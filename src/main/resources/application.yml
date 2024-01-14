@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/quizztoast
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
+    database-platform:  org.hibernate.dialect.MySQL8Dialect
+application:
+  security:
+    jwt:
+      secret-key: 58e1d44b27326b700536393f4ecb946673cb8d5ad372a120793bb212c37aee71
+      expiration: 86400000 # a day
+      refresh-token:
+        expiration: 604800000 # 7 days
