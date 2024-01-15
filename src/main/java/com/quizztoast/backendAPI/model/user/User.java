@@ -60,7 +60,10 @@ public class User implements UserDetails {
     @Column(name = "is_premium")
     private boolean isPremium;
 
+    @Column(name = "mfa_enabled")
     private boolean mfaEnabled;
+
+    @Column(name = "secret")
     private String secret;
 
     @OneToMany(mappedBy = "user")

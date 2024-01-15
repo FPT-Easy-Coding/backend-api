@@ -9,8 +9,7 @@ import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
-import org.springframework.stereotype.Service;
-
+//doc api http://localhost:8080/swagger-ui/index.html#/
 @OpenAPIDefinition(
         info = @Info(
                 contact = @Contact(

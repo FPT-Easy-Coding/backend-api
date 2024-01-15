@@ -1,6 +1,5 @@
 package com.quizztoast.backendAPI.config;
 
-
 import com.quizztoast.backendAPI.security.filter.JWTAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,9 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.quizztoast.backendAPI.model.user.Permission.*;
-import static com.quizztoast.backendAPI.model.user.Role.ADMIN;
-import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -40,11 +36,12 @@ public class SecurityConfig{
     private final JWTAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
-    //doc api http://localhost:8080/swagger-ui/index.html#/
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                                 request.requestMatchers(WHITE_LIST_URL)

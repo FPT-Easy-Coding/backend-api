@@ -3,6 +3,7 @@ package com.quizztoast.backendAPI.controller;
 import com.quizztoast.backendAPI.security.auth_payload.AuthenticationRequest;
 import com.quizztoast.backendAPI.security.auth_payload.AuthenticationResponse;
 import com.quizztoast.backendAPI.security.auth_payload.RegisterRequest;
+import com.quizztoast.backendAPI.security.auth_payload.VerificationRequest;
 import com.quizztoast.backendAPI.security.auth_service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,10 +30,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate (
-            @RequestBody AuthenticationRequest request
+    public ResponseEntity<?> authenticate (
+            @RequestBody RegisterRequest request
     ){
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        var response = authenticationService.register(request);
+        if(request.isMfaEnabled()){
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/refresh-token")
@@ -41,5 +46,12 @@ public class AuthenticationController {
             HttpServletResponse response
     ) throws IOException {
         authenticationService.refreshToken(request,response);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyCode(
+            @RequestBody VerificationRequest verificationRequest
+    ){
+            return ResponseEntity.ok(authenticationService.verifyCode(verificationRequest));
     }
 }

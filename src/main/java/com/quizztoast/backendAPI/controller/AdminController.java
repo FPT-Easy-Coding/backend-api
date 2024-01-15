@@ -32,7 +32,7 @@ public class AdminController {
             responses = {
                     @ApiResponse(
                             description = "Success. Returns essential admin information.",
-                            responseCode = "202"
+                            responseCode = "200"
                     ),
                     @ApiResponse(
                             description = "Unauthorized or Invalid Token. Access denied.",
