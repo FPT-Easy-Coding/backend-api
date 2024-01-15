@@ -32,7 +32,7 @@ public class AdminController {
             responses = {
                     @ApiResponse(
                             description = "Success. Returns essential admin information.",
-                            responseCode = "200"
+                            responseCode = "202"
                     ),
                     @ApiResponse(
                             description = "Unauthorized or Invalid Token. Access denied.",
@@ -51,6 +51,28 @@ public class AdminController {
      *
      * @return A message indicating the success of the POST operation.
      */
+    @Operation(
+            summary = "Creates a new resource",
+            description = "Creates a new resource with the provided data. This operation is accessible to Admins.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Resource created successfully.",
+                            responseCode = "201"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request. Invalid data provided.",
+                            responseCode = "400"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized. Admin access required.",
+                            responseCode = "401"
+                    ),
+                    @ApiResponse(
+                            description = "Internal Server Error.",
+                            responseCode = "500"
+                    )
+            }
+    )
     @PostMapping
     @PreAuthorize("hasAuthority('admin:create')")
     public String post() {
@@ -62,6 +84,34 @@ public class AdminController {
      *
      * @return A message indicating the success of the PUT operation.
      */
+
+
+    @Operation(
+            summary = "Updates an existing resource by ID",
+            description = "Updates an existing resource identified by its ID with the provided data. This operation is accessible to Admins.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Resource updated successfully.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request. Invalid data provided.",
+                            responseCode = "400"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized. Admin access required.",
+                            responseCode = "401"
+                    ),
+                    @ApiResponse(
+                            description = "Not Found. Resource with the provided ID not found.",
+                            responseCode = "404"
+                    ),
+                    @ApiResponse(
+                            description = "Internal Server Error.",
+                            responseCode = "500"
+                    )
+            }
+    )
     @PutMapping
     @PreAuthorize("hasAuthority('admin:update')")
     public String put() {
@@ -73,6 +123,20 @@ public class AdminController {
      *
      * @return A message indicating the success of the DELETE operation.
      */
+    @Operation(
+            summary = "Deletes a resource by ID",
+            description = "Deletes a resource identified by its ID. This operation is accessible to Admins.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Resource deleted successfully.",
+                            responseCode = "202"
+                    ),
+                    @ApiResponse(
+                            description = "Resource not found",
+                            responseCode = "404"
+                    )
+            }
+    )
     @DeleteMapping
     @PreAuthorize("hasAuthority('admin:delete')")
     public String delete() {
