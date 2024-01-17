@@ -31,13 +31,14 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticate (
-            @RequestBody RegisterRequest request
+            @RequestBody AuthenticationRequest request
     ){
-        var response = authenticationService.register(request);
-        if(request.isMfaEnabled()){
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.accepted().build();
+//        var response = authenticationService.register(request);
+//        if(request.isMfaEnabled()){
+//            return ResponseEntity.ok(response);
+//        }
+//        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
     @PostMapping("/refresh-token")
