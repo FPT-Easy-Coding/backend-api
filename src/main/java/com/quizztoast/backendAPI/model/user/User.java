@@ -1,7 +1,9 @@
 package com.quizztoast.backendAPI.model.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.quizztoast.backendAPI.model.token.Token;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,7 +40,8 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
+    @Email(message = "Invalid email address")
     private String email;
 
     @Column(name = "telephone")
@@ -66,6 +69,7 @@ public class User implements UserDetails {
     @Column(name = "secret")
     private String secret;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 

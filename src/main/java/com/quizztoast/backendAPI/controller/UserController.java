@@ -1,15 +1,16 @@
 package com.quizztoast.backendAPI.controller;
 
+import com.quizztoast.backendAPI.dto.UserDTO;
+import com.quizztoast.backendAPI.model.user.User;
 import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
 import com.quizztoast.backendAPI.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -24,4 +25,26 @@ public class UserController {
         userService.changePassword(changePasswordRequest,connectedUser);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/fetchAll")
+    public ResponseEntity<List<User>> getAllUsers(){
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
+        User user = userService.getUserById(id);
+
+        // Convert User entity to UserDTO
+        UserDTO userDTO = UserDTO.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .build();
+
+        return ResponseEntity.ok(userDTO);
+    }
+
 }
