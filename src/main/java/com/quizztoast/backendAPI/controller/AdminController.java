@@ -1,6 +1,9 @@
 package com.quizztoast.backendAPI.controller;
 
+import com.quizztoast.backendAPI.model.user.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +35,7 @@ public class AdminController {
             responses = {
                     @ApiResponse(
                             description = "Success. Returns essential admin information.",
-                            responseCode = "202"
+                            responseCode = "200"
                     ),
                     @ApiResponse(
                             description = "Unauthorized or Invalid Token. Access denied.",
@@ -52,27 +55,29 @@ public class AdminController {
      * @return A message indicating the success of the POST operation.
      */
     @Operation(
-            summary = "Creates a new resource",
-            description = "Creates a new resource with the provided data. This operation is accessible to Admins.",
+            summary = "Create a new resource using a POST request",
+            description = "Create a new resource with the provided data. This operation is accessible only to users with Admin privileges.",
             responses = {
                     @ApiResponse(
                             description = "Success. Resource created successfully.",
-                            responseCode = "201"
+                            responseCode = "200",
+                            content = @Content(schema = @Schema(implementation = User.class))
+                    ),
+
+                    @ApiResponse(
+                            description = "Unauthorized or Invalid Token. Access denied",
+                            responseCode = "403"
                     ),
                     @ApiResponse(
-                            description = "Bad Request. Invalid data provided.",
-                            responseCode = "400"
-                    ),
-                    @ApiResponse(
-                            description = "Unauthorized. Admin access required.",
-                            responseCode = "401"
-                    ),
-                    @ApiResponse(
-                            description = "Internal Server Error.",
-                            responseCode = "500"
+                            description = "Conflict. User with the provided username or email already exists.",
+                            responseCode = "422"
                     )
-            }
+            },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "This is the request body",
+                    content = @Content(schema = @Schema(implementation = User.class))
+            )
     )
+
     @PostMapping
     @PreAuthorize("hasAuthority('admin:create')")
     public String post() {
@@ -84,33 +89,32 @@ public class AdminController {
      *
      * @return A message indicating the success of the PUT operation.
      */
-
-
     @Operation(
-            summary = "Updates an existing resource by ID",
+            summary = "Updates a User by ID",
             description = "Updates an existing resource identified by its ID with the provided data. This operation is accessible to Admins.",
             responses = {
                     @ApiResponse(
                             description = "Success. Resource updated successfully.",
-                            responseCode = "200"
-                    ),
-                    @ApiResponse(
-                            description = "Bad Request. Invalid data provided.",
-                            responseCode = "400"
-                    ),
-                    @ApiResponse(
-                            description = "Unauthorized. Admin access required.",
-                            responseCode = "401"
+                            responseCode = "200",
+                            content = @Content(schema = @Schema(implementation = User.class))
                     ),
                     @ApiResponse(
                             description = "Not Found. Resource with the provided ID not found.",
                             responseCode = "404"
                     ),
+
                     @ApiResponse(
-                            description = "Internal Server Error.",
-                            responseCode = "500"
+                            description = "Unauthorized or Invalid Token. Access denied",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Conflict. User with the provided username or email already exists.",
+                            responseCode = "422"
                     )
-            }
+            },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "This is the request body",
+                    content = @Content(schema = @Schema(implementation = User.class))
+            )
     )
     @PutMapping
     @PreAuthorize("hasAuthority('admin:update')")
@@ -124,8 +128,8 @@ public class AdminController {
      * @return A message indicating the success of the DELETE operation.
      */
     @Operation(
-            summary = "Deletes a resource by ID",
-            description = "Deletes a resource identified by its ID. This operation is accessible to Admins.",
+            summary = "Deletes a User by ID",
+            description = "Deletes a user identified by its ID. This operation is accessible to Admins.",
             responses = {
                     @ApiResponse(
                             description = "Success. Resource deleted successfully.",

@@ -3,12 +3,14 @@ package com.quizztoast.backendAPI.service;
 import com.quizztoast.backendAPI.model.user.User;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,22 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
+
+    public User getUserById(Long id){
+        User user =  userRepository.findByUserId(id);
+        if(user == null){
+            throw new EntityNotFoundException("User not found with id: " + id);
+        }
+        return user;
+    }
+
+    public boolean userExists(String email){
+        return userRepository.findByEmail(email).isPresent();
     }
 
 }

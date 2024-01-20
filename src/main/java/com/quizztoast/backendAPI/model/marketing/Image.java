@@ -1,0 +1,22 @@
+package com.quizztoast.backendAPI.model.marketing;
+
+import com.quizztoast.backendAPI.model.user.User;
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Entity
+@Table
+@Data
+public class Image {
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+ private int image_id;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+private User source_id;
+
+    @Column(name = "webp_img" ,length = 255)
+private String webp_img;
+
+
+}

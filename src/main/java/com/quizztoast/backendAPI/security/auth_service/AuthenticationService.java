@@ -11,6 +11,7 @@ import com.quizztoast.backendAPI.security.auth_payload.AuthenticationResponse;
 import com.quizztoast.backendAPI.security.auth_payload.RegisterRequest;
 import com.quizztoast.backendAPI.security.auth_payload.VerificationRequest;
 import com.quizztoast.backendAPI.security.tfa.TwoFactorAuthenticationService;
+import com.quizztoast.backendAPI.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,9 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -33,31 +32,46 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
+    private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final TwoFactorAuthenticationService tfaService;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-        var user = User.builder()
-                .firstName(registerRequest.getFirstname())
-                .lastName(registerRequest.getLastname())
-                .email(registerRequest.getEmail())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(registerRequest.getRole())
-                .mfaEnabled(registerRequest.isMfaEnabled())
-                .build();
-        //If MFA enable --> generate Secret
-        if(registerRequest.isMfaEnabled()){
-            user.setSecret(tfaService.generateNewSecret());
+        try {
+            if (userService.userExists(registerRequest.getEmail())) {
+                throw new IllegalStateException("Email already taken");
+            }
+
+            var user = User.builder()
+                    .firstName(registerRequest.getFirstname())
+                    .lastName(registerRequest.getLastname())
+                    .email(registerRequest.getEmail())
+                    .password(passwordEncoder.encode(registerRequest.getPassword()))
+                    .role(registerRequest.getRole())
+                    .mfaEnabled(registerRequest.isMfaEnabled())
+                    .build();
+
+            // If MFA enabled --> generate Secret
+            if (registerRequest.isMfaEnabled()) {
+                user.setSecret(tfaService.generateNewSecret());
+            }
+
+            var savedUser = userRepository.save(user);
+            var jwtToken = jwtService.generateToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
+            saveUserToken(savedUser, jwtToken);
+
+            return AuthenticationResponse.builder()
+                    .secretImageUri(tfaService.generateQrCodeImageUrl(user.getSecret()))
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .mfaEnabled(user.isMfaEnabled())
+                    .build();
+        } catch (IllegalStateException e) {
+            // Catch the exception and return a custom response
+            return AuthenticationResponse.builder()
+                    .error("Email already taken")
+                    .build();
         }
-        var savedUser = userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtToken);
-        return AuthenticationResponse.builder()
-                .secretImageUri(tfaService.generateQrCodeImageUrl(user.getSecret()))
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .mfaEnabled(user.isMfaEnabled())
-                .build();
     }
 
     private void saveUserToken(User user, String jwtToken) {
@@ -72,30 +86,42 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getEmail(),
-                        authenticationRequest.getPassword()
-                )
-        );
-        var user = userRepository.findByEmail(authenticationRequest.getEmail())
-                .orElseThrow();
-        if (user.isMfaEnabled()){
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getEmail(),
+                            authenticationRequest.getPassword()
+                    )
+            );
+
+            var user = userRepository.findByEmail(authenticationRequest.getEmail())
+                    .orElseThrow();
+
+            if (user.isMfaEnabled()) {
+                return AuthenticationResponse.builder()
+                        .accessToken("")
+                        .refreshToken("")
+                        .mfaEnabled(true)
+                        .build();
+            }
+
+            var jwtToken = jwtService.generateToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+
             return AuthenticationResponse.builder()
-                    .accessToken("")
-                    .refreshToken("")
-                    .mfaEnabled(true)
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .userId(user.getUserId())
+                    .mfaEnabled(false)
+                    .build();
+        } catch (BadCredentialsException e) {
+            // Handle incorrect password
+            return AuthenticationResponse.builder()
+                    .error("Incorrect email or password")
                     .build();
         }
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user,jwtToken);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .mfaEnabled(false)
-                .build();
     }
 
     private void revokeAllUserTokens(User user){
@@ -130,6 +156,7 @@ public class AuthenticationService {
                       .accessToken(accessToken)
                       .refreshToken(refreshToken)
                       .mfaEnabled(false)
+                      .userId(user.getUserId())
                       .build();
               new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }

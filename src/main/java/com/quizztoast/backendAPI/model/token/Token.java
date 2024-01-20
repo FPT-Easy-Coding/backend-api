@@ -1,5 +1,6 @@
 package com.quizztoast.backendAPI.model.token;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.quizztoast.backendAPI.model.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,8 @@ public class Token {
 
     private boolean expired;
     private boolean revoked;
+
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
