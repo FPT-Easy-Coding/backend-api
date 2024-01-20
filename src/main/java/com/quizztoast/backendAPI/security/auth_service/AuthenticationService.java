@@ -115,6 +115,7 @@ public class AuthenticationService {
             return AuthenticationResponse.builder()
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken)
+                    .userId(user.getUserId())
                     .mfaEnabled(false)
                     .build();
         } catch (BadCredentialsException e) {
@@ -157,6 +158,7 @@ public class AuthenticationService {
                       .accessToken(accessToken)
                       .refreshToken(refreshToken)
                       .mfaEnabled(false)
+                      .userId(user.getUserId())
                       .build();
               new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
