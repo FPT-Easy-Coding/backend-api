@@ -1,11 +1,17 @@
 package com.quizztoast.backendAPI.model.quiz;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
-@Data
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

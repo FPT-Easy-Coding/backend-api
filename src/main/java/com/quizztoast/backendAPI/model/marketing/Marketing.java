@@ -2,11 +2,17 @@ package com.quizztoast.backendAPI.model.marketing;
 
 import com.quizztoast.backendAPI.model.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
-@Data
 public class Marketing {
     @Id
     @OneToOne

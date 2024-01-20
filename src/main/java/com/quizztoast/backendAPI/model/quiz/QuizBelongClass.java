@@ -3,13 +3,19 @@ package com.quizztoast.backendAPI.model.quiz;
 import com.quizztoast.backendAPI.model.exam.Exam;
 import com.quizztoast.backendAPI.model.inClass.Class;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
-@Data
 public class QuizBelongClass {
 
     @EmbeddedId
