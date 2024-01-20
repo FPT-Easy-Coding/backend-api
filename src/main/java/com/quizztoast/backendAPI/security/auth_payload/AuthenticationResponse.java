@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AuthenticationResponse {
+    private Long userId;
 //    @JsonProperty("access_token")
     private String accessToken;
 //    @JsonProperty("refresh_token")

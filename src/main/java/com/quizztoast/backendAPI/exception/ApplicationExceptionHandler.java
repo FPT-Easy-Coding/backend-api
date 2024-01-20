@@ -14,6 +14,12 @@ import java.util.Map;
 @org.springframework.web.bind.annotation.ControllerAdvice
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
+    /**
+     * Handles validation exceptions and returns a map of field names and error messages.
+     *
+     * @param  ex  the MethodArgumentNotValidException to be handled
+     * @return     a map containing field names as keys and error messages as values
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String,String> handleValidationExceptions (MethodArgumentNotValidException ex){
