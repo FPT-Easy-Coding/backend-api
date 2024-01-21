@@ -36,6 +36,15 @@ public class RegisterRequest {
     @NotBlank(message = "Password is mandatory")
     @Size(min = 5, max=20, message = "Password must be between 5 and 20 characters")
     private String password;
+
+    @NotNull(message = "Telephone is mandatory")
+    @NotBlank(message = "Telephone is mandatory")
+    private String telephone;
+
+    @NotNull(message = "Username is mandatory")
+    @NotBlank(message = "Username is mandatory")
+    private String username;
+
     private Role role;
     private boolean mfaEnabled;
 }
