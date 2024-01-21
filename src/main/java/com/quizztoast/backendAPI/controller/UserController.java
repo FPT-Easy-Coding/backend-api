@@ -37,11 +37,11 @@ public class UserController {
 
         // Convert User entity to UserDTO
         UserDTO userDTO = UserDTO.builder()
-                .userId(user.getUserId())
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
+                .telephone(user.getTelephone())
                 .build();
 
         return ResponseEntity.ok(userDTO);

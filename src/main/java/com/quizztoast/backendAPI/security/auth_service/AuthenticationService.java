@@ -47,6 +47,8 @@ public class AuthenticationService {
                     .firstName(registerRequest.getFirstname())
                     .lastName(registerRequest.getLastname())
                     .email(registerRequest.getEmail())
+                    .username(registerRequest.getUsername())
+                    .telephone(registerRequest.getTelephone())
                     .password(passwordEncoder.encode(registerRequest.getPassword()))
                     .role(registerRequest.getRole())
                     .mfaEnabled(registerRequest.isMfaEnabled())
