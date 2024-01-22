@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.security.auth_service;
+package com.quizztoast.backendAPI.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

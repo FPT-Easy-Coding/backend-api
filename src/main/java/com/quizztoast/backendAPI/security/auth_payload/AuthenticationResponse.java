@@ -21,4 +21,8 @@ public class AuthenticationResponse {
     private boolean mfaEnabled;
     private String secretImageUri;
     private String error;
+
+    public AuthenticationResponse(String err) {
+        this.error = err;
+    }
 }

@@ -10,6 +10,7 @@ import com.quizztoast.backendAPI.security.auth_payload.AuthenticationRequest;
 import com.quizztoast.backendAPI.security.auth_payload.AuthenticationResponse;
 import com.quizztoast.backendAPI.security.auth_payload.RegisterRequest;
 import com.quizztoast.backendAPI.security.auth_payload.VerificationRequest;
+import com.quizztoast.backendAPI.security.jwt.JWTService;
 import com.quizztoast.backendAPI.security.tfa.TwoFactorAuthenticationService;
 import com.quizztoast.backendAPI.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -38,10 +41,6 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final TwoFactorAuthenticationService tfaService;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-        try {
-            if (userService.userExists(registerRequest.getEmail())) {
-                throw new IllegalStateException("Email already taken");
-            }
 
             var user = User.builder()
                     .firstName(registerRequest.getFirstname())
@@ -70,12 +69,7 @@ public class AuthenticationService {
                     .refreshToken(refreshToken)
                     .mfaEnabled(user.isMfaEnabled())
                     .build();
-        } catch (IllegalStateException e) {
-            // Catch the exception and return a custom response
-            return AuthenticationResponse.builder()
-                    .error("Email already taken")
-                    .build();
-        }
+
     }
 
     private void saveUserToken(User user, String jwtToken) {
