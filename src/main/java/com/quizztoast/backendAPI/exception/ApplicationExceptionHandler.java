@@ -4,39 +4,76 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-@org.springframework.web.bind.annotation.ControllerAdvice
+@ControllerAdvice
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
     /**
-     * Handles validation exceptions and returns a map of field names and error messages.
+     * Handle validation exceptions in the Java function.
      *
-     * @param  ex  the MethodArgumentNotValidException to be handled
-     * @return     a map containing field names as keys and error messages as values
+     * @param  ex	description of parameter
+     * @return     description of return value
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String,String> handleValidationExceptions (MethodArgumentNotValidException ex){
-        Map< String , String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
+    public Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Validation Failed");
+        response.put("error", true);
+
+        ErrorDetailsFormatter errorDetailsFormatter = new ErrorDetailsFormatter();
+        List<Map<String, String>> errorDetailsList = errorDetailsFormatter.formatErrorDetails(ex);
+
+        response.put("data", errorDetailsList);
+        return response;
     }
 
+
+
+
+
+    /**
+     * Handle UsernameNotFoundException and return a map with error message.
+     *
+     * @param  ex  the UsernameNotFoundException to handle
+     * @return     a map with the error message
+     */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UsernameNotFoundException.class)
     public Map<String,String> handleBusinessException (UsernameNotFoundException ex){
         Map< String , String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
         return errors;
+    }
+    /**
+     * Handles the EmailAlreadyTakenException and returns an error response map.
+     *
+     * @param  ex  the EmailAlreadyTakenException to be handled
+     * @return     an error response map with the key "email" and the exception message
+     */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EmailAlreadyTakenException.class)
+    public Map<String, String> handleEmailAlreadyTakenException(EmailAlreadyTakenException ex) {
+        return createErrorResponse("email", ex.getMessage());
+    }
+
+
+    /**
+     * Creates an error response map with the given key and message.
+     *
+     * @param  key     the key for the error response
+     * @param  message the message for the error response
+     * @return         the error response map
+     */
+    private Map<String, String> createErrorResponse(String key, String message) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put(key, message);
+        return errorResponse;
     }
 }
