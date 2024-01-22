@@ -1,0 +1,72 @@
+package com.quizztoast.backendAPI.controller;
+
+import com.quizztoast.backendAPI.dto.QuizDTO;
+import com.quizztoast.backendAPI.model.quiz.Quiz;
+import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.service.QuizService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/quiz")
+@RequiredArgsConstructor
+public class QuizController {
+
+  private final QuizService quizService;
+    @Operation(
+            description = "Get All Quiz",
+            summary = "",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns All Quiz .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "[{\"quiz_id\":1,\"user_id\":null,\"class_id\":12,\"category_id\":null,\"quiz_name\":\"test Quiz\",\"rate\":5,\"created_at\":\"2024-01-22T12:30:00\",\"quiz_ques_id\":0}]"
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = ".",
+                            responseCode = "400",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+            }
+    )
+    @GetMapping("/getAll-quiz")
+    public List<Quiz> getAllQuizs(){
+        return quizService.getAllQuiz();
+    }
+
+
+}

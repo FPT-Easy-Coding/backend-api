@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.quizztoast.backendAPI.model.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class User implements UserDetails {
     @Column(name = "username")
     private String username;
 
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     @Column(name = "password")
     private String password;
 
@@ -78,6 +80,12 @@ public class User implements UserDetails {
         return role.getAuthorities();
     }
 
+    public User(String username, String password, String email, Role role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
     @Override
     public String getUsername() {
         return email;

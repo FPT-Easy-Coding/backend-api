@@ -1,6 +1,6 @@
 package com.quizztoast.backendAPI.config;
 
-import com.quizztoast.backendAPI.security.filter.JWTAuthenticationFilter;
+import com.quizztoast.backendAPI.security.jwt.JWTAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,16 +44,18 @@ public class SecurityConfig{
         http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+//                .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(
+//                        )))
                 .authorizeHttpRequests(request ->
-                                request.requestMatchers(WHITE_LIST_URL)
-                                    .permitAll()
-                //                .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
-                //                .requestMatchers(GET,"/api/v1/admin/**").hasAuthority(ADMIN_READ.name())
-                //                .requestMatchers(POST,"/api/v1/admin/**").hasAuthority(ADMIN_CREATE.name())
-                //                .requestMatchers(PUT,"/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())
-                //                .requestMatchers(DELETE,"/api/v1/admin/**").hasAuthority(ADMIN_DELETE.name())
-                .anyRequest()
-                    .authenticated()
+                        request.requestMatchers(WHITE_LIST_URL)
+                                .permitAll()
+                                //                .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
+                                //                .requestMatchers(GET,"/api/v1/admin/**").hasAuthority(ADMIN_READ.name())
+                                //                .requestMatchers(POST,"/api/v1/admin/**").hasAuthority(ADMIN_CREATE.name())
+                                //                .requestMatchers(PUT,"/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())
+                                //                .requestMatchers(DELETE,"/api/v1/admin/**").hasAuthority(ADMIN_DELETE.name())
+                                .anyRequest()
+                                .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

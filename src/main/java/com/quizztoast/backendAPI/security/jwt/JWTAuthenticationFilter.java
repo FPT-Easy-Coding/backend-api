@@ -1,7 +1,6 @@
-package com.quizztoast.backendAPI.security.filter;
+package com.quizztoast.backendAPI.security.jwt;
 
 import com.quizztoast.backendAPI.repository.TokenRepository;
-import com.quizztoast.backendAPI.security.auth_service.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
