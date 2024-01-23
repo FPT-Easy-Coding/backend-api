@@ -1,7 +1,13 @@
 package com.quizztoast.backendAPI.controller;
 
+import com.quizztoast.backendAPI.dto.QuizAnswerDTO;
+import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
 import com.quizztoast.backendAPI.dto.UserDTO;
+import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
+import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
 import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
+import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
 import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
 import com.quizztoast.backendAPI.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,11 +16,16 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -22,9 +33,15 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
+
+    /**
+     * Change password using a Patch request.
+     *
+     * @return A message indicating the success of the Patch operation.
+     */
     @Operation(
-            description = "Change Password",
-            summary = "",
+            description = "",
+            summary = "Change Password",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns essential admin information.",
@@ -65,6 +82,12 @@ public class UserController {
         userService.changePassword(changePasswordRequest,connectedUser);
         return ResponseEntity.ok().build();
     }
+    /**
+     * Get All User using a get request.
+     *
+     * @return A message indicating the success of the Get operation.
+     */
+
     @Operation(
             description = "",
             summary = "get All User",
@@ -87,6 +110,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+
+    /**
+     * Get profile by Id using a Post request.
+     *
+     * @return A message indicating the success of the Post operation.
+     */
     @Operation(
             description = "",
             summary = "get profile by id",
@@ -134,6 +163,7 @@ public class UserController {
                     ),
             }
     )
+
     @GetMapping("/profile/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
         User user = userService.getUserById(id);
@@ -150,4 +180,126 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
+    /**
+     * Create QuizQuestion and QuizAnswer using a Post request.
+     *
+     * @return A message indicating the success of the Post operation.
+     */
+    @Operation(
+            description = "",
+            summary = "Create QuizQuestion and QuizAnswer",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns essential admin information.",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizCreationRequestDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{\n" +
+                                                            "    \"questionContent\": \"1+1=\",\n" +
+                                                            "    \"answers\": [\n" +
+                                                            "        {\n" +
+                                                            "            \"content\": \"2\",\n" +
+                                                            "            \"correct\": true\n" +
+                                                            "        }\n" +
+                                                            "    ]\n" +
+                                                            "}"
+                                            )
+                                    })
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "400",
+                            content = @Content),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+                            content = @Content
+                    ),
+            }
+    )
+    @PostMapping("/create-quizquestion")
+    public ResponseEntity<QuizCreationRequestDTO> createQuizQuestionAndAnswers(@RequestBody QuizCreationRequestDTO requestDTO) {
+        ResponseEntity<QuizCreationRequestDTO> QuizCreationRequestDTO = userService.createQuizQuestionAndAnswers(requestDTO);
+        return QuizCreationRequestDTO;
+    }
+    /**
+     *  Update Answer by Id using a put request.
+     *
+     * @return A message indicating the success of the put operation.
+     */
+
+    @Operation(
+            description = "",
+            summary = "Update QuizAnswer",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns essential admin information.",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizAnswerDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "QuizAnswer updated successfully"
+                                            )
+                                    })
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "400",
+                            content = @Content),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizAnswerDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "QuizAnswer with ID 123 not found"
+                                            )
+                                    })
+                    ),
+            }
+    )
+    @PutMapping("/update-answer/{answerId}")
+    public ResponseEntity<String> updateAnswerById(@PathVariable Long answerId, @RequestBody QuizAnswerDTO quizAnswerDTO) {
+        return  userService.updateQuizAnswer(answerId,quizAnswerDTO);
+    }
+
+    /**
+     *  Delete quizquestion and quizanswer by Id using a DELETE request.
+     *
+     * @return A message indicating the success of the DELETE operation.
+     */
+    @Operation(
+            description = "",
+            summary = "Delete Quizquestion and quizAnswer",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Delete succesfull.",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizAnswerDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "Delete Succesfull"
+                                            )
+                                    })
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "400",
+                            content = @Content),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+                            content = @Content)
+            }
+    )
+    @DeleteMapping("/delete-quizquestion/{quizquestionId}")
+public ResponseEntity<String> deleteQuizQuestionById(@PathVariable Long quizquestionId)
+    {
+        return userService.deleteQuizQuesById(quizquestionId);
+    }
 }

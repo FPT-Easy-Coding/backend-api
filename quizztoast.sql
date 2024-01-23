@@ -28,7 +28,7 @@ CREATE TABLE `category` (
   `category_id` int NOT NULL AUTO_INCREMENT,
   `category_name` varchar(50) NOT NULL,
   PRIMARY KEY (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,6 +37,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` VALUES (1,'string'),(2,'string'),(3,'Software Testing');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -409,7 +410,7 @@ CREATE TABLE `quiz` (
   KEY `FK1tofsm1qynhakggx7ttqh8ihu` (`user_id`),
   CONSTRAINT `FK1tofsm1qynhakggx7ttqh8ihu` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT `FK82x9fxd5tsbb3i1ewrp3cr8xa` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -418,6 +419,7 @@ CREATE TABLE `quiz` (
 
 LOCK TABLES `quiz` WRITE;
 /*!40000 ALTER TABLE `quiz` DISABLE KEYS */;
+INSERT INTO `quiz` VALUES (1,12,'2024-01-22 12:30:00.000000','test Quiz',0,5,NULL,NULL),(2,1,'2024-01-23 16:57:06.630185','ABC',0,3,1,10952);
 /*!40000 ALTER TABLE `quiz` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -437,7 +439,7 @@ CREATE TABLE `quiz_answer` (
   PRIMARY KEY (`quiz_answer_id`),
   KEY `FK1tfpvs7phj0firv5btt04yrsd` (`quiz_question_id`),
   CONSTRAINT `FK1tfpvs7phj0firv5btt04yrsd` FOREIGN KEY (`quiz_question_id`) REFERENCES `quiz_question` (`quiz_question_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -446,6 +448,7 @@ CREATE TABLE `quiz_answer` (
 
 LOCK TABLES `quiz_answer` WRITE;
 /*!40000 ALTER TABLE `quiz_answer` DISABLE KEYS */;
+INSERT INTO `quiz_answer` VALUES (3,'2','2024-01-23 10:13:27.466647',_binary '',3),(4,'string','2024-01-23 10:25:45.652079',_binary '',4),(5,'2','2024-01-23 10:25:56.360883',_binary '',5),(6,'string','2024-01-23 10:27:49.596625',_binary '',6),(7,'string','2024-01-23 11:47:48.707868',_binary '',7),(8,'string','2024-01-23 11:49:17.393576',_binary '',8);
 /*!40000 ALTER TABLE `quiz_answer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -486,8 +489,11 @@ CREATE TABLE `quiz_question` (
   `quiz_question_id` bigint NOT NULL AUTO_INCREMENT,
   `content` varchar(1000) NOT NULL,
   `created_at` datetime(6) NOT NULL,
-  PRIMARY KEY (`quiz_question_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `category_id` int DEFAULT NULL,
+  PRIMARY KEY (`quiz_question_id`),
+  KEY `FKademupmkualcdnl7k8im0m6uo` (`category_id`),
+  CONSTRAINT `FKademupmkualcdnl7k8im0m6uo` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -496,6 +502,7 @@ CREATE TABLE `quiz_question` (
 
 LOCK TABLES `quiz_question` WRITE;
 /*!40000 ALTER TABLE `quiz_question` DISABLE KEYS */;
+INSERT INTO `quiz_question` VALUES (3,'1+1=','2024-01-23 10:13:27.457673',NULL),(4,'string','2024-01-23 10:25:45.594236',NULL),(5,'1+1=','2024-01-23 10:25:56.353902',NULL),(6,'1+1=','2024-01-23 10:27:49.548752',NULL),(7,'string','2024-01-23 11:47:48.653116',NULL),(8,'string','2024-01-23 11:49:17.388588',NULL);
 /*!40000 ALTER TABLE `quiz_question` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -551,7 +558,7 @@ CREATE TABLE `token` (
 
 LOCK TABLES `token` WRITE;
 /*!40000 ALTER TABLE `token` DISABLE KEYS */;
-INSERT INTO `token` VALUES (10002,_binary '\0',_binary '\0','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1Njc0NDgzLCJleHAiOjE3MDU3NjA4ODN9.Kuop5LPr2MEiYZ78mJayXoxBT-38dAk0iajXih-RNTE','BEARER',10002),(10052,_binary '\0',_binary '\0','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1NzU2MTQ4LCJleHAiOjE3MDU4NDI1NDh9.LwOJAcZoN5vdTy4-UY171EF5wU5p-s94IOatb9z2ZPI','BEARER',10052);
+INSERT INTO `token` VALUES (10502,_binary '',_binary '','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1OTEyMDYyLCJleHAiOjE3MDU5OTg0NjJ9.WlXPho3LjB7D_sgIKERwSvzF1FNEOb7Adf11p_0quj4','BEARER',10952),(10552,_binary '\0',_binary '\0','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjAzNTc4Nn0.GbOt25veZBXl3YHwJrW101CT-gvNGC20RTQK4uBwdAk','BEARER',11002),(10602,_binary '',_binary '','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1OTQ5OTc0LCJleHAiOjE3MDYwMzYzNzR9.Oz_2zQJn78Oy_ApmykjWk_s-Bmbq7omd0v-2JCN_RAI','BEARER',10952),(10603,_binary '\0',_binary '\0','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1OTQ5OTk5LCJleHAiOjE3MDYwMzYzOTl9.Rivssn7JjKZFQ4Kr8U1xa5gErKTJxKDSMoe5TdrWRL4','BEARER',10952);
 /*!40000 ALTER TABLE `token` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -573,7 +580,7 @@ CREATE TABLE `token_seq` (
 
 LOCK TABLES `token_seq` WRITE;
 /*!40000 ALTER TABLE `token_seq` DISABLE KEYS */;
-INSERT INTO `token_seq` VALUES (10151);
+INSERT INTO `token_seq` VALUES (10701);
 /*!40000 ALTER TABLE `token_seq` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -643,7 +650,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (10002,NULL,'admin2@gmail.com','Admin',NULL,_binary '\0',_binary '\0','Demo',_binary '\0','$2a$10$Yd/q6BvJnketEg6iVZ3E7eBXJI3BRjK2zdmhRDogL7oiy2GW7VK9e','ADMIN',NULL,NULL,NULL),(10052,NULL,'admin2@gmail.com','Admin',NULL,_binary '\0',_binary '\0','Demo',_binary '\0','$2a$10$n0Zx2NZcfLzBdRmfcIE7XOze3nGf9.Ouyltb1TxQoGCZHQGo1QqnS','ADMIN',NULL,NULL,NULL);
+INSERT INTO `user` VALUES (10952,NULL,'admin2@gmail.com','Admin',NULL,_binary '\0',_binary '\0','Demo',_binary '\0','$2a$10$sPVhhDkMde/zWh5NX2rqheJHijkckE1erEmAcLMgV1/UZJUZpXaCS','ADMIN',NULL,NULL,NULL),(11002,NULL,'anhananh123@gmail.com','string',NULL,_binary '\0',_binary '\0','string',_binary '','$2a$10$p8cqU8kKhCqet0bUQNgSUee0YCh7syVmTn0ZcHS/a7hZX0y.f8cmi','USER','CXNY7FH5HH3HW2BXC2LFIGSEMSEIETEG','0987777777','hieuee');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -691,7 +698,7 @@ CREATE TABLE `user_seq` (
 
 LOCK TABLES `user_seq` WRITE;
 /*!40000 ALTER TABLE `user_seq` DISABLE KEYS */;
-INSERT INTO `user_seq` VALUES (10151);
+INSERT INTO `user_seq` VALUES (11101);
 /*!40000 ALTER TABLE `user_seq` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -704,4 +711,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-20 21:30:14
+-- Dump completed on 2024-01-23 17:05:05

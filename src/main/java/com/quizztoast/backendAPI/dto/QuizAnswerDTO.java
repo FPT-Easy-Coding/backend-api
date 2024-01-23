@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CategoryDTO {
-    private int categoryId;
-    private String categoryName;
+public class QuizAnswerDTO {
+
+    private String content;
+    private boolean isCorrect;
 }

@@ -23,6 +23,12 @@ import java.util.List;
 public class QuizController {
 
   private final QuizService quizService;
+
+    /**
+     * Get All Quiz set using a Get request.
+     *
+     * @return All of quiz.
+     */
     @Operation(
             description = "Get All Quiz",
             summary = "",
@@ -67,6 +73,58 @@ public class QuizController {
     public List<Quiz> getAllQuizs(){
         return quizService.getAllQuiz();
     }
+/**
+ * creaete Quiz set using a Post request.
+ *
+ * @return quiz set.
+ */
+@Operation(
+        description = "Get All Quiz",
+        summary = "",
+        responses = {
+                @ApiResponse(
+                        description = "Success. Returns All Quiz .",
+                        responseCode = "200",
+                        content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                ,
+                                examples = {
+                                        @ExampleObject(
+                                                value = "{\n" +
+                                                        "    \"quiz_id\": 1,\n" +
+                                                        "    \"user_id\": 10952,\n" +
+                                                        "    \"class_id\": 1,\n" +
+                                                        "    \"category_id\": 1,\n" +
+                                                        "    \"quiz_name\": \"ABC\",\n" +
+                                                        "    \"rate\": 3,\n" +
+                                                        "    \"create_at\": \"2024-01-23T09:55:17.447\",\n" +
+                                                        "    \"quiz_ques_ids\": [\n" +
+                                                        "        0\n" +
+                                                        "    ]\n" +
+                                                        "}"
+                                        )
+                                }
+                        )
+                ),
+                @ApiResponse(
+                        description = "" ,
 
-
+                        responseCode = "400",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema
+                        )
+                ),
+                @ApiResponse(
+                        description = "",
+                        responseCode = "404",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema
+                        )
+                ),
+        }
+)
+@PostMapping("/create-quiz")
+    public ResponseEntity<QuizDTO> createQuiz(@RequestBody QuizDTO quizdto)
+{
+    return quizService.createQuiz(quizdto);
+}
 }

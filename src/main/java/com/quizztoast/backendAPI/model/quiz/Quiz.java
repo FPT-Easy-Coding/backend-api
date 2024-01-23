@@ -22,17 +22,17 @@ public class Quiz {
     private int quiz_id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user_id;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name= "class_id" ,nullable = false)
     private int class_id;
 
-@ManyToOne
-@JoinColumn(name = "category_id")
-    private Category category_id; // Change the property name to match your entity
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category; // Change the property name to match your entity
 
-    @Column(name= "quiz_name" ,nullable = false)
+    @Column(name = "quiz_name", nullable = false)
     private String quiz_name;
 
     @Column(name= "rate" ,nullable = false,length = 255)

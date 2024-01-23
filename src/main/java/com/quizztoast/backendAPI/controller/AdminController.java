@@ -345,7 +345,13 @@ public class AdminController {
                                             value = "{\"statusCode\":404, \"message\":\"User not found with ID: 10286\"}"
                                     )
                             )
-                    )
+                    ),
+                    @ApiResponse(
+                            description = "Resource not found",
+                            responseCode = "400",
+                            content = @Content
+                            )
+
 
             }
 

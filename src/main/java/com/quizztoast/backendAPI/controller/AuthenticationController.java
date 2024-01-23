@@ -37,6 +37,11 @@ public class AuthenticationController {
     private final ReCaptchaRegisterService reCaptchaRegisterService;
     private final UserService userService;
 
+    /**
+     * register new User using a Post request.
+     *
+     * @return A message indicating the success of the Post operation.
+     */
     @Operation(
             summary = "Registers a new user",
             description = "Registers a new user with the provided details.",
@@ -189,6 +194,12 @@ public class AuthenticationController {
 //        return ResponseEntity.accepted().build();
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
+
+    /**
+     * refresh-token using a Post request.
+     *
+     * @return A message indicating the success of the Post operation.
+     */
     @Operation(
             summary = "Refreshes the authentication token",
             description = "Refreshes the authentication token using the provided refresh token.",
