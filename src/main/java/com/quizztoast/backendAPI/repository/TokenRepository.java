@@ -1,6 +1,6 @@
 package com.quizztoast.backendAPI.repository;
 
-import com.quizztoast.backendAPI.model.token.Token;
+import com.quizztoast.backendAPI.model.entity.token.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

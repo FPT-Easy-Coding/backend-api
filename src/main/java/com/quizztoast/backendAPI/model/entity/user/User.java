@@ -1,7 +1,7 @@
-package com.quizztoast.backendAPI.model.user;
+package com.quizztoast.backendAPI.model.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.quizztoast.backendAPI.model.token.Token;
+import com.quizztoast.backendAPI.model.entity.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User implements UserDetails {
-
+// Spring boot -> ORM -> JPA Api (Query: JPQL) -> Hibernate (HQL) -> SQL -> RDBMS
     @Id
     @GeneratedValue
     @Column (name = "user_id")

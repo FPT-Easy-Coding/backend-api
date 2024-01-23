@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.dto;
+package com.quizztoast.backendAPI.model.dto;
 
 import lombok.Builder;
 import lombok.Data;

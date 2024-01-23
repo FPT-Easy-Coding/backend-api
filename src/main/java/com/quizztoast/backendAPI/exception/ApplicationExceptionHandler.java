@@ -2,7 +2,7 @@ package com.quizztoast.backendAPI.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.FieldError;
+
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,18 +51,6 @@ public class ApplicationExceptionHandler {
         errors.put("error", ex.getMessage());
         return errors;
     }
-    /**
-     * Handles the EmailAlreadyTakenException and returns an error response map.
-     *
-     * @param  ex  the EmailAlreadyTakenException to be handled
-     * @return     an error response map with the key "email" and the exception message
-     */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(EmailAlreadyTakenException.class)
-    public Map<String, String> handleEmailAlreadyTakenException(EmailAlreadyTakenException ex) {
-        return createErrorResponse("email", ex.getMessage());
-    }
-
 
     /**
      * Creates an error response map with the given key and message.

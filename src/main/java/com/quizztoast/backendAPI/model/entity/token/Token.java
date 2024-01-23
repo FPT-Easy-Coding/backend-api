@@ -1,7 +1,7 @@
-package com.quizztoast.backendAPI.model.token;
+package com.quizztoast.backendAPI.model.entity.token;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

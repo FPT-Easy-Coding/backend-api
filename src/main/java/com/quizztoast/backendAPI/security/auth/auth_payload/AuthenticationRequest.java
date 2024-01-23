@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.security.auth_payload;
+package com.quizztoast.backendAPI.security.auth.auth_payload;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 @Data
 @Builder

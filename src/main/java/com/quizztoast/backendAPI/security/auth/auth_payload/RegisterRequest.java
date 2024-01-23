@@ -1,13 +1,12 @@
-package com.quizztoast.backendAPI.security.auth_payload;
-import com.quizztoast.backendAPI.model.user.Role;
+package com.quizztoast.backendAPI.security.auth.auth_payload;
+import com.quizztoast.backendAPI.exception.annotation.email_exits.EmailExists;
+import com.quizztoast.backendAPI.model.entity.user.Role;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.UniqueElements;
 
 @Data
 @Builder
@@ -18,10 +17,12 @@ public class RegisterRequest {
 
     @NotNull(message = "firstname cannot be null")
     @NotBlank(message = "firstname cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "firstname must contain only letters")
     private String firstname;
 
     @NotNull(message = "lastname cannot be null")
     @NotBlank(message = "lastname cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "lastname must contain only letters")
     private String lastname;
 
     @NotNull(message = "email cannot be null")
@@ -31,7 +32,7 @@ public class RegisterRequest {
             regexp = "^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)*@gmail\\.com$",
             message = "email must be a gmail account"
     )
-
+    @EmailExists(message = "email already exists")
     private String email;
 
     @NotNull(message = "password cannot be null")
@@ -39,9 +40,10 @@ public class RegisterRequest {
     @Size(min = 5, max=20,
             message = "password must be between 5 and 20 characters")
     @Pattern(
-            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).{8,}$",
-            message = "password must contain at least one uppercase letter, one number and one special character"
+            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).*",
+            message = "Password must contain at least one uppercase letter, one number, and one special character."
     )
+
     private String password;
 
     @NotNull(message = "telephone cannot be null")

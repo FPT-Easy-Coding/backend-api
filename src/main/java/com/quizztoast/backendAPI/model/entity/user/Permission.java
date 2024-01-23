@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.user;
+package com.quizztoast.backendAPI.model.entity.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
