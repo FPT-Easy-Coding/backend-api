@@ -14,6 +14,7 @@ import com.quizztoast.backendAPI.security.auth.auth_payload.VerificationRequest;
 import com.quizztoast.backendAPI.security.jwt.JWTService;
 import com.quizztoast.backendAPI.security.tfa.TwoFactorAuthenticationService;
 
+import com.quizztoast.backendAPI.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,8 +23,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
 
@@ -35,31 +34,19 @@ import java.io.IOException;
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TwoFactorAuthenticationService tfaService;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-            var user = User.builder()
-                    .firstName(registerRequest.getFirstname())
-                    .lastName(registerRequest.getLastname())
-                    .email(registerRequest.getEmail())
-                    .username(registerRequest.getUsername())
-                    .telephone(registerRequest.getTelephone())
-                    .password(passwordEncoder.encode(registerRequest.getPassword()))
-                    .role(registerRequest.getRole())
-                    .mfaEnabled(registerRequest.isMfaEnabled())
-                    .build();
-
+        var user = userService.createUser(registerRequest);
             // If MFA enabled --> generate Secret
             if (registerRequest.isMfaEnabled()) {
                 user.setSecret(tfaService.generateNewSecret());
             }
-
-            var savedUser = userRepository.save(user);
             var jwtToken = jwtService.generateToken(user);
             var refreshToken = jwtService.generateRefreshToken(user);
-            saveUserToken(savedUser, jwtToken);
+            saveUserToken(user, jwtToken);
 
             return AuthenticationResponse.builder()
                     .secretImageUri(tfaService.generateQrCodeImageUrl(user.getSecret()))
@@ -82,7 +69,6 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authenticationRequest.getEmail(),
@@ -112,12 +98,7 @@ public class AuthenticationService {
                     .userId(user.getUserId())
                     .mfaEnabled(false)
                     .build();
-        } catch (BadCredentialsException e) {
-            // Handle incorrect password
-            return AuthenticationResponse.builder()
-                    .error("Incorrect email or password")
-                    .build();
-        }
+
     }
 
     private void revokeAllUserTokens(User user){

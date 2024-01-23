@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.exception;
 
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.ArrayList;
@@ -13,11 +14,14 @@ public class ErrorDetailsFormatter {
         List<Map<String, String>> errorDetailsList = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             Map<String, String> errorDetails = new HashMap<>();
-            errorDetails.put("fieldName", ((FieldError) error).getField());
+            if (error instanceof FieldError) {
+                errorDetails.put("fieldName", ((FieldError) error).getField());
+            } else if (error instanceof ObjectError) {
+                errorDetails.put("objectName", ((ObjectError) error).getObjectName());
+            }
             errorDetails.put("errorMessage", error.getDefaultMessage());
             errorDetailsList.add(errorDetails);
         });
         return errorDetailsList;
     }
-
 }

@@ -1,4 +1,6 @@
 package com.quizztoast.backendAPI.security.auth.auth_payload;
+import com.quizztoast.backendAPI.exception.annotation.credentials.ValidCredentials;
+import com.quizztoast.backendAPI.exception.annotation.email_exits.EmailExists;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,14 +14,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ValidCredentials(message = "Wrong email or password")
 public class AuthenticationRequest {
     @Valid
-    @NotNull(message = "Email is mandatory")
-    @NotBlank(message = "Email is mandatory")
+    @NotNull(message = "Email is not null")
+    @NotBlank(message = "Email is not blank")
     @Email(message = "Invalid email address")
     private String email;
     @Valid
-    @NotNull(message = "Password is mandatory")
-    @NotBlank(message = "Password is mandatory")
+    @NotNull(message = "Password is not null")
+    @NotBlank(message = "Password is not blank")
     private String password;
 }
