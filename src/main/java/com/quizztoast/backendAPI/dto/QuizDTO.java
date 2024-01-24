@@ -1,6 +1,6 @@
 package com.quizztoast.backendAPI.dto;
 
-import com.quizztoast.backendAPI.model.quiz.QuizQuestionMapping;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestionMapping;
 import lombok.Builder;
 import lombok.Data;
 

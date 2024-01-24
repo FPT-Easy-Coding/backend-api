@@ -1,9 +1,9 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.dto.CategoryDTO;
-import com.quizztoast.backendAPI.model.quiz.Category;
-import com.quizztoast.backendAPI.model.user.Role;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
+import com.quizztoast.backendAPI.model.entity.user.Role;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.service.CategoryService;
 import com.quizztoast.backendAPI.service.UserService;

@@ -21,7 +21,4 @@ public class AuthenticationResponse {
     private String secretImageUri;
     private String error;
 
-    public AuthenticationResponse(String err) {
-        this.error = err;
-    }
 }

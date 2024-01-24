@@ -5,13 +5,7 @@ import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
 import com.quizztoast.backendAPI.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
-import com.quizztoast.backendAPI.dto.UserDTO;
-import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
-import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
-import com.quizztoast.backendAPI.model.user.User;
-import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
-import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
-import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
+
 import com.quizztoast.backendAPI.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,17 +13,13 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -87,26 +77,6 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/fetchAll")
-    public ResponseEntity<List<User>> getAllUsers(){
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    @GetMapping("/profile/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
-        User user = userService.getUserById(id);
-
-        // Convert User entity to UserDTO
-        UserDTO userDTO = UserDTO.builder()
-                .username(user.getUsername())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .telephone(user.getTelephone())
-                .build();
-
-        return ResponseEntity.ok(userDTO);
-    }
 
     /**
      * Get All User using a get request.

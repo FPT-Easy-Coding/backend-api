@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.transaction;
+package com.quizztoast.backendAPI.model.entity.quiz;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 @Data
 @Builder
@@ -15,23 +14,24 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @Table
-public class PlanTransactionTracking {
+public class QuizQuestionMapping {
 
     @EmbeddedId
-    private PlanTranid id;
+    private QuizQuestionMappingId id;
 
     // Constructors, getters, setters, etc.
-
     @Embeddable
-    public class PlanTranid implements Serializable {
+    public class QuizQuestionMappingId implements Serializable {
 
         @ManyToOne
-        @JoinColumn(name = "transaction_id")
-        private Transaction transaction_id;
+        @JoinColumn(name = "quiz_id")
+        private Quiz quiz_id;
 
-        @Column(name = "date" )
-        private LocalDate date;
+        @ManyToOne
+        @JoinColumn(name = "quiz_question_id")
+        private QuizQuestion quiz_question_id;
 
         // Constructors, getters, setters, etc.
     }
+
 }

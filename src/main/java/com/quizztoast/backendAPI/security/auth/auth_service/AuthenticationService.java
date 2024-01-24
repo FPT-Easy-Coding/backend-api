@@ -36,7 +36,6 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final UserService userService;
     private final JWTService jwtService;
-    private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final TwoFactorAuthenticationService tfaService;
     public AuthenticationResponse register(RegisterRequest registerRequest) {

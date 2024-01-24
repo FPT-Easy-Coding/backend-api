@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.inClass;
+package com.quizztoast.backendAPI.model.entity.inClass;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

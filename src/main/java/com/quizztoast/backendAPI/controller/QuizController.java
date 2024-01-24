@@ -1,8 +1,8 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.dto.QuizDTO;
-import com.quizztoast.backendAPI.model.quiz.Quiz;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.service.QuizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

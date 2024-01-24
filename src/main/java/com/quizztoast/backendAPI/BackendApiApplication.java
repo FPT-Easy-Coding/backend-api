@@ -1,19 +1,19 @@
 package com.quizztoast.backendAPI;
 
 import com.quizztoast.backendAPI.dto.QuizDTO;
-import com.quizztoast.backendAPI.model.quiz.Quiz;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.QuizRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
-import com.quizztoast.backendAPI.security.auth_payload.RegisterRequest;
-import com.quizztoast.backendAPI.security.auth_service.AuthenticationService;
+import com.quizztoast.backendAPI.security.auth.auth_payload.RegisterRequest;
+import com.quizztoast.backendAPI.security.auth.auth_service.AuthenticationService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import static com.quizztoast.backendAPI.model.user.Role.ADMIN;
+import static com.quizztoast.backendAPI.model.entity.user.Role.ADMIN;
 
 @SpringBootApplication
 public class BackendApiApplication {

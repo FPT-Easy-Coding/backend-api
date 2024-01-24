@@ -1,6 +1,6 @@
-package com.quizztoast.backendAPI.model.exam;
+package com.quizztoast.backendAPI.model.entity.exam;
 
-import com.quizztoast.backendAPI.model.quiz.Quiz;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

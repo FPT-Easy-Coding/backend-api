@@ -1,5 +1,6 @@
-package com.quizztoast.backendAPI.model.quiz;
+package com.quizztoast.backendAPI.model.entity.quiz;
 
+import com.quizztoast.backendAPI.model.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,22 +15,22 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Entity
 @Table
-public class QuizQuestionMapping {
+public class DoQuiz {
 
     @EmbeddedId
-    private QuizQuestionMappingId id;
+    private DoQuizid id;
 
     // Constructors, getters, setters, etc.
     @Embeddable
-    public class QuizQuestionMappingId implements Serializable {
+    public class DoQuizid implements Serializable {
+
+        @ManyToOne
+        @JoinColumn(name = "user_doquiz_id")
+        private User user_id;
 
         @ManyToOne
         @JoinColumn(name = "quiz_id")
         private Quiz quiz_id;
-
-        @ManyToOne
-        @JoinColumn(name = "quiz_question_id")
-        private QuizQuestion quiz_question_id;
 
         // Constructors, getters, setters, etc.
     }

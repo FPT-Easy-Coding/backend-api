@@ -1,7 +1,7 @@
-package com.quizztoast.backendAPI.model.quiz;
+package com.quizztoast.backendAPI.model.entity.quiz;
 
-import com.quizztoast.backendAPI.model.exam.Exam;
-import com.quizztoast.backendAPI.model.inClass.Class;
+import com.quizztoast.backendAPI.model.entity.exam.Exam;
+import com.quizztoast.backendAPI.model.entity.inClass.Class;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

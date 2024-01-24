@@ -2,21 +2,21 @@ package com.quizztoast.backendAPI.service;
 
 import com.quizztoast.backendAPI.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
-import com.quizztoast.backendAPI.model.quiz.Category;
-import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
-import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
 import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
-import com.quizztoast.backendAPI.model.entity.user.User;
+
 import com.quizztoast.backendAPI.repository.UserRepository;
-import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
+import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.persistence.EntityNotFoundException;
-import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
+
 import com.quizztoast.backendAPI.security.auth.auth_payload.RegisterRequest;
-import jakarta.persistence.EntityNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -70,9 +70,6 @@ public class UserService {
         newUser.setRole(user.getRole());
         newUser.setMfaEnabled(user.isMfaEnabled());
         return userRepository.save(newUser);
-    }
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
     }
 
     public List<User> getAllUsers(){
@@ -192,29 +189,6 @@ public class UserService {
 
         return ResponseEntity.ok("Delete Succesfull");
     }
-    public User getUserById(Long id){
-        User user =  userRepository.findByUserId(id);
-        if(user == null){
-            throw new EntityNotFoundException("User not found with id: " + id);
-        }
-        return user;
-    }
 
-    public boolean userExists(String email){
-        return userRepository.findByEmail(email).isPresent();
-    }
-    public String getHashedPasswordByEmail(String email) {
-        // Fetch the user entity from the database based on the email
-        User user = userRepository.findByEmail(email).orElse(null);
-
-        // Check if the user exists
-        if (user != null) {
-            // Return the hashed password from the user entity
-            return user.getPassword();
-        } else {
-            // Handle the case where the user doesn't exist
-            return null;
-        }
-    }
 }
 

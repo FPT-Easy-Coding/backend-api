@@ -1,6 +1,6 @@
 package com.quizztoast.backendAPI.service;
 
-import com.quizztoast.backendAPI.model.quiz.Category;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
