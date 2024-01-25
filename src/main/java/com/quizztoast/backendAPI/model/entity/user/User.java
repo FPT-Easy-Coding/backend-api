@@ -31,7 +31,6 @@ public class User implements UserDetails {
     @Column(name = "username")
     private String username;
 
-    @Size(min = 6, message = "Password must be at least 6 characters long")
     @Column(name = "password")
     private String password;
 

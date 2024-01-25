@@ -6,14 +6,7 @@ import com.quizztoast.backendAPI.security.auth.auth_payload.RegisterRequest;
 import com.quizztoast.backendAPI.security.auth.auth_payload.VerificationRequest;
 import com.quizztoast.backendAPI.security.auth.auth_service.AuthenticationService;
 import com.quizztoast.backendAPI.security.recaptcha.ReCaptchaRegisterService;
-import com.quizztoast.backendAPI.exception.EmailAlreadyTakenException;
-import com.quizztoast.backendAPI.model.user.User;
-import com.quizztoast.backendAPI.security.auth_payload.AuthenticationRequest;
-import com.quizztoast.backendAPI.security.auth_payload.AuthenticationResponse;
-import com.quizztoast.backendAPI.security.auth_payload.RegisterRequest;
-import com.quizztoast.backendAPI.security.auth_payload.VerificationRequest;
-import com.quizztoast.backendAPI.security.auth_service.AuthenticationService;
-import com.quizztoast.backendAPI.security.recaptcha.ReCaptchaRegisterService;
+
 import com.quizztoast.backendAPI.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
@@ -41,22 +33,11 @@ import java.util.Map;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final ReCaptchaRegisterService reCaptchaRegisterService;
-    private final ReCaptchaRegisterService reCaptchaRegisterService;
+
     private final UserService userService;
 
-@PostMapping("/register")
-public ResponseEntity<?> register(
-        @Valid
-        @RequestBody RegisterRequest request
-) {
-        AuthenticationResponse response = authenticationService.register(request);
-        return ResponseEntity.ok(response);
 
-    /**
-     * register new User using a Post request.
-     *
-     * @return A message indicating the success of the Post operation.
-     */
+
     @Operation(
             summary = "Registers a new user",
             description = "Registers a new user with the provided details.",
@@ -101,6 +82,14 @@ public ResponseEntity<?> register(
                     ),
             }
     )
+    @PostMapping("/register")
+    public ResponseEntity<?> register(
+            @Valid
+            @RequestBody RegisterRequest request
+    ) {
+        AuthenticationResponse response = authenticationService.register(request);
+        return ResponseEntity.ok(response);
+    }
     //    @PostMapping("/register")
 //    public ResponseEntity<AuthenticationResponse> register (
 //            @Valid
@@ -115,12 +104,8 @@ public ResponseEntity<?> register(
 ////        }
 //        return ResponseEntity.ok(authenticationService.register(request));
 //    }
-    }
-    private void validateEmail(String email) {
-        if (userService.userExists(email)) {
-            throw new EmailAlreadyTakenException("Email already taken");
-        }
-    }
+
+
 
 
     private Map<String, String> createErrorResponse(String key, String message) {

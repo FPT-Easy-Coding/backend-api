@@ -20,7 +20,13 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
-recaptcha:
-  site-key: 6LdUz1cpAAAAAO64-HeFjK3sTGAiMWs5hjG3rgTe
-  secret-key: 6LdUz1cpAAAAAEk2i1OML4dCyTWLU3GPw5j-S8wL
-  threshold: 0.7
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 328640323284-if17pp6b8pjmjlludil14kdta9aop62s.apps.googleusercontent.com
+            clientSecret: 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
+#recaptcha:
+#  site-key: 6LdUz1cpAAAAAO64-HeFjK3sTGAiMWs5hjG3rgTe
+#  secret-key: 6LdUz1cpAAAAAEk2i1OML4dCyTWLU3GPw5j-S8wL
+#  threshold: 0.7

@@ -5,13 +5,13 @@ import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
 import com.quizztoast.backendAPI.model.quiz.Category;
 import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
 import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
 import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.UserRepository;
-import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
+import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.persistence.EntityNotFoundException;
 import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
@@ -71,9 +71,7 @@ public class UserService {
         newUser.setMfaEnabled(user.isMfaEnabled());
         return userRepository.save(newUser);
     }
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
-    }
+
 
     public List<User> getAllUsers(){
         return userRepository.findAll();
@@ -90,9 +88,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean userExists(String email){
-        return userRepository.findByEmail(email).isPresent();
-    }
 
     public void deleteUser(int userId) {
         userRepository.deleteById((long) userId);
@@ -191,13 +186,6 @@ public class UserService {
         quizQuestionRepository.deleteById(quizquestionId);
 
         return ResponseEntity.ok("Delete Succesfull");
-    }
-    public User getUserById(Long id){
-        User user =  userRepository.findByUserId(id);
-        if(user == null){
-            throw new EntityNotFoundException("User not found with id: " + id);
-        }
-        return user;
     }
 
     public boolean userExists(String email){

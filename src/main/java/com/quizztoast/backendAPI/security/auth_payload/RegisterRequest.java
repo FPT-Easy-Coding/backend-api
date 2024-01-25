@@ -1,5 +1,5 @@
 package com.quizztoast.backendAPI.security.auth_payload;
-import com.quizztoast.backendAPI.model.user.Role;
+import com.quizztoast.backendAPI.model.entity.user.Role;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
