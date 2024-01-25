@@ -17,12 +17,16 @@ public class RegisterRequest {
 
     @NotNull(message = "firstname cannot be null")
     @NotBlank(message = "firstname cannot be blank")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "firstname must contain only letters")
+    @Pattern(regexp = "^[a-zA-Z]+(?:\\s[a-zA-Z]+)*$", message = "Firstname must contain only letters and one space between words")
+
+
     private String firstname;
 
     @NotNull(message = "lastname cannot be null")
     @NotBlank(message = "lastname cannot be blank")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "lastname must contain only letters")
+    @Pattern(regexp = "^[a-zA-Z]+(?:\\s[a-zA-Z]+)*$", message = "Firstname must contain only letters and one space between words")
+
+
     private String lastname;
 
     @NotNull(message = "email cannot be null")
