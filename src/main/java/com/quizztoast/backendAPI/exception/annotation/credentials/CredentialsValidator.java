@@ -23,7 +23,6 @@ public class CredentialsValidator implements ConstraintValidator<ValidCredential
     @Override
     public boolean isValid(AuthenticationRequest request, ConstraintValidatorContext context) {
         // Implement your password validation logic here
-        // For simplicity, let's assume any non-null or non-empty string is considered valid
         return request != null && isValidPassword(request.getEmail(), request.getPassword());
     }
 

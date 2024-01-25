@@ -28,7 +28,7 @@ public class ApplicationExceptionHandler {
         response.put("error", true);
 
         ErrorDetailsFormatter errorDetailsFormatter = new ErrorDetailsFormatter();
-        List<Map<String, String>> errorDetailsList = errorDetailsFormatter.formatErrorDetails(ex);
+        List<Map<String, Object>> errorDetailsList = errorDetailsFormatter.formatErrorDetails(ex);
 
         response.put("data", errorDetailsList);
         return response;

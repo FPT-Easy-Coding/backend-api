@@ -17,6 +17,8 @@ public @interface ValidCredentials {
 
     String message() default "Invalid credentials";
 
+    String[] fields() default {};
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

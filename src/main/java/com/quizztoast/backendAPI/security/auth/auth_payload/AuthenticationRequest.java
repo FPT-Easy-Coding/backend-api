@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ValidCredentials(message = "Wrong email or password")
+@ValidCredentials(fields = {"email", "password"}, message = "Wrong email or password")
 public class AuthenticationRequest {
     @Valid
     @NotNull(message = "Email is not null")
