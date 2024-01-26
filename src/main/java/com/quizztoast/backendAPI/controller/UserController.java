@@ -109,9 +109,7 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
-
-
-    /**
+   /**
      * Get profile by Id using a Post request.
      *
      * @return A message indicating the success of the Post operation.
@@ -171,8 +169,8 @@ public class UserController {
         // Convert User entity to UserDTO
         UserDTO userDTO = UserDTO.builder()
                 .username(user.getUsername())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
+                .firstname(user.getFirstName())
+                .lastname(user.getLastName())
                 .email(user.getEmail())
                 .telephone(user.getTelephone())
                 .build();

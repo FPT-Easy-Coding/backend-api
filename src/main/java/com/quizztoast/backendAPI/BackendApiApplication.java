@@ -34,7 +34,7 @@ public class BackendApiApplication {
 //                    .lastname("Demo")
 //                    .email("admin2@gmail.com")
 //                    .password("password")
-//                    .role(ADMIN)
+//
 //                    .build();
 //            System.out.println("Admin token: " + authenticationService.register(admin).getAccessToken());
 //        };

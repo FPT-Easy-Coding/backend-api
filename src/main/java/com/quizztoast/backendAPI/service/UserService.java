@@ -2,6 +2,8 @@ package com.quizztoast.backendAPI.service;
 
 import com.quizztoast.backendAPI.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
+import com.quizztoast.backendAPI.dto.UserDTO;
+import com.quizztoast.backendAPI.exception.EmailOrUsernameAlreadyTakenException;
 import com.quizztoast.backendAPI.model.quiz.Category;
 import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
 import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
@@ -12,12 +14,12 @@ import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,45 +42,44 @@ public class UserService {
     @Autowired
     private CategoryRepository categoryRepository;
     private final CategoryService categoryService;
-    public void changePassword(ChangePasswordRequest request, Principal connectedUser){
+
+    public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = ((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
         //Check if the current password is correct
-        if (!passwordEncoder.matches(request.getCurrentPassword(),user.getPassword())){
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
         }
         //Check if 2 password are matched
-        if(!request.getNewPassword().equals(request.getConfirmPassword())){
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new IllegalStateException("Password are not the same");
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id){
-        User user =  userRepository.findByUserId(id);
-        if(user == null){
-            throw new EntityNotFoundException("User not found with id: " + id);
-        }
-        return user;
+    public User getUserById(Long id) {
+        User user = userRepository.findByUserId(id);
+        throw new UsernameNotFoundException("User not found with id: " + id);
     }
+
     public void addNewUser(@RequestBody User user) {
         userRepository.save(user);
     }
 
-    public boolean userExists(String email){
+    public boolean userExists(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void deleteUser(int userId) {
+    public void deleteUser(Long userId) {
         userRepository.deleteById((long) userId);
     }
 
-    public boolean doesUserExist(int userId) {
+    public boolean doesUserExist(Long userId) {
         // Implement logic to check if the user with the given ID exists
         // For example, you might check if a user with the provided ID is present in your repository
         Optional<User> userOptional = userRepository.findById((long) userId);
@@ -167,10 +168,51 @@ public class UserService {
     public ResponseEntity<String> deleteQuizQuesById(Long quizquestionId) {
         //delete in quizanswer
         quizAnswerRepository.deleteById(quizquestionId);
-       //delete in quizQuestion
+        //delete in quizQuestion
         quizQuestionRepository.deleteById(quizquestionId);
 
         return ResponseEntity.ok("Delete Succesfull");
+    }
+
+    public ResponseEntity<User> UpdateUser(Long userId, UserDTO request) {
+
+        validateUsernameOrEmail(userId, request.getUsername(), request.getEmail());
+        User existingUserOptional = userRepository.findByUserId(userId);
+        existingUserOptional.setUsername(request.getUsername()); // Ensure correct username update
+        existingUserOptional.setPassword(request.getPassword());
+        existingUserOptional.setFirstName(request.getFirstname());
+        existingUserOptional.setLastName(request.getLastname());
+        existingUserOptional.setEmail(request.getEmail()); // Ensure correct email update
+        existingUserOptional.setTelephone(request.getTelephone());
+        existingUserOptional.setBanned(request.isBanned());
+        existingUserOptional.setGoogleId(request.getGoogleId());
+        existingUserOptional.setRole(request.getRole());
+        existingUserOptional.setPremium(request.isPremium());
+
+        // Save the updated user
+        userRepository.save(existingUserOptional);
+
+        return ResponseEntity.ok(existingUserOptional);
+    }
+
+    private void validateUsernameOrEmail(Long userId, String username, String email) {
+        // Kiểm tra username trùng
+        Optional<User> existingUserByUsernameOptional = userRepository.findByUsername(username);
+        if (existingUserByUsernameOptional.isPresent()) {
+            User existingUserByUsername = existingUserByUsernameOptional.get();
+            if (!existingUserByUsername.getUserId().equals(userId)) {
+                throw new EmailOrUsernameAlreadyTakenException("username", "username :" + username + " already exist");
+            }
+        }
+
+        // Kiểm tra email trùng
+        Optional<User> existingUserByEmailOptional = userRepository.findByEmail(email);
+        if (existingUserByEmailOptional.isPresent()) {
+            User existingUserByEmail = existingUserByEmailOptional.get();
+            if (!existingUserByEmail.getUserId().equals(userId)) {
+                throw new EmailOrUsernameAlreadyTakenException("email", "email : " + email + " already exist");
+            }
+        }
     }
 }
 

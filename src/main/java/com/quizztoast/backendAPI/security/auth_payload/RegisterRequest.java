@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 public class RegisterRequest {
     @Valid
 
-    @NotNull(message = "firstname cannot be null")
-    @NotBlank(message = "firstname cannot be blank")
+//    @NotNull(message = "firstname cannot be null")
+//    @NotBlank(message = "firstname cannot be blank")
     private String firstname;
 
-    @NotNull(message = "lastname cannot be null")
-    @NotBlank(message = "lastname cannot be blank")
+//    @NotNull(message = "lastname cannot be null")
+//    @NotBlank(message = "lastname cannot be blank")
     private String lastname;
 
     @NotNull(message = "email cannot be null")

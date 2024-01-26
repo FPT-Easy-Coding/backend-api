@@ -1,14 +1,13 @@
 package com.quizztoast.backendAPI.service;
 
+import com.quizztoast.backendAPI.dto.CategoryDTO;
 import com.quizztoast.backendAPI.model.quiz.Category;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -16,8 +15,21 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
 
-    public Category saveCategory(Category category) {
+    public Category saveCategory(CategoryDTO categoryDTO) {
+        // Convert CategoryDTO to Category entity
+        Category category = convertToEntity(categoryDTO);
+
+        // Save the entity using the repository
         categoryRepository.save(category);
+
+        // Return the saved entity
+        return category;
+    }
+    private Category convertToEntity(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        category.setCategory_name(categoryDTO.getCategoryName());
+        // Map other properties from DTO to entity as needed
+
         return category;
     }
     @Autowired
