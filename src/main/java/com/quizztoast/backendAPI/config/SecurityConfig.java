@@ -1,6 +1,8 @@
 package com.quizztoast.backendAPI.config;
 
 import com.quizztoast.backendAPI.security.jwt.JWTAuthenticationFilter;
+import com.quizztoast.backendAPI.security.oauth2.CustomOAuth2UserService;
+import com.quizztoast.backendAPI.security.oauth2.OAuthLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +22,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
-public class SecurityConfig{
+public class SecurityConfig {
     private static final String[] WHITE_LIST_URL = {
             "/api/v1/auth/**",
             "/api/v1/users/**",
@@ -37,7 +39,8 @@ public class SecurityConfig{
     private final JWTAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
-
+    private final CustomOAuth2UserService customOauth2UserService;
+    private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,6 +58,10 @@ public class SecurityConfig{
                                 .anyRequest()
                                 .authenticated()
                 )
+                .oauth2Login(
+                        oauth2Login -> oauth2Login.userInfoEndpoint(
+                                userInfoEndpoint -> userInfoEndpoint.userService(customOauth2UserService))
+                        .successHandler(oAuthLoginSuccessHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

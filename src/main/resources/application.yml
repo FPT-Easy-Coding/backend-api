@@ -1,4 +1,18 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: "328640323284-ke3micguhl6gtgqa1fok7r6iojv693ug.apps.googleusercontent.com"
+            clientSecret: "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"
+            scope:
+              - email
+              - profile
+          github:
+            clientId: "54cdd801b9ba30e2c60e"
+            clientSecret: "755309efec0cb16ef31e646b288d8cd1ea4776f2"
+
   datasource:
     url: jdbc:mysql://localhost:3306/quizztoast
     username: root
@@ -20,6 +34,9 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
+
+
+
 #recaptcha:
 #  site-key: 6LdUz1cpAAAAAO64-HeFjK3sTGAiMWs5hjG3rgTe
 #  secret-key: 6LdUz1cpAAAAAEk2i1OML4dCyTWLU3GPw5j-S8wL

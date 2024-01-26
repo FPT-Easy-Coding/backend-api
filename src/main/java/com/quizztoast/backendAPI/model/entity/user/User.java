@@ -53,9 +53,6 @@ public class User implements UserDetails {
     @Column(name = "is_banned")
     private boolean isBanned;
 
-    @Column(name = "google_id")
-    private String googleId;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
@@ -72,6 +69,10 @@ public class User implements UserDetails {
     @JsonManagedReference
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_type")
+    private AuthenticationType authType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -2,6 +2,7 @@ package com.quizztoast.backendAPI.service;
 
 import com.quizztoast.backendAPI.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
+import com.quizztoast.backendAPI.model.entity.user.AuthenticationType;
 import com.quizztoast.backendAPI.model.quiz.Category;
 import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
 import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
@@ -9,14 +10,15 @@ import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
 import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
-import com.quizztoast.backendAPI.model.entity.user.User;
+
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.persistence.EntityNotFoundException;
-import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
+
 import com.quizztoast.backendAPI.security.auth.auth_payload.RegisterRequest;
-import jakarta.persistence.EntityNotFoundException;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,12 +32,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
     private final PasswordEncoder passwordEncoder;
+    @Autowired
     private final UserRepository userRepository;
     @Autowired
     private QuizQuestionRepository quizQuestionRepository;
@@ -82,6 +85,10 @@ public class UserService {
         if(user == null){
             throw new EntityNotFoundException("User not found with id: " + id);
         }
+        return user;
+    }
+    public User getUserByEmail(String email){
+        User user =  userRepository.findUserByEmail(email);
         return user;
     }
     public void addNewUser(@RequestBody User user) {
@@ -203,6 +210,11 @@ public class UserService {
             // Handle the case where the user doesn't exist
             return null;
         }
+    }
+
+    public void updateAuthenticationType(String username, String oauth2ClientName) {
+        AuthenticationType authType = AuthenticationType.valueOf(oauth2ClientName.toUpperCase());
+        userRepository.updateAuthenticationType(username, authType);
     }
 }
 

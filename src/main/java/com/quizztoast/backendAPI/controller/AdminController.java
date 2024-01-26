@@ -284,7 +284,6 @@ public class AdminController {
                 existingUser.setEmail(updatedUser.getEmail()); // Ensure correct email update
                 existingUser.setTelephone(updatedUser.getTelephone());
                 existingUser.setBanned(updatedUser.isBanned());
-                existingUser.setGoogleId(updatedUser.getGoogleId());
                 existingUser.setRole(updatedUser.getRole());
                 existingUser.setPremium(updatedUser.isPremium());
 

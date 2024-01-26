@@ -1,6 +1,8 @@
 package com.quizztoast.backendAPI.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,9 +37,6 @@ public class ApplicationExceptionHandler {
     }
 
 
-
-
-
     /**
      * Handle UsernameNotFoundException and return a map with error message.
      *
@@ -52,16 +51,4 @@ public class ApplicationExceptionHandler {
         return errors;
     }
 
-    /**
-     * Creates an error response map with the given key and message.
-     *
-     * @param  key     the key for the error response
-     * @param  message the message for the error response
-     * @return         the error response map
-     */
-    private Map<String, String> createErrorResponse(String key, String message) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put(key, message);
-        return errorResponse;
-    }
 }
