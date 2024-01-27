@@ -185,8 +185,8 @@ public class UserController {
         // Convert User entity to UserDTO
         UserDTO userDTO = UserDTO.builder()
                 .username(user.getUsername())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
+                .firstname(user.getFirstName())
+                .lastname(user.getLastName())
                 .email(user.getEmail())
                 .telephone(user.getTelephone())
                 .build();

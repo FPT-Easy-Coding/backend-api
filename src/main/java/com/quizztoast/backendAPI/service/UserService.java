@@ -2,6 +2,8 @@ package com.quizztoast.backendAPI.service;
 
 import com.quizztoast.backendAPI.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
+import com.quizztoast.backendAPI.dto.UserDTO;
+import com.quizztoast.backendAPI.exception.EmailOrUsernameAlreadyTakenException;
 import com.quizztoast.backendAPI.model.quiz.Category;
 import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
 import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
@@ -175,6 +177,44 @@ public class UserService {
 
         throw new EmailOrUsernameAlreadyTakenException("quizquestionId", "Quiz question with ID " + quizquestionId + " not found");
 
+    }
+    public ResponseEntity<User> UpdateUser(Long userId, @Valid UserDTO request) {
+
+        validateUsernameOrEmail(userId, request.getUsername(), request.getEmail());
+        User existingUserOptional = userRepository.findByUserId(userId);
+        existingUserOptional.setUsername(request.getUsername()); // Ensure correct username update
+        existingUserOptional.setPassword(request.getPassword());
+        existingUserOptional.setFirstName(request.getFirstname());
+        existingUserOptional.setLastName(request.getLastname());
+        existingUserOptional.setEmail(request.getEmail()); // Ensure correct email update
+        existingUserOptional.setTelephone(request.getTelephone());
+        existingUserOptional.setBanned(request.isBanned());
+        existingUserOptional.setPremium(request.isPremium());
+
+        // Save the updated user
+        userRepository.save(existingUserOptional);
+
+        return ResponseEntity.ok(existingUserOptional);
+    }
+
+    private void validateUsernameOrEmail(Long userId, String username, String email) {
+        // Kiểm tra username trùng
+        Optional<User> existingUserByUsernameOptional = userRepository.findByUsername(username);
+        if (existingUserByUsernameOptional.isPresent()) {
+            User existingUserByUsername = existingUserByUsernameOptional.get();
+            if (!existingUserByUsername.getUserId().equals(userId)) {
+                throw new EmailOrUsernameAlreadyTakenException("Username","Username already taken");
+            }
+        }
+
+        // Kiểm tra email trùng
+        Optional<User> existingUserByEmailOptional = userRepository.findByEmail(email);
+        if (existingUserByEmailOptional.isPresent()) {
+            User existingUserByEmail = existingUserByEmailOptional.get();
+            if (!existingUserByEmail.getUserId().equals(userId)) {
+                throw new EmailOrUsernameAlreadyTakenException("Email","Email already taken");
+            }
+        }
     }
 }
 

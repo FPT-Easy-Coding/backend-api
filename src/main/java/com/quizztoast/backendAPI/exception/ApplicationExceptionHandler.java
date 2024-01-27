@@ -62,7 +62,20 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleEmailAlreadyTakenException(EmailAlreadyTakenException ex) {
         return createErrorResponse("email", ex.getMessage());
     }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EmailOrUsernameAlreadyTakenException.class)
+    public Map<String, Object> handleEmailOrUsernameAlreadyTakenException(EmailOrUsernameAlreadyTakenException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Validation Failed");
+        response.put("error", true);
 
+        Map<String, String> errorDetails = new HashMap<>();
+        errorDetails.put("fieldName", ex.getFieldName());
+        errorDetails.put("errorMessage", ex.getErrorMessage());
+
+        response.put("data", List.of(errorDetails));
+        return response;
+    }
 
     /**
      * Creates an error response map with the given key and message.

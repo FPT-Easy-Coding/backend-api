@@ -4,6 +4,7 @@ import com.quizztoast.backendAPI.dto.CategoryDTO;
 import com.quizztoast.backendAPI.exception.EmailOrUsernameAlreadyTakenException;
 import com.quizztoast.backendAPI.model.quiz.Category;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
