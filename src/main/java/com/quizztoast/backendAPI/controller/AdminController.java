@@ -385,13 +385,14 @@ public class AdminController {
             responses = {
                     @ApiResponse(
                             description = "Success. Resource deleted successfully.",
-                            responseCode = "200", content = @Content(
+                            responseCode = "200",
+                            content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CategoryDTO.class),
                             examples = @ExampleObject(
                                     value = "{\n" +
-                                            "    \"category_id\": 3,\n" +
-                                            "    \"category_name\": \"Software Testing\"\n" +
+                                            "    \"category_id\": 1,\n" +
+                                            "    \"category_name\": \"Usernssss\"\n" +
                                             "}"
                             )
                     )
@@ -404,16 +405,37 @@ public class AdminController {
                     @ApiResponse(
                             description = "",
                             responseCode = "400",
-                            content = @Content
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CategoryDTO.class),
+                                    examples = @ExampleObject(
+                                            value = "{\n" +
+                                                    "    \"data\": [\n" +
+                                                    "        {\n" +
+                                                    "            \"fieldName\": \"categoryId\",\n" +
+                                                    "            \"errorMessage\": \"categoryId cannot be null\"\n" +
+                                                    "        },\n" +
+                                                    "        {\n" +
+                                                    "            \"fieldName\": \"categoryName\",\n" +
+                                                    "            \"errorMessage\": \"categoryName cannot be blank\"\n" +
+                                                    "        }\n" +
+                                                    "    ],\n" +
+                                                    "    \"message\": \"Validation Failed\",\n" +
+                                                    "    \"error\": true\n" +
+                                                    "}"
+                                    )
+                            )
                     )
 
             }
 
     )
 
-    @PostMapping("/create_category")
-    public Category createCategory(@Valid @RequestBody Category category){
-        return categoryService.saveCategory(category);
+    @PostMapping("/create-category")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDTO category){
+        Category response =   categoryService.saveCategory(category);
+        return ResponseEntity.ok(response);
     }
 
 

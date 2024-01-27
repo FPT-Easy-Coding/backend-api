@@ -3,11 +3,10 @@ package com.quizztoast.backendAPI.controller;
 import com.quizztoast.backendAPI.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
 import com.quizztoast.backendAPI.dto.UserDTO;
+import com.quizztoast.backendAPI.exception.UserNotFoundException;
 import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
-import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
 import com.quizztoast.backendAPI.model.user.User;
-import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
-import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
+import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
 import com.quizztoast.backendAPI.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,24 +14,22 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * Change password using a Patch request.
@@ -55,27 +52,30 @@ public class UserController {
                                     schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{ \"message\": \"Invalid email address\" }"
+                                                    value = "{\n" +
+                                                            "    \"data\": [\n" +
+                                                            "        {\n" +
+                                                            "            \"fieldName\": \"currentPassword\",\n" +
+                                                            "            \"errorMessage\": \"currentPassword : incorrect\"\n" +
+                                                            "        }\n" +
+                                                            "    ],\n" +
+                                                            "    \"message\": \"Validation Failed\",\n" +
+                                                            "    \"error\": true\n" +
+                                                            "}"
                                             )
                                     }
                             )
                     ),
                     @ApiResponse(
-                            description = "Bad Request. Invalid data provided (Email)",
+                            description = "",
                             responseCode = "404",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = SimpleErrorResponse.class),
-                                    examples = {
-                                            @ExampleObject(
-                                                    value = "{ \"message\": \"Invalid email address\" }"
-                                            )
-                                    }
-                            )
+                            content = @Content
                     ),
             }
     )
-    @PatchMapping
+    @PatchMapping()
     public ResponseEntity<?> changePassword(
+
             @RequestBody ChangePasswordRequest changePasswordRequest,
             Principal connectedUser
     ){
@@ -128,26 +128,27 @@ public class UserController {
                                     examples = {
                                             @ExampleObject(
                                                     value = "{\n" +
-                                                            "    \"userId\": 10802,\n" +
-                                                            "    \"username\": \"hieu111@gmail.com\",\n" +
-                                                            "    \"firstName\": \"hieu111@gmail.com\",\n" +
-                                                            "    \"lastName\": \"string\",\n" +
-                                                            "    \"email\": \"hieu111@gmail.com\"\n" +
+                                                            "  \"firstname\": \"string\",\n" +
+                                                            "  \"lastname\": \"string\",\n" +
+                                                            "  \"email\": \"Hiiii1@gmail.com\",\n" +
+                                                            "  \"password\": null,\n" +
+                                                            "  \"telephone\": \"--4\",\n" +
+                                                            "  \"username\": \"Hiiii1@gmail.com\",\n" +
+                                                            "  \"createdAt\": null,\n" +
+                                                            "  \"googleId\": null,\n" +
+                                                            "  \"role\": null,\n" +
+                                                            "  \"mfaEnabled\": false,\n" +
+                                                            "  \"secret\": null,\n" +
+                                                            "  \"banned\": false,\n" +
+                                                            "  \"premium\": false\n" +
                                                             "}"
                                             )
                                     })
                     ),
                     @ApiResponse(
-                            description = "Bad Request. Invalid data provided (Email)",
+                            description = "",
                             responseCode = "400",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = SimpleErrorResponse.class),
-                                    examples = {
-                                            @ExampleObject(
-                                                    value = "{ \"message\": \"Invalid email address\" }"
-                                            )
-                                    }
-                            )
+                            content = @Content
                     ),
                     @ApiResponse(
                             description = "Resource not found",
@@ -156,7 +157,16 @@ public class UserController {
                                     schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{ \"message\": \"User not found with id: 123123\" }"
+                                                    value = "{\n" +
+                                                            "  \"data\": [\n" +
+                                                            "    {\n" +
+                                                            "      \"fieldName\": \"userId\",\n" +
+                                                            "      \"errorMessage\": \"User with ID 11 not found\"\n" +
+                                                            "    }\n" +
+                                                            "  ],\n" +
+                                                            "  \"message\": \"User not found\",\n" +
+                                                            "  \"error\": true\n" +
+                                                            "}"
                                             )
                                     }
                             )
@@ -166,7 +176,11 @@ public class UserController {
 
     @GetMapping("/profile/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
-        User user = userService.getUserById(id);
+        if (userRepository.findByUserId(id) == null) {
+            // User not found, return a 404 response with JSON format
+            throw new UserNotFoundException(id);
+        }
+        User user = userRepository.findByUserId(id);
 
         // Convert User entity to UserDTO
         UserDTO userDTO = UserDTO.builder()
@@ -197,10 +211,11 @@ public class UserController {
                                     examples = {
                                             @ExampleObject(
                                                     value = "{\n" +
-                                                            "    \"questionContent\": \"1+1=\",\n" +
+                                                            "    \"categoryId\": 1,\n" +
+                                                            "    \"questionContent\": \"string\",\n" +
                                                             "    \"answers\": [\n" +
                                                             "        {\n" +
-                                                            "            \"content\": \"2\",\n" +
+                                                            "            \"content\": \"string\",\n" +
                                                             "            \"correct\": true\n" +
                                                             "        }\n" +
                                                             "    ]\n" +
@@ -211,21 +226,52 @@ public class UserController {
                     @ApiResponse(
                             description = "",
                             responseCode = "400",
-                            content = @Content),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizCreationRequestDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{\n" +
+                                                            "    \"data\": [\n" +
+                                                            "        {\n" +
+                                                            "            \"fieldName\": \"questionContent\",\n" +
+                                                            "            \"errorMessage\": \"questionContent cannot be blank\"\n" +
+                                                            "        }\n" +
+                                                            "    ],\n" +
+                                                            "    \"message\": \"Validation Failed\",\n" +
+                                                            "    \"error\": true\n" +
+                                                            "}"
+                                            )
+                                    })
+                    ),
                     @ApiResponse(
                             description = "",
                             responseCode = "404",
-                            content = @Content
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizCreationRequestDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{\n" +
+                                                            "    \"data\": [\n" +
+                                                            "        {\n" +
+                                                            "            \"fieldName\": \"CategoryId\",\n" +
+                                                            "            \"errorMessage\": \"CategoryId Not exist\"\n" +
+                                                            "        }\n" +
+                                                            "    ],\n" +
+                                                            "    \"message\": \"Validation Failed\",\n" +
+                                                            "    \"error\": true\n" +
+                                                            "}"
+                                            )
+                                    })
                     ),
             }
     )
     @PostMapping("/create-quizquestion")
-    public ResponseEntity<QuizCreationRequestDTO> createQuizQuestionAndAnswers(@RequestBody QuizCreationRequestDTO requestDTO) {
+    public ResponseEntity<QuizCreationRequestDTO> createQuizQuestionAndAnswers(@Valid @RequestBody QuizCreationRequestDTO requestDTO) {
         ResponseEntity<QuizCreationRequestDTO> QuizCreationRequestDTO = userService.createQuizQuestionAndAnswers(requestDTO);
         return QuizCreationRequestDTO;
     }
     /**
-     *  Update Answer by Id using a put request.
+     * Update Answer by Id using a put request.
      *
      * @return A message indicating the success of the put operation.
      */
@@ -241,14 +287,45 @@ public class UserController {
                                     ,
                                     examples = {
                                             @ExampleObject(
-                                                    value = "QuizAnswer updated successfully"
+                                                    value = "{\n" +
+                                                            "    \"quiz_answer_id\": 2,\n" +
+                                                            "    \"quizQuestion\": {\n" +
+                                                            "        \"quiz_question_id\": 4,\n" +
+                                                            "        \"created_at\": \"2024-01-27T13:15:53.685639\",\n" +
+                                                            "        \"content\": \"qqqq\",\n" +
+                                                            "        \"category_id\": {\n" +
+                                                            "            \"category_id\": 1,\n" +
+                                                            "            \"category_name\": \"Usernssss\"\n" +
+                                                            "        }\n" +
+                                                            "    },\n" +
+                                                            "    \"content\": \"111111\",\n" +
+                                                            "    \"is_correct\": true,\n" +
+                                                            "    \"created_at\": \"2024-01-27T13:15:53.719909\"\n" +
+                                                            "}"
                                             )
                                     })
                     ),
                     @ApiResponse(
                             description = "",
                             responseCode = "400",
-                            content = @Content),
+
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizAnswerDTO.class)
+            ,
+            examples = {
+                    @ExampleObject(
+                            value = "{\n" +
+                                    "    \"data\": [\n" +
+                                    "        {\n" +
+                                    "            \"fieldName\": \"content\",\n" +
+                                    "            \"errorMessage\": \"questionContent cannot be blank\"\n" +
+                                    "        }\n" +
+                                    "    ],\n" +
+                                    "    \"message\": \"Validation Failed\",\n" +
+                                    "    \"error\": true\n" +
+                                    "}"
+                    )
+            })
+    ),
                     @ApiResponse(
                             description = "",
                             responseCode = "404",
@@ -256,14 +333,23 @@ public class UserController {
                                     ,
                                     examples = {
                                             @ExampleObject(
-                                                    value = "QuizAnswer with ID 123 not found"
+                                                    value = "{\n" +
+                                                            "    \"data\": [\n" +
+                                                            "        {\n" +
+                                                            "            \"fieldName\": \"answerId\",\n" +
+                                                            "            \"errorMessage\": \"answerId Not Found\"\n" +
+                                                            "        }\n" +
+                                                            "    ],\n" +
+                                                            "    \"message\": \"Validation Failed\",\n" +
+                                                            "    \"error\": true\n" +
+                                                            "}"
                                             )
                                     })
                     ),
             }
     )
     @PutMapping("/update-answer/{answerId}")
-    public ResponseEntity<String> updateAnswerById(@PathVariable Long answerId, @RequestBody QuizAnswerDTO quizAnswerDTO) {
+    public ResponseEntity<QuizAnswer> updateAnswerById(@PathVariable Long answerId, @Valid @RequestBody QuizAnswerDTO quizAnswerDTO) {
         return  userService.updateQuizAnswer(answerId,quizAnswerDTO);
     }
 
@@ -292,9 +378,25 @@ public class UserController {
                             responseCode = "400",
                             content = @Content),
                     @ApiResponse(
-                            description = "",
+                            description = "quizquestionId Not Found",
                             responseCode = "404",
-                            content = @Content)
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizAnswerDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{\n" +
+                                                            "    \"data\": [\n" +
+                                                            "        {\n" +
+                                                            "            \"fieldName\": \"quizquestionId\",\n" +
+                                                            "            \"errorMessage\": \"Quiz question with ID 12 not found\"\n" +
+                                                            "        }\n" +
+                                                            "    ],\n" +
+                                                            "    \"message\": \"Validation Failed\",\n" +
+                                                            "    \"error\": true\n" +
+                                                            "}"
+                                            )
+                                    })
+                    )
             }
     )
     @DeleteMapping("/delete-quizquestion/{quizquestionId}")
