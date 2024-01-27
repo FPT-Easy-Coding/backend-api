@@ -14,12 +14,12 @@ import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,11 +48,11 @@ public class UserService {
         var user = ((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
         //Check if the current password is correct
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalStateException("Wrong password");
+            throw new EmailOrUsernameAlreadyTakenException("currentPassword", "currentPassword :" + " incorrect");
         }
         //Check if 2 password are matched
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalStateException("Password are not the same");
+            throw new EmailOrUsernameAlreadyTakenException("ConfirmPassword", "ConfirmPassword :" + " incorrect");
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
@@ -62,10 +62,6 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
-        User user = userRepository.findByUserId(id);
-        throw new UsernameNotFoundException("User not found with id: " + id);
-    }
 
     public void addNewUser(@RequestBody User user) {
         userRepository.save(user);
@@ -98,13 +94,12 @@ public class UserService {
 
     public ResponseEntity<QuizCreationRequestDTO> createQuizQuestionAndAnswers(QuizCreationRequestDTO requestDTO) {
 
+
+//        if ( categoryService.existsCategoryById(requestDTO.getCategoryId())) {
+//            throw new EmailOrUsernameAlreadyTakenException("CategoryId", "currentPassword :" + " incorrect");
+//        }
         // Kiểm tra category_id tồn tại trong bảng category
         ResponseEntity<String> categoryCheckResult = categoryService.existsCategoryById(requestDTO.getCategoryId());
-
-        if (categoryCheckResult.getStatusCode() == HttpStatus.NOT_FOUND) {
-            String errorMessage = categoryCheckResult.getBody();
-            return ResponseEntity.<QuizCreationRequestDTO>status(HttpStatus.NOT_FOUND).body(null);
-        }
 
         Category category = categoryRepository.findById(requestDTO.getCategoryId()).orElse(null);
 
@@ -123,7 +118,7 @@ public class UserService {
             for (QuizAnswerDTO answerDTO : requestDTO.getAnswers()) {
                 QuizAnswer quizAnswer = QuizAnswer.builder()
                         .content(answerDTO.getContent())
-                        .is_correct(answerDTO.isCorrect())
+                        .is_correct(answerDTO.getIsCorrect())
                         .created_at(LocalDateTime.now())
                         .quizQuestion(quizQuestion)
                         .build();
@@ -141,37 +136,48 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<String> updateQuizAnswer(Long answerId, QuizAnswerDTO quizAnswerDTO) {
+    public ResponseEntity<QuizAnswer> updateQuizAnswer(Long answerId, @Valid QuizAnswerDTO quizAnswerDTO) {
+
+        // Check if the answerId exists in the repository
         Optional<QuizAnswer> optionalQuizAnswer = quizAnswerRepository.findById(answerId);
 
         if (optionalQuizAnswer.isPresent()) {
             QuizAnswer quizAnswer = optionalQuizAnswer.get();
 
+
             // Kiểm tra và cập nhật nội dung
-            if (quizAnswerDTO.getContent() != null && !quizAnswerDTO.getContent().isEmpty()) {
-                quizAnswer.setContent(quizAnswerDTO.getContent());
-            }
+//            if (quizAnswerDTO.getContent() != null && !quizAnswerDTO.getContent().isEmpty()) {
+//                quizAnswer.setContent(quizAnswerDTO.getContent());
+//            }
 
             // Kiểm tra và cập nhật đáp án đúng/sai
-            quizAnswer.setIs_correct(quizAnswerDTO.isCorrect());
-
+           quizAnswer.setIs_correct(quizAnswerDTO.getIsCorrect());
+            quizAnswer.setContent(quizAnswerDTO.getContent());
             // Lưu cập nhật
             quizAnswerRepository.save(quizAnswer);
 
-            return ResponseEntity.ok("QuizAnswer updated successfully");
+            return ResponseEntity.ok(quizAnswer);
         } else {
             // Trả về lỗi nếu không tìm thấy ID
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("QuizAnswer with ID " + answerId + " not found");
+            throw new EmailOrUsernameAlreadyTakenException("answerId", "answerId " + answerId + " Not Found");
         }
     }
 
     public ResponseEntity<String> deleteQuizQuesById(Long quizquestionId) {
-        //delete in quizanswer
-        quizAnswerRepository.deleteById(quizquestionId);
-        //delete in quizQuestion
-        quizQuestionRepository.deleteById(quizquestionId);
 
-        return ResponseEntity.ok("Delete Succesfull");
+        // Check if the quiz question with the given ID exists in the repository
+        if (quizQuestionRepository.existsById(quizquestionId)) {
+            // Delete associated quiz answers
+            quizAnswerRepository.deleteByQuizQuestionId(quizquestionId);
+
+            // Delete the quiz question
+            quizQuestionRepository.deleteById(quizquestionId);
+
+            return ResponseEntity.ok("Delete Successful");
+        }
+
+        throw new EmailOrUsernameAlreadyTakenException("quizquestionId", "Quiz question with ID " + quizquestionId + " not found");
+
     }
 
     public ResponseEntity<User> UpdateUser(Long userId, UserDTO request) {

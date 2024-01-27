@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.service;
 
 import com.quizztoast.backendAPI.dto.CategoryDTO;
+import com.quizztoast.backendAPI.exception.EmailOrUsernameAlreadyTakenException;
 import com.quizztoast.backendAPI.model.quiz.Category;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import jakarta.validation.Valid;
@@ -14,8 +15,11 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-
-    public Category saveCategory(CategoryDTO categoryDTO) {
+    public Category saveCategory(@Valid CategoryDTO categoryDTO) {
+//        if (categoryDTO.getCategoryId() == 0) {
+//            throw new EmailOrUsernameAlreadyTakenException("CategoryId", "CategoryId must not null");
+//        }
+        validateCategoryDTO(categoryDTO);
         // Convert CategoryDTO to Category entity
         Category category = convertToEntity(categoryDTO);
 
@@ -25,6 +29,21 @@ public class CategoryService {
         // Return the saved entity
         return category;
     }
+
+    private void validateCategoryDTO(CategoryDTO categoryDTO) {
+        if (categoryDTO.getCategoryId() == null) {
+            throw new EmailOrUsernameAlreadyTakenException("categoryId", "CategoryId must not be null");
+        }
+
+        if (categoryDTO.getCategoryId() == 0) {
+            throw new EmailOrUsernameAlreadyTakenException("categoryId", "CategoryId must not be zero");
+        }
+
+        if (categoryDTO.getCategoryName() == null || categoryDTO.getCategoryName().trim().isEmpty()) {
+            throw new EmailOrUsernameAlreadyTakenException("categoryName", "CategoryName must not be blank");
+        }
+    }
+
     private Category convertToEntity(CategoryDTO categoryDTO) {
         Category category = new Category();
         category.setCategory_name(categoryDTO.getCategoryName());
@@ -40,7 +59,7 @@ public class CategoryService {
         if (categoryRepository.findById(categoryId).isPresent()) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category not found for ID: " + categoryId);
+            throw new EmailOrUsernameAlreadyTakenException("CategoryId", "CategoryId" + " Not exist");
         }
     }
 
