@@ -1,12 +1,11 @@
 package com.quizztoast.backendAPI.controller;
 
-import com.quizztoast.backendAPI.dto.CategoryDTO;
-import com.quizztoast.backendAPI.model.quiz.Category;
-import com.quizztoast.backendAPI.model.entity.user.Role;
+import com.quizztoast.backendAPI.model.dto.CategoryDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.service.CategoryService;
-import com.quizztoast.backendAPI.service.UserService;
+import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -44,7 +43,7 @@ public class AdminController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    UserService service;
+    UserServiceImpl service;
     @Autowired
     CategoryService categoryService;
     /**

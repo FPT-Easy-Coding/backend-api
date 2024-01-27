@@ -71,8 +71,7 @@ public class User implements UserDetails {
     private List<Token> tokens;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "auth_type")
-    private AuthenticationType authType;
+    private Provider provider;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

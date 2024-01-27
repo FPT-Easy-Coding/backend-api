@@ -7,7 +7,7 @@ import com.quizztoast.backendAPI.security.auth.auth_payload.VerificationRequest;
 import com.quizztoast.backendAPI.security.auth.auth_service.AuthenticationService;
 import com.quizztoast.backendAPI.security.recaptcha.ReCaptchaRegisterService;
 
-import com.quizztoast.backendAPI.service.UserService;
+import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -34,7 +34,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final ReCaptchaRegisterService reCaptchaRegisterService;
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
 
 

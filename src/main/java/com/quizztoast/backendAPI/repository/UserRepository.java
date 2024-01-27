@@ -1,6 +1,6 @@
 package com.quizztoast.backendAPI.repository;
 
-import com.quizztoast.backendAPI.model.entity.user.AuthenticationType;
+import com.quizztoast.backendAPI.model.entity.user.Provider;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,6 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
     @Modifying
-    @Query("UPDATE User u SET u.authType = ?2 WHERE u.username = ?1")
-    public void updateAuthenticationType(String username, AuthenticationType authType);
+    @Query("UPDATE User u SET u.provider = ?2 WHERE u.username = ?1")
+    void updateAuthenticationType(String username, Provider provider);
 }

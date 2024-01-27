@@ -1,11 +1,10 @@
 package com.quizztoast.backendAPI.service;
 
-import com.quizztoast.backendAPI.dto.QuizDTO;
-import com.quizztoast.backendAPI.model.quiz.Quiz;
+import com.quizztoast.backendAPI.model.dto.QuizDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import com.quizztoast.backendAPI.repository.QuizRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

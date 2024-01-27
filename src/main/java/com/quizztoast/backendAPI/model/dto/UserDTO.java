@@ -1,9 +1,10 @@
 package com.quizztoast.backendAPI.model.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class UserDTO {
     private String username;

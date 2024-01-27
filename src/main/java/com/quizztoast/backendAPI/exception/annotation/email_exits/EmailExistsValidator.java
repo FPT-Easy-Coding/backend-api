@@ -1,6 +1,6 @@
 package com.quizztoast.backendAPI.exception.annotation.email_exits;
 
-import com.quizztoast.backendAPI.service.UserService;
+import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EmailExistsValidator implements ConstraintValidator<EmailExists, String> {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     /**
      * Initializes the EmailExistsValidator.
@@ -37,6 +37,6 @@ public class EmailExistsValidator implements ConstraintValidator<EmailExists, St
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
         // Validation logic: Returns true if the email is valid (not already exists), false otherwise
-        return email == null || !userService.userExists(email);
+        return email == null || !userServiceImpl.userExists(email);
     }
 }

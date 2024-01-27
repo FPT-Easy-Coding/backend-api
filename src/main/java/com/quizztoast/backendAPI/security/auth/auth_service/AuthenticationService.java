@@ -14,7 +14,7 @@ import com.quizztoast.backendAPI.security.auth.auth_payload.VerificationRequest;
 import com.quizztoast.backendAPI.security.jwt.JWTService;
 import com.quizztoast.backendAPI.security.tfa.TwoFactorAuthenticationService;
 
-import com.quizztoast.backendAPI.service.UserService;
+import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,12 +34,12 @@ import java.io.IOException;
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TwoFactorAuthenticationService tfaService;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-        var user = userService.createUser(registerRequest);
+        var user = userServiceImpl.createUser(registerRequest);
             // If MFA enabled --> generate Secret
             if (registerRequest.isMfaEnabled()) {
                 user.setSecret(tfaService.generateNewSecret());

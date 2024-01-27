@@ -2,7 +2,8 @@ package com.quizztoast.backendAPI.config;
 
 import com.quizztoast.backendAPI.security.jwt.JWTAuthenticationFilter;
 import com.quizztoast.backendAPI.security.oauth2.CustomOAuth2UserService;
-import com.quizztoast.backendAPI.security.oauth2.OAuthLoginSuccessHandler;
+import com.quizztoast.backendAPI.security.oauth2.OAuth2LoginSuccessHandler;
+import com.quizztoast.backendAPI.security.oauth2.Oauth2LoginFailureHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +41,8 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
     private final CustomOAuth2UserService customOauth2UserService;
-    private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final Oauth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -50,18 +52,21 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                //                .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
-                                //                .requestMatchers(GET,"/api/v1/admin/**").hasAuthority(ADMIN_READ.name())
-                                //                .requestMatchers(POST,"/api/v1/admin/**").hasAuthority(ADMIN_CREATE.name())
-                                //                .requestMatchers(PUT,"/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())
-                                //                .requestMatchers(DELETE,"/api/v1/admin/**").hasAuthority(ADMIN_DELETE.name())
                                 .anyRequest()
                                 .authenticated()
                 )
+
                 .oauth2Login(
-                        oauth2Login -> oauth2Login.userInfoEndpoint(
-                                userInfoEndpoint -> userInfoEndpoint.userService(customOauth2UserService))
-                        .successHandler(oAuthLoginSuccessHandler))
+                        oauth2Login -> oauth2Login.authorizationEndpoint(
+                                        authorizationEndpoint -> authorizationEndpoint.baseUri("/oauth2/authorize"))
+                                .redirectionEndpoint(
+                                        redirectionEndpoint -> redirectionEndpoint.baseUri("/oauth2/callback/*"))
+                                .userInfoEndpoint(
+                                        userInfoEndpoint -> userInfoEndpoint.userService(customOauth2UserService))
+                                .successHandler(oAuth2LoginSuccessHandler)
+                                .failureHandler(oAuth2LoginFailureHandler)
+                )
+
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

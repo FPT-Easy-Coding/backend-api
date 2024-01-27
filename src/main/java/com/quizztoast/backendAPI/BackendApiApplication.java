@@ -35,7 +35,7 @@ public class BackendApiApplication {
 //                    .created_at(LocalDateTime.parse("2024-01-22 12:30:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 //                    .build();
 //            quizrepo.save(quiz);
+//
+//        };
 
-        };
-
-
+}

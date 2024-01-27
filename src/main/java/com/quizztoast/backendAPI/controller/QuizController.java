@@ -1,8 +1,7 @@
 package com.quizztoast.backendAPI.controller;
 
-import com.quizztoast.backendAPI.dto.QuizDTO;
-import com.quizztoast.backendAPI.model.quiz.Quiz;
-import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.model.dto.QuizDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.service.QuizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,9 +9,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
