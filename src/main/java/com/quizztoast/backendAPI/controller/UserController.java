@@ -120,13 +120,14 @@ public class UserController {
                                     ,
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"userId\": 10802,\n" +
-                                                            "    \"username\": \"hieu111@gmail.com\",\n" +
-                                                            "    \"firstName\": \"hieu111@gmail.com\",\n" +
-                                                            "    \"lastName\": \"string\",\n" +
-                                                            "    \"email\": \"hieu111@gmail.com\"\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "userId": 10802,
+                                                                "username": "hieu111@gmail.com",
+                                                                "firstName": "hieu111@gmail.com",
+                                                                "lastName": "string",
+                                                                "email": "hieu111@gmail.com"
+                                                            }"""
                                             )
                                     })
                     ),
@@ -189,15 +190,16 @@ public class UserController {
                                     ,
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"questionContent\": \"1+1=\",\n" +
-                                                            "    \"answers\": [\n" +
-                                                            "        {\n" +
-                                                            "            \"content\": \"2\",\n" +
-                                                            "            \"correct\": true\n" +
-                                                            "        }\n" +
-                                                            "    ]\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "questionContent": "1+1=",
+                                                                "answers": [
+                                                                    {
+                                                                        "content": "2",
+                                                                        "correct": true
+                                                                    }
+                                                                ]
+                                                            }"""
                                             )
                                     })
                     ),

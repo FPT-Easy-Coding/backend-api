@@ -64,7 +64,7 @@ public class SecurityConfig {
                                 .userInfoEndpoint(
                                         userInfoEndpoint -> userInfoEndpoint.userService(customOauth2UserService))
                                 .successHandler(oAuth2LoginSuccessHandler)
-                                .failureHandler(oAuth2LoginFailureHandler)
+//                                .failureHandler(oAuth2LoginFailureHandler)
                 )
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

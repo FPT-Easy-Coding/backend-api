@@ -1,15 +1,23 @@
 package com.quizztoast.backendAPI.service.impl;
 
+import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
+import com.quizztoast.backendAPI.model.dto.QuizCreationRequestDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
 import com.quizztoast.backendAPI.model.entity.user.Provider;
 import com.quizztoast.backendAPI.model.entity.user.User;
-
+import com.quizztoast.backendAPI.repository.CategoryRepository;
+import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
+import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
 import com.quizztoast.backendAPI.security.auth.auth_payload.RegisterRequest;
-
+import com.quizztoast.backendAPI.service.CategoryService;
 import com.quizztoast.backendAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.security.Principal;
-
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +36,20 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final QuizQuestionRepository quizQuestionRepository;
+    private final QuizAnswerRepository quizAnswerRepository;
+    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, QuizQuestionRepository quizQuestionRepository,
+                           QuizAnswerRepository quizAnswerRepository, CategoryRepository categoryRepository, CategoryService categoryService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.quizQuestionRepository = quizQuestionRepository;
+        this.quizAnswerRepository = quizAnswerRepository;
+        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -80,7 +98,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
+        User user =  userRepository.findUserByEmail(email);
+        return user;
     }
 
     @Override
@@ -109,6 +128,84 @@ public class UserServiceImpl implements UserService {
     public boolean doesUsernameExist(String username) {
         Optional<User> existingUser = userRepository.findByUsername(username);
         return existingUser.isPresent();
+    }
+
+    public ResponseEntity<QuizCreationRequestDTO> createQuizQuestionAndAnswers(QuizCreationRequestDTO requestDTO) {
+
+        // Kiểm tra category_id tồn tại trong bảng category
+        ResponseEntity<String> categoryCheckResult = categoryService.existsCategoryById(requestDTO.getCategoryId());
+
+        if (categoryCheckResult.getStatusCode() == HttpStatus.NOT_FOUND) {
+            String errorMessage = categoryCheckResult.getBody();
+            return ResponseEntity.<QuizCreationRequestDTO>status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        Category category = categoryRepository.findById(requestDTO.getCategoryId()).orElse(null);
+
+        try {
+            // Tạo QuizQuestion
+            QuizQuestion quizQuestion = QuizQuestion.builder()
+                    .content(requestDTO.getQuestionContent())
+                    .category_id(category)
+                    .created_at(LocalDateTime.now())
+                    .build();
+
+            quizQuestionRepository.save(quizQuestion);
+
+            // Tạo danh sách QuizAnswer
+            List<QuizAnswer> quizAnswers = new ArrayList<>();
+            for (QuizAnswerDTO answerDTO : requestDTO.getAnswers()) {
+                QuizAnswer quizAnswer = QuizAnswer.builder()
+                        .content(answerDTO.getContent())
+                        .is_correct(answerDTO.isCorrect())
+                        .created_at(LocalDateTime.now())
+                        .quizQuestion(quizQuestion)
+                        .build();
+
+                quizAnswers.add(quizAnswer);
+            }
+
+            // Lưu danh sách QuizAnswer
+            quizAnswerRepository.saveAll(quizAnswers);
+
+            // Trả về QuizCreationRequestDTO ban đầu sau khi đã tạo
+            return ResponseEntity.ok(requestDTO);
+        } catch (Exception e) {
+            return ResponseEntity.<QuizCreationRequestDTO>status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    public ResponseEntity<String> updateQuizAnswer(Long answerId, QuizAnswerDTO quizAnswerDTO) {
+        Optional<QuizAnswer> optionalQuizAnswer = quizAnswerRepository.findById(answerId);
+
+        if (optionalQuizAnswer.isPresent()) {
+            QuizAnswer quizAnswer = optionalQuizAnswer.get();
+
+            // Kiểm tra và cập nhật nội dung
+            if (quizAnswerDTO.getContent() != null && !quizAnswerDTO.getContent().isEmpty()) {
+                quizAnswer.setContent(quizAnswerDTO.getContent());
+            }
+
+            // Kiểm tra và cập nhật đáp án đúng/sai
+            quizAnswer.setIs_correct(quizAnswerDTO.isCorrect());
+
+            // Lưu cập nhật
+            quizAnswerRepository.save(quizAnswer);
+
+            return ResponseEntity.ok("QuizAnswer updated successfully");
+        } else {
+            // Trả về lỗi nếu không tìm thấy ID
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("QuizAnswer with ID " + answerId + " not found");
+        }
+    }
+
+    public ResponseEntity<String> deleteQuizQuesById(Long quizquestionId) {
+        //delete in quizanswer
+        quizAnswerRepository.deleteById(quizquestionId);
+        //delete in quizQuestion
+        quizQuestionRepository.deleteById(quizquestionId);
+
+        return ResponseEntity.ok("Delete Succesfull");
     }
 
     @Override

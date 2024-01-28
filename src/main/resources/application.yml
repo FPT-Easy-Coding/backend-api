@@ -6,14 +6,14 @@ spring:
           google:
             clientId: "328640323284-ke3micguhl6gtgqa1fok7r6iojv693ug.apps.googleusercontent.com"
             clientSecret: "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"
-            redirectUri: {baseUrl}/oauth2/callback/{registrationId}"
+#            redirectUri: {baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - profile
           github:
             clientId: "54cdd801b9ba30e2c60e"
             clientSecret: "755309efec0cb16ef31e646b288d8cd1ea4776f2"
-            redirectUri: {baseUrl}/oauth2/callback/{registrationId}"
+#            redirectUri: {baseUrl}/oauth2/callback/{registrationId}"
   datasource:
     url: jdbc:mysql://localhost:3306/quizztoast
     username: root
