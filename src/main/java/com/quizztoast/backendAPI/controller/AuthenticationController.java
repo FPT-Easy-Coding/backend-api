@@ -1,7 +1,8 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.exception.EmailAlreadyTakenException;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.exception.EmailOrUsernameAlreadyTakenException;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.security.auth_payload.AuthenticationRequest;
 import com.quizztoast.backendAPI.security.auth_payload.AuthenticationResponse;
 import com.quizztoast.backendAPI.security.auth_payload.RegisterRequest;
@@ -50,27 +51,34 @@ public class AuthenticationController {
                             description = "Success. User registered successfully.",
                             responseCode = "200",
                             content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
-                            examples = {
-                                    @ExampleObject(
-                                            value = " {\n" +
-                                                    "    \"accessToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjAzNTc4Nn0.GbOt25veZBXl3YHwJrW101CT-gvNGC20RTQK4uBwdAk\",\n" +
-                                                    "    \"refreshToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjU1NDE4Nn0.BJAeEOcrPjd23_PlJfoMtkq345yxnRhv0eHoObNyjfo\",\n" +
-                                                    "    \"mfaEnabled\": true,\n" +
-                                                    "    \"secretImageUri\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeAQAAAADlUEq3AAADHElEQVR4Xu2asZHjMAxFoXFw4ZagUlSaWJpKcQkOHXiMw/+AxtSK9vji+wiWMvnI4C9AALLNv7eH/Z75YIJ7E9yb4N4E9/Z/wE+j+eOPX/GAYY2lH99s8jsXL4KHMJ68PS93LBsGfPKb2crJQgQP4NByaaHzbd5Wzm9GOCb9/hPiC/4IQ9Lr0sJFb7PHYBZbBX8Dxweb3RnPi0+I9diKEwS/h+NPxHMqi4sxPtVWiL8jgs+w0cpFTwMXBQ/hg7XJPe9Hempvgnt76VyBvLSpShi4KAYmmknwEI6/cfmtASOeWQTymoytiG7I/YpuwT2cE3Exgko46udILSGw5/1IE3yC0XM445kuyug2qB4Cx40IFxU8hp+cQIMGp2TzVqobz4rb8tC1Ce7TMaKblx/m6bC5tRnsEN2COxh2jbnq0/KaDJ2j4eXyteQWfIbhlIbCGe0agxzLyDD0VD+mY8EvmC6aNyJ0Dosgx2QUNPi0D4JPsGfFbFzOgiaWeT/WQUgtggdw6ZwljNEboWxWMnkQTxR8hi98H4AXK54FjWOZ0Q2/nSG+4DdwuKcx5UY6DpszK88pcIiPQfAIdghcPQfvR3hqVjI4aElE8Al2zMc6PRU6Y4D4cw7W6yz44HW7wFQWg2cjgq3Yg5AXPIaNzcaDAu855YHZvBG3jHzBJziKlvySEc+tghxUqV6fBJ/h0hmU4zsgGru2pfGEX62H4Bd8oZaeLlpOiUrGqnA+RLfgHk6dEd3RZTjCetlPyLfxoASP4Mwb6ZvN8v1KRbehLTlEt+AD7Hi/MrH6W1HXxB7elpDb4aI8R/AY5kS9oQpxV7po/WIAJwh+B8c6vmu0fEOVlQz63j3fHFxU8A6XPdFzbCs6EArMsIaLxvBKx4J7mFrmryxC4KQwj+iurTTBZxj+F1dhlsp4LpixTp0Fv4PviGBUzLEMnbmWnS7+AxXygj/AeP+OrBx7WMmU3BuDXPBH2EvnSM6sZFrnt4JHMB5RwsQduNeCDOslJw85RfAow3LZ0GwsnJyrH9lACR7A35rg3gT3Jrg3wb0J7u3f4L/kiTr3Hk1oVAAAAABJRU5ErkJggg==\"\n" +
-                                                    "}"
-                                    )
-                            })
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = " {\n" +
+                                                            "    \"accessToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjAzNTc4Nn0.GbOt25veZBXl3YHwJrW101CT-gvNGC20RTQK4uBwdAk\",\n" +
+                                                            "    \"refreshToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjU1NDE4Nn0.BJAeEOcrPjd23_PlJfoMtkq345yxnRhv0eHoObNyjfo\",\n" +
+                                                            "    \"mfaEnabled\": true,\n" +
+                                                            "    \"secretImageUri\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeAQAAAADlUEq3AAADHElEQVR4Xu2asZHjMAxFoXFw4ZagUlSaWJpKcQkOHXiMw/+AxtSK9vji+wiWMvnI4C9AALLNv7eH/Z75YIJ7E9yb4N4E9/Z/wE+j+eOPX/GAYY2lH99s8jsXL4KHMJ68PS93LBsGfPKb2crJQgQP4NByaaHzbd5Wzm9GOCb9/hPiC/4IQ9Lr0sJFb7PHYBZbBX8Dxweb3RnPi0+I9diKEwS/h+NPxHMqi4sxPtVWiL8jgs+w0cpFTwMXBQ/hg7XJPe9Hempvgnt76VyBvLSpShi4KAYmmknwEI6/cfmtASOeWQTymoytiG7I/YpuwT2cE3Exgko46udILSGw5/1IE3yC0XM445kuyug2qB4Cx40IFxU8hp+cQIMGp2TzVqobz4rb8tC1Ce7TMaKblx/m6bC5tRnsEN2COxh2jbnq0/KaDJ2j4eXyteQWfIbhlIbCGe0agxzLyDD0VD+mY8EvmC6aNyJ0Dosgx2QUNPi0D4JPsGfFbFzOgiaWeT/WQUgtggdw6ZwljNEboWxWMnkQTxR8hi98H4AXK54FjWOZ0Q2/nSG+4DdwuKcx5UY6DpszK88pcIiPQfAIdghcPQfvR3hqVjI4aElE8Al2zMc6PRU6Y4D4cw7W6yz44HW7wFQWg2cjgq3Yg5AXPIaNzcaDAu855YHZvBG3jHzBJziKlvySEc+tghxUqV6fBJ/h0hmU4zsgGru2pfGEX62H4Bd8oZaeLlpOiUrGqnA+RLfgHk6dEd3RZTjCetlPyLfxoASP4Mwb6ZvN8v1KRbehLTlEt+AD7Hi/MrH6W1HXxB7elpDb4aI8R/AY5kS9oQpxV7po/WIAJwh+B8c6vmu0fEOVlQz63j3fHFxU8A6XPdFzbCs6EArMsIaLxvBKx4J7mFrmryxC4KQwj+iurTTBZxj+F1dhlsp4LpixTp0Fv4PviGBUzLEMnbmWnS7+AxXygj/AeP+OrBx7WMmU3BuDXPBH2EvnSM6sZFrnt4JHMB5RwsQduNeCDOslJw85RfAow3LZ0GwsnJyrH9lACR7A35rg3gT3Jrg3wb0J7u3f4L/kiTr3Hk1oVAAAAABJRU5ErkJggg==\"\n" +
+                                                            "}"
+                                            )
+                                    })
                     ),
                     @ApiResponse(
-                            description = "Conflict. User with the provided username or email already exists.",
+                            description = "Conflict. User with the provided telephone or username or email already exists.",
                             responseCode = "422",
                             content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"mfaEnabled\": false,\n" +
-                                                            "    \"error\": \"Email already taken\"\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "Email",
+                                                                        "errorMessage": " Email already taken"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
                                             )
                                     })
                     ),
@@ -83,47 +91,42 @@ public class AuthenticationController {
                                                     value = "{\"data\":[{\"fieldName\":\"email\",\"errorMessage\":\"email must be a gmail account\"}],\"message\":\"Validation Failed\",\"error\":true}"
                                             )
                                     })
-                    ),
+                    ), @ApiResponse(
+                    description = "",
+                    responseCode = "404",
+                    content = @Content
+            )
             }
     )
-    //    @PostMapping("/register")
-//    public ResponseEntity<AuthenticationResponse> register (
-//            @Valid
-//            @RequestBody RegisterRequest request
-////            @RequestParam(name = "g-recaptcha-response") String captcha,
-////            Model model
-//    ){
-////        ReCaptchaResponse reCaptchaResponse = reCaptchaRegisterService.verifyCaptcha(captcha);
-////        if(!reCaptchaResponse.isSuccess()){
-////            model.addAttribute("reCaptchaError", reCaptchaResponse.getErrorCodes());
-////            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-////        }
-//        return ResponseEntity.ok(authenticationService.register(request));
-//    }
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
             validateEmail(request.getEmail());
-
+            ValidateUsername(request.getUsername());
+            ValidatePhoneNumber(request.getTelephone());
             AuthenticationResponse response = authenticationService.register(request);
             return ResponseEntity.ok(response);
         } catch (EmailAlreadyTakenException e) {
-            return ResponseEntity.badRequest().body(createErrorResponse("email", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(createErrorResponse("error", "An error occurred during registration"));
-        }
-    }
-    private void validateEmail(String email) {
-        if (userService.userExists(email)) {
-            throw new EmailAlreadyTakenException("Email already taken");
+            throw new EmailOrUsernameAlreadyTakenException("Email", " Email already taken");
         }
     }
 
-    private Map<String, String> createErrorResponse(String key, String message) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put(key, message);
-        return errorResponse;
+    private void ValidatePhoneNumber(String telephone) {
+        if (userService.checkTelephone(telephone).isPresent()) {
+            throw new EmailOrUsernameAlreadyTakenException("telephone", " telephone already taken");
+        }
+    }
+
+    private void ValidateUsername(String username) {
+        if (userService.checkUsername(username).isPresent()) {
+            throw new EmailOrUsernameAlreadyTakenException("username", " username already taken");
+        }
+    }
+
+    private void validateEmail(String email) {
+        if (userService.userExists(email)) {
+            throw new EmailOrUsernameAlreadyTakenException("Email", " Email already taken");
+        }
     }
     /**
      * Authenticates a user.

@@ -1,9 +1,9 @@
 package com.quizztoast.backendAPI.security.auth_service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.quizztoast.backendAPI.model.token.Token;
-import com.quizztoast.backendAPI.model.token.TokenType;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.model.entity.token.Token;
+import com.quizztoast.backendAPI.model.entity.token.TokenType;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.TokenRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth_payload.AuthenticationRequest;

@@ -1,11 +1,10 @@
 package com.quizztoast.backendAPI.controller;
 
-import com.quizztoast.backendAPI.dto.CategoryDTO;
-import com.quizztoast.backendAPI.dto.UserDTO;
+import com.quizztoast.backendAPI.model.dto.CategoryDTO;
+import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.exception.EmailOrUsernameAlreadyTakenException;
-import com.quizztoast.backendAPI.exception.UserNotFoundException;
-import com.quizztoast.backendAPI.model.quiz.Category;
-import com.quizztoast.backendAPI.model.user.User;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.TokenRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth_payload.AuthenticationResponse;

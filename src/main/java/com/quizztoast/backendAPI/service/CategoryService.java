@@ -1,17 +1,13 @@
 package com.quizztoast.backendAPI.service;
 
-import com.quizztoast.backendAPI.dto.CategoryDTO;
+import com.quizztoast.backendAPI.model.dto.CategoryDTO;
 import com.quizztoast.backendAPI.exception.EmailOrUsernameAlreadyTakenException;
-import com.quizztoast.backendAPI.model.quiz.Category;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {

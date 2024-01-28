@@ -1,6 +1,6 @@
 package com.quizztoast.backendAPI.repository;
 
-import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

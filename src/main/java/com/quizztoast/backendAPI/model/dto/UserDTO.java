@@ -1,4 +1,5 @@
-package com.quizztoast.backendAPI.security.auth_payload;
+package com.quizztoast.backendAPI.model.dto;
+
 import com.quizztoast.backendAPI.model.entity.user.Role;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -7,18 +8,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class UserDTO {
     @Valid
 
     @NotNull(message = "firstname cannot be null")
     @NotBlank(message = "firstname cannot be blank")
     private String firstname;
 
-    @NotNull(message = "lastname cannot be null")
+        @NotNull(message = "lastname cannot be null")
     @NotBlank(message = "lastname cannot be blank")
     private String lastname;
 
@@ -59,8 +62,12 @@ public class RegisterRequest {
             message = "username must only contain letters, numbers, hyphens and underscores"
     )
     private String username;
-
-    private final Role role = Role.USER;
-
+    private Date createdAt;
+    private boolean isBanned;
+    private String googleId;
+    private Role role;
+    private boolean isPremium;
     private boolean mfaEnabled;
+    private String secret;
+
 }

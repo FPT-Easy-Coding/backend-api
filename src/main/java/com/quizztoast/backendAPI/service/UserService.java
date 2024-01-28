@@ -1,17 +1,14 @@
 package com.quizztoast.backendAPI.service;
 
-import com.quizztoast.backendAPI.dto.QuizAnswerDTO;
-import com.quizztoast.backendAPI.dto.QuizCreationRequestDTO;
-import com.quizztoast.backendAPI.dto.UserDTO;
+import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
+import com.quizztoast.backendAPI.model.dto.QuizCreationRequestDTO;
+import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.exception.EmailOrUsernameAlreadyTakenException;
-import com.quizztoast.backendAPI.model.quiz.Category;
-import com.quizztoast.backendAPI.model.quiz.QuizAnswer;
-import com.quizztoast.backendAPI.model.quiz.QuizQuestion;
-import com.quizztoast.backendAPI.model.user.User;
-import com.quizztoast.backendAPI.repository.CategoryRepository;
-import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
-import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
-import com.quizztoast.backendAPI.repository.UserRepository;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
+import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.repository.*;
 import com.quizztoast.backendAPI.security.auth_payload.ChangePasswordRequest;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
@@ -42,6 +39,8 @@ public class UserService {
     @Autowired
     private CategoryRepository categoryRepository;
     private final CategoryService categoryService;
+
+    private TokenRepository tokenRepository;
     public void changePassword(ChangePasswordRequest request, Principal connectedUser){
 
         var user = ((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
@@ -92,6 +91,7 @@ public class UserService {
     }
 
     public ResponseEntity<QuizCreationRequestDTO> createQuizQuestionAndAnswers(QuizCreationRequestDTO requestDTO) {
+
 
 
 //        if ( categoryService.existsCategoryById(requestDTO.getCategoryId())) {
@@ -215,6 +215,19 @@ public class UserService {
                 throw new EmailOrUsernameAlreadyTakenException("Email","Email already taken");
             }
         }
+    }
+
+    public Optional<User> checkTelephone(String telephone) {
+        return userRepository.findByTelephone(telephone) ;
+    }
+
+    public Optional<User> checkUsername(String username) {
+        return userRepository.findUserByUsername(username) ;
+
+    }
+
+    public Optional<User> getUserbyEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
 
