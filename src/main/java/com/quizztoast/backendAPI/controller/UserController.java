@@ -2,6 +2,7 @@ package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.model.mapper.UserMapper;
 import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
 import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.model.dto.QuizCreationRequestDTO;
@@ -99,8 +100,10 @@ public class UserController {
             }
     )
     @GetMapping("/fetchAll")
-    public ResponseEntity<List<User>> getAllUsers(){
-        return ResponseEntity.ok(userServiceImpl.getAllUsers());
+    public ResponseEntity<List<UserDTO>> getAllUsers(){
+        List<User> users = userServiceImpl.getAllUsers();
+        List<UserDTO> userDTOs = UserMapper.usersToUserDTOs(users);
+        return ResponseEntity.ok(userDTOs);
     }
 
 
@@ -163,13 +166,7 @@ public class UserController {
         User user = userServiceImpl.getUserById(id);
 
         // Convert User entity to UserDTO
-        UserDTO userDTO = UserDTO.builder()
-                .username(user.getUsername())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .telephone(user.getTelephone())
-                .build();
+        UserDTO userDTO = UserMapper.mapToUserDto(user);
 
         return ResponseEntity.ok(userDTO);
     }
