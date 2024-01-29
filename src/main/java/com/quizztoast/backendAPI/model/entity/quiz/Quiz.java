@@ -36,7 +36,7 @@ public class Quiz {
     private String quiz_name;
 
     @Column(name= "rate" ,nullable = false,length = 255)
-    private int rate;
+    private double rate;
 
     @Column(name= "created_at" ,nullable = false)
     private LocalDateTime created_at;

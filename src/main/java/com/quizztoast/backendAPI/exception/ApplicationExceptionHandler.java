@@ -50,5 +50,18 @@ public class ApplicationExceptionHandler {
         errors.put("error", ex.getMessage());
         return errors;
     }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(FormatException.class)
+    public Map<String, Object> handleEmailOrUsernameAlreadyTakenException(FormatException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Validation Failed");
+        response.put("error", true);
 
+        Map<String, String> errorDetails = new HashMap<>();
+        errorDetails.put("fieldName", ex.getFieldName());
+        errorDetails.put("errorMessage", ex.getErrorMessage());
+
+        response.put("data", List.of(errorDetails));
+        return response;
+    }
 }
