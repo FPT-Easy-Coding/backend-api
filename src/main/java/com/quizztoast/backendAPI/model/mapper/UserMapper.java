@@ -21,9 +21,10 @@ public class UserMapper {
     }
 
     public static UserDTO mapUserDtoToAdmin(User user) {
+        System.out.println("Check this:"+user.getUserName());
         return UserDTO.builder()
                 .userId(user.getUserId())
-                .userName(user.getUsername())
+                .userName(user.getUserName())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())

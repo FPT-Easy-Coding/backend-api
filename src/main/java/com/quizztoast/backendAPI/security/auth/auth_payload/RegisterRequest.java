@@ -20,14 +20,14 @@ public class RegisterRequest {
     @Pattern(regexp = "^[a-zA-Z]+(?:\\s[a-zA-Z]+)*$", message = "Firstname must contain only letters and one space between words")
 
 
-    private String firstname;
+    private String firstName;
 
     @NotNull(message = "lastname cannot be null")
     @NotBlank(message = "lastname cannot be blank")
     @Pattern(regexp = "^[a-zA-Z]+(?:\\s[a-zA-Z]+)*$", message = "Firstname must contain only letters and one space between words")
 
 
-    private String lastname;
+    private String lastName;
 
     @NotNull(message = "email cannot be null")
     @NotBlank(message = "email cannot be blank")
@@ -66,9 +66,11 @@ public class RegisterRequest {
             regexp = "^[a-zA-Z0-9_\\-]+$",
             message = "username must only contain letters, numbers, hyphens and underscores"
     )
-    private String username;
+    private String userName;
 
     private final Role role = Role.USER;
 
     private boolean mfaEnabled;
+
+
 }
