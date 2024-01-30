@@ -4,7 +4,7 @@ import com.quizztoast.backendAPI.model.dto.CategoryDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.UserRepository;
-import com.quizztoast.backendAPI.service.CategoryService;
+import com.quizztoast.backendAPI.service.impl.CategoryServiceImpl;
 import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -44,8 +44,8 @@ public class AdminController {
     private UserRepository userRepository;
     @Autowired
     UserServiceImpl service;
-    @Autowired
-    CategoryService categoryService;
+
+    private CategoryServiceImpl categoryServiceImpl;
     /**
      * Retrieves information for administrative tasks using a GET request.
      *
@@ -410,8 +410,8 @@ public class AdminController {
     )
 
     @PostMapping("/create_category")
-    public Category createCategory(@Valid @RequestBody Category category){
-        return categoryService.saveCategory(category);
+    public Category createCategory(@Valid @RequestBody CategoryDTO category){
+        return categoryServiceImpl.saveCategory(category);
     }
 
 

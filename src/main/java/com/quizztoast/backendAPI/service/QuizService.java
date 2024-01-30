@@ -1,7 +1,7 @@
 package com.quizztoast.backendAPI.service;
 
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
-import com.quizztoast.backendAPI.model.payload.QuizRequest;
+import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

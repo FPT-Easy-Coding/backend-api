@@ -2,11 +2,12 @@ package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.model.mapper.UserMapper;
 import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
 import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.model.dto.QuizCreationRequestDTO;
 
-import com.quizztoast.backendAPI.service.CategoryService;
+import com.quizztoast.backendAPI.service.impl.CategoryServiceImpl;
 import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserServiceImpl userServiceImpl;
-
 
     /**
      * Change password using a Patch request.
@@ -102,7 +102,7 @@ public class UserController {
     @GetMapping("/fetchAll")
     public ResponseEntity<List<UserDTO>> getAllUsers(){
         List<User> users = userServiceImpl.getAllUsers();
-        List<UserDTO> userDTOs = CategoryService.UserMapper.usersToUserDTOs(users);
+        List<UserDTO> userDTOs = UserMapper.usersToUserDTOs(users);
         return ResponseEntity.ok(userDTOs);
     }
 
@@ -166,7 +166,7 @@ public class UserController {
         User user = userServiceImpl.getUserById(id);
 
         // Convert User entity to UserDTO
-        UserDTO userDTO = CategoryService.UserMapper.mapToUserDto(user);
+        UserDTO userDTO = UserMapper.mapToUserDto(user);
 
         return ResponseEntity.ok(userDTO);
     }

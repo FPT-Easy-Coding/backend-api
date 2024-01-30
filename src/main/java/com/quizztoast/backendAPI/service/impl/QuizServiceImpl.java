@@ -4,7 +4,7 @@ import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
-import com.quizztoast.backendAPI.model.payload.QuizRequest;
+import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import com.quizztoast.backendAPI.repository.QuizRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional

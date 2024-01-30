@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.payload;
+package com.quizztoast.backendAPI.model.payload.Request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -27,5 +27,4 @@ public class QuizRequest {
 
     private Double rate;
     private LocalDateTime create_at;
-
 }

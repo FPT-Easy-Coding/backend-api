@@ -1,8 +1,12 @@
 package com.quizztoast.backendAPI;
 
 
+import com.quizztoast.backendAPI.security.auth.auth_payload.RegisterRequest;
+import com.quizztoast.backendAPI.security.auth.auth_service.AuthenticationService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 
 @SpringBootApplication
@@ -21,7 +25,7 @@ public class BackendApiApplication {
 //                    .lastname("Demo")
 //                    .email("admin2@gmail.com")
 //                    .password("password")
-//                    .role(ADMIN)
+//
 //                    .build();
 //            System.out.println("Admin token: " + authenticationService.register(admin).getAccessToken());
 //        };
