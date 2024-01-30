@@ -6,6 +6,7 @@ import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.UserMapper;
 
+import com.quizztoast.backendAPI.model.payload.Request.CategoryRequest;
 import com.quizztoast.backendAPI.service.impl.CategoryServiceImpl;
 import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -393,14 +394,14 @@ public class AdminController {
             responses = {
                     @ApiResponse(
                             description = "Success. Resource deleted successfully.",
-                            responseCode = "200", content = @Content(
+                            responseCode = "200",
+                            content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CategoryDTO.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                                "category_id": 3,
-                                                "category_name": "Software Testing"
+                                                "categoryName": "Success"
                                             }"""
                             )
                     )
@@ -411,9 +412,25 @@ public class AdminController {
                             content = @Content
                     ),
                     @ApiResponse(
-                            description = "",
+                            description = "Bad Request",
                             responseCode = "400",
-                            content = @Content
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CategoryDTO.class),
+                                    examples = @ExampleObject(
+                                            value = """
+                                                    {
+                                                        "data": [
+                                                            {
+                                                                "fieldName": "Category_name",
+                                                                "errorMessage": "Category_name is exist"
+                                                            }
+                                                        ],
+                                                        "message": "Validation Failed",
+                                                        "error": true
+                                                    }"""
+                                    )
+                            )
                     )
 
             }
@@ -421,7 +438,7 @@ public class AdminController {
     )
 
     @PostMapping("/create_category")
-    public Category createCategory(@Valid @RequestBody CategoryDTO category){
+    public CategoryDTO createCategory(@Valid @RequestBody CategoryRequest category){
         return categoryServiceImpl.saveCategory(category);
     }
 

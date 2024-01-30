@@ -18,7 +18,4 @@ public class Category {
     private int category_id;
     @Column(name= "category_name" ,nullable = false,length = 50)
     private String category_name;
-
-
-
 }
