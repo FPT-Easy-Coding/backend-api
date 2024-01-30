@@ -1,5 +1,6 @@
 package com.quizztoast.backendAPI.model.payload.Request;
 
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -24,7 +26,8 @@ public class QuizRequest {
     @NotNull(message = "quiz_name cannot be null")
     @NotBlank(message = "quiz_name cannot be blank")
     private String quiz_name;
-
+    private List<QuizQuestionRequest> list_question;
     private Double rate;
     private LocalDateTime create_at;
+
 }

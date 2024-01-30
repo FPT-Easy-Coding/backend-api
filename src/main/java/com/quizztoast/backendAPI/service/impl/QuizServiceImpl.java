@@ -56,12 +56,13 @@ public class QuizServiceImpl implements QuizService {
         if (!categoryRepository.existsById(quizRequest.getCategory_id())) {
             throw new FormatException("Category_id","Category_id not found");
         }
-        // Create Quiz object from QuizDTO
+        // Create Quiz object from quizRequest
         Quiz quiz = new Quiz();
         quiz.setUser(userRepository.findById(quizRequest.getUser_id()).orElse(null));
         quiz.setCategory(categoryRepository.findById(quizRequest.getCategory_id()).orElse(null));
         quiz.setQuiz_name(quizRequest.getQuiz_name());
         quiz.setRate(quizRequest.getRate());
+        quiz.setQuiz_ques_id(quizRequest.getList_question().size());
         quiz.setCreated_at(LocalDateTime.now());
 
         // Save the Quiz object to the Quiz table

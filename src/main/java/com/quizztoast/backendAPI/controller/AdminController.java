@@ -437,10 +437,14 @@ public class AdminController {
 
     )
 
-    @PostMapping("/create_category")
+    @PostMapping("/create-category")
     public CategoryDTO createCategory(@Valid @RequestBody CategoryRequest category){
         return categoryServiceImpl.saveCategory(category);
     }
 
+    @GetMapping("get-all-category")
+    public List<Category> GetAllCategory(){
+        return categoryServiceImpl.getAllCategory();
+    }
 
 }

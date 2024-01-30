@@ -12,10 +12,13 @@ public class QuizMapper {
 
     public static QuizDTO mapQuizDTOToUser(Quiz quiz){
         return QuizDTO.builder()
+                .user_first_name(quiz.getUser().getFirstName())
+                .user_last_name(quiz.getUser().getLastName())
                 .user_id(quiz.getUser().getUserId())
                 .quiz_name(quiz.getQuiz_name())
                 .category_id(quiz.getCategory().getCategory_id())
                 .rate(quiz.getRate())
+                .number_of_questions(quiz.getQuiz_ques_id())
                 .create_at(quiz.getCreated_at())
                 .build();
     }
