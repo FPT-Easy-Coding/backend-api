@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.quizztoast.backendAPI.model.mapper.QuizMapper.quizToQuizDTO;
+
 @Service
 @Transactional
 public class QuizServiceImpl implements QuizService {
@@ -34,7 +36,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public List<QuizDTO> getAllQuiz() {
         List<Quiz> listQuiz = quizRepository.findAll();
-        List<QuizDTO> quizDTOList = QuizMapper.quizToQuizDTO(listQuiz);
+        List<QuizDTO> quizDTOList = quizToQuizDTO(listQuiz);
         return  quizDTOList;
     }
 
@@ -109,5 +111,15 @@ public class QuizServiceImpl implements QuizService {
         QuizDTO quizDTo = QuizMapper.mapQuizDTOToUser(quiz);
         // Returns the QuizDTO object after creation
         return ResponseEntity.ok(quizDTo);
+    }
+
+    @Override
+    public List<QuizDTO> GetByContent(String content) {
+        if(quizRepository.findByContent(content).isEmpty())
+        {
+            throw  new FormatException("quiz_name","quiz_name not exist");
+        }
+        List<QuizDTO> listQuizDTO =quizToQuizDTO(quizRepository.findByContent(content));
+        return listQuizDTO;
     }
 }
