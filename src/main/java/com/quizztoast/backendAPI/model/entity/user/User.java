@@ -29,7 +29,7 @@ public class User implements UserDetails {
     private Long userId;
 
     @Column(name = "username")
-    private String username;
+    private String userName;
 
     @Column(name = "password")
     private String password;
@@ -78,8 +78,8 @@ public class User implements UserDetails {
         return role.getAuthorities();
     }
 
-    public User(String username, String password, String email, Role role) {
-        this.username = username;
+    public User(String userName, String password, String email, Role role) {
+        this.userName = userName;
         this.password = password;
         this.email = email;
         this.role = role;
@@ -111,5 +111,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }

@@ -25,9 +25,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     User findByUserId(Long userId);
     User findUserByEmail(String email);
-    Optional<User> findByUsername(String username);
+    Optional<User> findByUserName(String userName);
 
     @Modifying
-    @Query("UPDATE User u SET u.provider = ?2 WHERE u.username = ?1")
-    void updateAuthenticationType(String username, Provider provider);
+    @Query("UPDATE User u SET u.provider = ?2 WHERE u.userName = ?1")
+    void updateAuthenticationType(String userName, Provider provider);
 }

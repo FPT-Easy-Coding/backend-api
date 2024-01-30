@@ -52,10 +52,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(RegisterRequest user) {
         User newUser = new User();
-        newUser.setFirstName(user.getFirstname());
-        newUser.setLastName(user.getLastname());
+        newUser.setFirstName(user.getFirstName());
+        newUser.setLastName(user.getLastName());
         newUser.setEmail(user.getEmail());
-        newUser.setUsername(user.getUsername());
+        newUser.setUserName(user.getUserName());
         newUser.setTelephone(user.getTelephone());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setRole(user.getRole());
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User addNewUser(User user) {
         User newUser = new User();
-        newUser.setUsername(user.getUsername());
+        newUser.setUserName(user.getUsername());
         newUser.setFirstName(user.getFirstName());
         newUser.setLastName(user.getLastName());
         newUser.setEmail(user.getEmail());
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean doesUsernameExist(String username) {
-        Optional<User> existingUser = userRepository.findByUsername(username);
+        Optional<User> existingUser = userRepository.findByUserName(username);
         return existingUser.isPresent();
     }
 
