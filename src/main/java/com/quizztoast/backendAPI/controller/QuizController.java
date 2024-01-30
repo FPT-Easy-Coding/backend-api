@@ -2,6 +2,8 @@ package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
 import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
 import com.quizztoast.backendAPI.service.impl.QuizServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -332,4 +334,99 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @Requ
 {
     return quizServiceImpl.UpdateQuiz(quiz_id,quizRequest);
 }
+
+    /**
+     * get Quiz and answer by name  using a Post request.
+     *
+     * @return  Quiz .
+     */
+    @Operation(
+            description = "Get Quiz By Content",
+            summary = "",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns Quiz By Name QuizQuestion .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            [
+                                                                {
+                                                                    "user_id": 252,
+                                                                    "category_id": 1,
+                                                                    "quiz_name": "string",
+                                                                    "rate": 0.0,
+                                                                    "create_at": "2024-01-30T12:46:39.926883"
+                                                                }
+                                                            ]"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request" ,
+
+                            responseCode = "400",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "questionContent",
+                                                                        "errorMessage": "questionContent cannot be blank"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
+                                            )
+                                    }
+
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "quiz_name",
+                                                                        "errorMessage": "quiz_name not exist"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
+                                            )
+                                    }
+                            )
+
+                    )
+
+            }
+    )
+    @GetMapping("getquiz/{content}")
+    public List<QuizDTO> findByContent(@PathVariable String content)
+    {
+        return quizServiceImpl.GetByContent(content);
+    }
 }
