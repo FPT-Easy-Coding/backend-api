@@ -15,4 +15,6 @@ public interface QuizQuestionService {
      List<QuizQuestion> getAllQuiz();
     List<QuizQuestion> GetByContent(String content);
     ResponseEntity<QuizQuestion> UpdateQuizQuestion(int quizquestionId, QuizQuestionRequest quizRequest);
+
+    ResponseEntity<String> deleteQuizById(Long quizquestionId);
 }

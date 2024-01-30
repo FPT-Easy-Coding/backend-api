@@ -86,7 +86,7 @@ public class QuizQuestionController {
                             content = @Content
                     ),
                     @ApiResponse(
-                            description = "",
+                            description = "BadRequest",
                             responseCode = "404",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
                                     ,
@@ -115,6 +115,11 @@ public class QuizQuestionController {
 
         return quizQuestionServiceImpl.createQuizQuestionAndAnswers(Quizrequest);
     }
+    /**
+     * get all QuizQuestion and answer  using a Post request.
+     *
+     * @return  QuizQuestion and answer .
+     */
     @Operation(
             description = "Get All QuizQuestion",
             summary = "",
@@ -197,6 +202,11 @@ public class QuizQuestionController {
     public List<QuizQuestion> getAllQuizQues(){
         return quizQuestionServiceImpl.getAllQuiz();
     }
+    /**
+     * get QuizQuestion and answer by name  using a Post request.
+     *
+     * @return  QuizQuestion and answer .
+     */
     @Operation(
             description = "Get All QuizQuestion",
             summary = "",
@@ -252,10 +262,27 @@ public class QuizQuestionController {
                             )
                     ),
                     @ApiResponse(
-                            description = ".",
+                            description = "Bad Request" ,
+
                             responseCode = "400",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "questionContent",
+                                                                        "errorMessage": "questionContent cannot be blank"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
+                                            )
+                                    }
+
                             )
                     ),
                     @ApiResponse(
@@ -298,11 +325,151 @@ public class QuizQuestionController {
     {
         return quizQuestionServiceImpl.GetByContent(content);
     }
+    /**
+     * UPdate QuizQuestion and answer using a Post request.
+     *
+     * @return  QuizQuestion and answer .
+     */
+    @Operation(
+            description = "Update QuizQuestion",
+            summary = "",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns Quiz By Name QuizQuestion .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                "quiz_question_id": 3,
+                                                                "created_at": "2024-01-30T13:16:21.040623",
+                                                                "content": "helloEveryone",
+                                                                "category_id": {
+                                                                    "category_id": 1,
+                                                                    "category_name": "string"
+                                                                }
+                                                            }"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = ".",
+                            responseCode = "400",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
 
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                  "data": [
+                                                                      {
+                                                                          "fieldName": "quizquestionId",
+                                                                          "errorMessage": "quizquestionId not exist"
+                                                                      }
+                                                                  ],
+                                                                  "message": "Validation Failed",
+                                                                  "error": true
+                                                              }"""
+                                            )
+                                    }
+                            )
+
+                    )
+
+            }
+    )
     @PutMapping("updatequizquestion/{quizquestion_id}")
     public ResponseEntity<QuizQuestion> UpdateQuizQuestion(@PathVariable int quizquestion_id,@Valid @RequestBody QuizQuestionRequest quizRequest)
     {
         return quizQuestionServiceImpl.UpdateQuizQuestion(quizquestion_id,quizRequest);
     }
 
+    /**
+     * UPdate QuizQuestion and answer using a Post request.
+     *
+     * @return  QuizQuestion and answer .
+     */
+    @Operation(
+            description = "Delete QuizQuestion",
+            summary = "",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns Quiz By Name QuizQuestion .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            QuizQuestion deleted successfully"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = ".",
+                            responseCode = "400",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "quizquestionId",
+                                                                        "errorMessage": "quizquestionId not exist"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
+                                            )
+                                    }
+                            )
+
+                    )
+
+            }
+    )
+    @DeleteMapping("delete/{quizquestionId}")
+    public ResponseEntity<String> deleteQuiz(@PathVariable Long quizquestionId)
+    {
+        return quizQuestionServiceImpl.deleteQuizById(quizquestionId);
+    }
 }

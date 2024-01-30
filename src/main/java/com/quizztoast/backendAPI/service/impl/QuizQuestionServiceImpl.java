@@ -101,26 +101,63 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public ResponseEntity<QuizQuestion> UpdateQuizQuestion(int quizquestionId, QuizQuestionRequest quizRequest) {
+    public ResponseEntity<QuizQuestion> UpdateQuizQuestion(int quizquestionId,@Valid @RequestBody QuizQuestionRequest quizRequest) {
+
+
         // Find the quiz question by ID
         Optional<QuizQuestion> optionalQuizQuestion = quizQuestionRepository.findById((long) quizquestionId);
 
         if (optionalQuizQuestion.isPresent()) {
             QuizQuestion quizQuestion = optionalQuizQuestion.get();
+            //check category_id
+            if(categoryRepository.findById(quizRequest.getCategoryId()).isEmpty())
+            {
+                throw  new FormatException("CategoryId","CategoryId not exist");
+            }
+            Category category = categoryRepository.findCategoryById(quizRequest.getCategoryId());
+           try {
+               // Update quiz question fields
+               quizQuestion.setContent(quizRequest.getQuestionContent());
+               quizQuestion.setCategory_id(category);
+               // Save the updated quiz question
+               quizQuestionRepository.save(quizQuestion);
 
-            // Update quiz question fields
-            quizQuestion.setContent(quizRequest.getQuestionContent());
-            // Update other fields if needed
-
-            // Save the updated quiz question
-            quizQuestionRepository.save(quizQuestion);
+           }catch (Exception e)
+           {
+               System.out.println(e);
+           }
 
             // Return the updated quiz question
             return ResponseEntity.ok(quizQuestion);
         } else {
             // If quiz question with the given ID is not found, return not found status
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                throw  new FormatException("quizquestionId","quizquestionId not exist");
+
         }
 
+    }
+
+    @Override
+    public ResponseEntity<String> deleteQuizById(Long quizquestionId) {
+
+        // Find the quiz question by ID
+        Optional<QuizQuestion> optionalQuizQuestion = quizQuestionRepository.findById((long) quizquestionId);
+        if (optionalQuizQuestion.isPresent()) {
+            try{
+                //delete quizanswer
+                quizAnswerRepository.deleteByQuizQuestionId(quizquestionId);
+                //delete quizquestion
+                quizQuestionRepository.deleteQuestionById(quizquestionId);
+
+                return ResponseEntity.ok().body("QuizQuestion");
+            }catch (Exception e)
+            {
+                System.out.println(e);
+                return null;
+            }
+
+        }else {
+            throw  new FormatException("quizquestionId","quizquestionId not exist");
+        }
     }
 }
