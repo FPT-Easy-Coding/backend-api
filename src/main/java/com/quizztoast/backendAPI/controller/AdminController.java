@@ -1,9 +1,11 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.CategoryDTO;
+import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.entity.user.User;
-import com.quizztoast.backendAPI.repository.UserRepository;
+import com.quizztoast.backendAPI.model.mapper.UserMapper;
+
 import com.quizztoast.backendAPI.service.impl.CategoryServiceImpl;
 import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,19 +16,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import lombok.AllArgsConstructor;
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 /**
- * The {@code AdminController} class defines RESTful endpoints for performing administrative operations.
+ * The {@code AdminController} class defines REST API endpoints for performing administrative operations.
  * These operations are restricted to users with the 'ADMIN' role and specific authorities.
  * The controller provides endpoints for GET, POST, PUT, and DELETE actions related to administrative tasks.
  *
@@ -36,14 +38,12 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("api/v1/admin")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
+@AllArgsConstructor
 @Tag(name = "Admin")
 public class AdminController {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    UserServiceImpl service;
+    private UserServiceImpl userServiceImpl;
 
     private CategoryServiceImpl categoryServiceImpl;
     /**
@@ -68,12 +68,13 @@ public class AdminController {
                     )
             }
     )
-    @GetMapping
-    @PreAuthorize("hasAuthority('admin:read')")
+    @GetMapping("/users-dashboard")
+//    @PreAuthorize("hasAuthority('admin:read')")
     public ResponseEntity<?> get() {
         try {
-            List<User> userList = userRepository.findAll();
-            return ResponseEntity.ok(userList);
+            List<User> users = userServiceImpl.getAllUsers();
+            List<UserDTO> userDTOs = UserMapper.usersToUserDTOs(users);
+            return ResponseEntity.ok(userDTOs);
         } catch (Exception e) {
             // Handle other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
@@ -143,27 +144,24 @@ public class AdminController {
                     content = @Content(schema = @Schema(implementation = User.class))
             )
     )
-    /**
-     * Handles administrative tasks using a POST request.
-     *
-     * @return A message indicating the success of the POST operation.
-     */
-    @PostMapping
-    @PreAuthorize("hasAuthority('admin:create')")
-    public ResponseEntity<?> createResource(@Valid @RequestBody User newUser) {
+
+    @PostMapping("users-dashboard")
+//    @PreAuthorize("hasAuthority('admin:create')")
+    public ResponseEntity<?> createResource(@Valid @RequestBody User user) {
         try {
             // Check for duplicate email or username
-            if (service.doesEmailExist(newUser.getEmail())) {
+            if (userServiceImpl.doesEmailExist(user.getEmail())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleErrorResponse(HttpStatus.CONFLICT.value(), "Email already exists."));
             }
-            if (service.doesUsernameExist(newUser.getUsername())) {
+            if (userServiceImpl.doesUsernameExist(user.getUsername())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleErrorResponse(HttpStatus.CONFLICT.value(), "Username already exists."));
             }
             // Validate other business rules if needed
 
             // Actual implementation for creating a new resource can be added here
-            service.addNewUser(newUser);
-            return ResponseEntity.ok(newUser);
+            User newUser = userServiceImpl.addNewUser(user);
+            UserDTO userDTO = UserMapper.mapUserDtoToAdmin(newUser);
+            return ResponseEntity.ok(userDTO);
         } catch (ValidationException e) {
             // Handle validation errors
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
@@ -195,10 +193,11 @@ public class AdminController {
                             content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"statusCode\": 404,\n" +
-                                                            "    \"message\": \"User not found with ID: 1\"\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "statusCode": 404,
+                                                                "message": "User not found with ID: 1"
+                                                            }"""
                                             )
                                     })
                     ),
@@ -208,9 +207,10 @@ public class AdminController {
                             content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"email\": \"Invalid email address\"\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "email": "Invalid email address"
+                                                            }"""
                                             )
                                     })
                     ),
@@ -225,10 +225,11 @@ public class AdminController {
                             content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"statusCode\": 422,\n" +
-                                                            "    \"message\": \"Conflict: Email already exists.\"\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "statusCode": 422,
+                                                                "message": "Conflict: Email already exists."
+                                                            }"""
                                             )
                                     })
                     )
@@ -238,88 +239,97 @@ public class AdminController {
             )
     )
 
-    /**
-     * Get information using a PUT request.
-     *
-     * @return A message indicating the success of the PUT operation.
-     */
-    @PutMapping("/{userId}")
-    @PreAuthorize("hasAuthority('admin:update')")
-    public ResponseEntity<?> put(@PathVariable Long userId, @Valid @RequestBody User updatedUser) {
-        try {
-            // Validate email format
-            if (!isValidEmail(updatedUser.getEmail())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new SimpleErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid email address."));
-            }
+//    @PutMapping("/{userId}")
+//    @PreAuthorize("hasAuthority('admin:update')")
+//    public ResponseEntity<?> put(@PathVariable Long userId, @Valid @RequestBody User updatedUser) {
+//        try {
+//            // Validate email format
+//            if (!isValidEmail(updatedUser.getEmail())) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                        .body(new SimpleErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid email address."));
+//            }
+//
+//            // Validate password length
+//            if (updatedUser.getPassword() != null && updatedUser.getPassword().length() < 6) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                        .body(new SimpleErrorResponse(HttpStatus.BAD_REQUEST.value(), "Password must be at least 6 characters long."));
+//            }
+//
+//            Optional<User> existingUserOptional = userRepository.findById(userId);
+//
+//            if (existingUserOptional.isPresent()) {
+//                User existingUser = existingUserOptional.get();
+//
+//                // Check if the updated username or email already exists
+//                if (!existingUser.getUsername().equals(updatedUser.getUsername()) && userServiceImpl.doesUsernameExist(updatedUser.getUsername())) {
+//                    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+//                            .body(new SimpleErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Conflict: Username already exists."));
+//                }
+//
+//                if (!existingUser.getEmail().equals(updatedUser.getEmail()) && userServiceImpl.doesEmailExist(updatedUser.getEmail())) {
+//                    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+//                            .body(new SimpleErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Conflict: Email already exists."));
+//                }
+//
+//                // Update the existing user with the provided data
+//                existingUser.setUsername(updatedUser.getUsername()); // Ensure correct username update
+//                existingUser.setPassword(updatedUser.getPassword());
+//                existingUser.setFirstName(updatedUser.getFirstName());
+//                existingUser.setLastName(updatedUser.getLastName());
+//                existingUser.setEmail(updatedUser.getEmail()); // Ensure correct email update
+//                existingUser.setTelephone(updatedUser.getTelephone());
+//                existingUser.setBanned(updatedUser.isBanned());
+//                existingUser.setRole(updatedUser.getRole());
+//                existingUser.setPremium(updatedUser.isPremium());
+//
+//                // Save the updated user
+//                userRepository.save(existingUser);
+//
+//                return ResponseEntity.ok(existingUser);
+//            } else {
+//                // User with the provided ID not found
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body(new SimpleErrorResponse(HttpStatus.NOT_FOUND.value(), "User not found with ID: " + userId));
+//            }
+//        } catch (ValidationException e) {
+//            // Handle validation errors (e.g., invalid data provided)
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new SimpleErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+//        } catch (AccessDeniedException e) {
+//            // Handle access denied errors (e.g., user does not have sufficient privileges)
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+//                    .body(new SimpleErrorResponse(HttpStatus.FORBIDDEN.value(), e.getMessage()));
+//        } catch (DataIntegrityViolationException e) {
+//            // Handle other conflicts or exceptions
+//            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+//                    .body(new SimpleErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Conflict: " + e.getMessage()));
+//        } catch (Exception e) {
+//            // Handle other exceptions
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Server Error: " + e.getMessage()));
+//        }
+//    }
 
-            // Validate password length
-            if (updatedUser.getPassword() != null && updatedUser.getPassword().length() < 6) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new SimpleErrorResponse(HttpStatus.BAD_REQUEST.value(), "Password must be at least 6 characters long."));
-            }
-
-            Optional<User> existingUserOptional = userRepository.findById(userId);
-
-            if (existingUserOptional.isPresent()) {
-                User existingUser = existingUserOptional.get();
-
-                // Check if the updated username or email already exists
-                if (!existingUser.getUsername().equals(updatedUser.getUsername()) && service.doesUsernameExist(updatedUser.getUsername())) {
-                    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                            .body(new SimpleErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Conflict: Username already exists."));
-                }
-
-                if (!existingUser.getEmail().equals(updatedUser.getEmail()) && service.doesEmailExist(updatedUser.getEmail())) {
-                    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                            .body(new SimpleErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Conflict: Email already exists."));
-                }
-
-                // Update the existing user with the provided data
-                existingUser.setUsername(updatedUser.getUsername()); // Ensure correct username update
-                existingUser.setPassword(updatedUser.getPassword());
-                existingUser.setFirstName(updatedUser.getFirstName());
-                existingUser.setLastName(updatedUser.getLastName());
-                existingUser.setEmail(updatedUser.getEmail()); // Ensure correct email update
-                existingUser.setTelephone(updatedUser.getTelephone());
-                existingUser.setBanned(updatedUser.isBanned());
-                existingUser.setRole(updatedUser.getRole());
-                existingUser.setPremium(updatedUser.isPremium());
-
-                // Save the updated user
-                userRepository.save(existingUser);
-
-                return ResponseEntity.ok(existingUser);
-            } else {
-                // User with the provided ID not found
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new SimpleErrorResponse(HttpStatus.NOT_FOUND.value(), "User not found with ID: " + userId));
-            }
-        } catch (ValidationException e) {
-            // Handle validation errors (e.g., invalid data provided)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new SimpleErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
-        } catch (AccessDeniedException e) {
-            // Handle access denied errors (e.g., user does not have sufficient privileges)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new SimpleErrorResponse(HttpStatus.FORBIDDEN.value(), e.getMessage()));
-        } catch (DataIntegrityViolationException e) {
-            // Handle other conflicts or exceptions
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body(new SimpleErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Conflict: " + e.getMessage()));
-        } catch (Exception e) {
-            // Handle other exceptions
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Server Error: " + e.getMessage()));
-        }
+//    private boolean isValidEmail(String email) {
+//        // Use your preferred email validation logic or library
+//        // For simplicity, a basic regex pattern is used here
+//        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+//        return email.matches(emailRegex);
+//    }
+    @GetMapping("/users-dashboard/{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
+        User user = userServiceImpl.getUserById(userId);
+        UserDTO userDTO = UserMapper.mapUserDtoToAdmin(user);
+        return ResponseEntity.ok(userDTO);
     }
 
-    private boolean isValidEmail(String email) {
-        // Use your preferred email validation logic or library
-        // For simplicity, a basic regex pattern is used here
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        return email.matches(emailRegex);
+    @PutMapping("/users-dashboard/{userId}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @RequestBody User user) {
+        User updatedUser = userServiceImpl.updateUser(userId, user);
+        UserDTO userDTODTO = UserMapper.mapUserDtoToAdmin(updatedUser);
+        return ResponseEntity.ok(userDTODTO);
     }
+
     /**
      * Deletes administrative records using a DELETE request.
      *
@@ -355,12 +365,12 @@ public class AdminController {
 
     )
 
-    @DeleteMapping
-    @PreAuthorize("hasAuthority('admin:delete')")
-    public ResponseEntity<?> delete(@RequestParam int userId) {
+    @DeleteMapping("/users-dashboard/{userId}")
+//    @PreAuthorize("hasAuthority('admin:delete')")
+    public ResponseEntity<?> delete(@PathVariable("userId") Long userId) {
         try {
-            if (service.doesUserExist(userId)) {
-                service.deleteUser(userId);
+            if (userServiceImpl.doesUserExist(userId)) {
+                userServiceImpl.deleteUser(userId);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body("Delete Successful!");
             }
             else {
@@ -387,10 +397,11 @@ public class AdminController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = CategoryDTO.class),
                             examples = @ExampleObject(
-                                    value = "{\n" +
-                                            "    \"category_id\": 3,\n" +
-                                            "    \"category_name\": \"Software Testing\"\n" +
-                                            "}"
+                                    value = """
+                                            {
+                                                "category_id": 3,
+                                                "category_name": "Software Testing"
+                                            }"""
                             )
                     )
                     ),

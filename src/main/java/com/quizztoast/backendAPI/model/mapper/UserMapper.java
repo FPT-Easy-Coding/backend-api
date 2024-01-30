@@ -10,7 +10,7 @@ public class UserMapper {
     // Convert User JPA Entity into UserDto
     public static UserDTO mapToUserDto(User user) {
         return UserDTO.builder()
-                .username(user.getUsername())
+                .userName(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
@@ -22,7 +22,8 @@ public class UserMapper {
 
     public static UserDTO mapUserDtoToAdmin(User user) {
         return UserDTO.builder()
-                .username(user.getUsername())
+                .userId(user.getUserId())
+                .userName(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())

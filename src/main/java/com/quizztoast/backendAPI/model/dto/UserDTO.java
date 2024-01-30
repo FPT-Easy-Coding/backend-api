@@ -1,7 +1,9 @@
 package com.quizztoast.backendAPI.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.quizztoast.backendAPI.model.entity.user.Role;
 import lombok.*;
+
 
 import java.util.Date;
 
@@ -10,7 +12,9 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class UserDTO {
-    private String username;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long userId;
+    private String userName;
     private String firstName;
     private String lastName;
     private String email;
@@ -18,8 +22,9 @@ public class UserDTO {
     private Role Role;
     private boolean isBanned;
     private boolean isPremium;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Date createdAt;
 
-    public UserDTO(String username, String firstName, String lastName, String email, String telephone) {
+    public UserDTO(String userName, String firstName, String lastName, String email, String telephone) {
     }
 }
