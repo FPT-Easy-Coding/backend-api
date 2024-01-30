@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 import static com.quizztoast.backendAPI.model.mapper.CategoryMapper.MapCategoryReqToCategory;
 import static com.quizztoast.backendAPI.model.mapper.CategoryMapper.MapCategoryReqToDTO;
 
@@ -57,4 +59,8 @@ public class CategoryServiceImpl implements CategoryService {
         return category;
     }
 
+    @Override
+    public List<Category> getAllCategory() {
+       return categoryRepository.findAll();
+    }
 }

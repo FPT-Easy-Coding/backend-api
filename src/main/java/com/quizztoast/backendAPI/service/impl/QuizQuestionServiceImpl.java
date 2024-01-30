@@ -149,7 +149,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                 //delete quizquestion
                 quizQuestionRepository.deleteQuestionById(quizquestionId);
 
-                return ResponseEntity.ok().body("QuizQuestion");
+                return ResponseEntity.ok().body("Delete Succesfull QuizQuestion ");
             }catch (Exception e)
             {
                 System.out.println(e);
