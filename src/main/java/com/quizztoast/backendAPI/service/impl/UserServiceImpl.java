@@ -144,6 +144,7 @@ public class UserServiceImpl implements UserService {
         if (existingUser == null) {
             throw new EntityNotFoundException("User not found with id: " + userId);
         }
+        existingUser.setUserName(user.getUserName());
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());
         existingUser.setEmail(user.getEmail());

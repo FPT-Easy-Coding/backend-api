@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.security.auth.auth_payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.quizztoast.backendAPI.model.entity.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class AuthenticationResponse {
     private boolean mfaEnabled;
     private String secretImageUri;
     private String error;
-
+    private Role role;
     public AuthenticationResponse(String err) {
         this.error = err;
     }

@@ -96,6 +96,7 @@ public class AuthenticationService {
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken)
                     .userId(user.getUserId())
+                    .role(user.getRole())
                     .mfaEnabled(false)
                     .build();
 
