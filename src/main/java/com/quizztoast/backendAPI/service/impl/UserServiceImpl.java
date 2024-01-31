@@ -3,6 +3,7 @@ package com.quizztoast.backendAPI.service.impl;
 import com.quizztoast.backendAPI.model.entity.user.Provider;
 import com.quizztoast.backendAPI.model.entity.user.User;
 
+import com.quizztoast.backendAPI.repository.TokenRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
 import com.quizztoast.backendAPI.security.auth.auth_payload.RegisterRequest;
@@ -27,11 +28,13 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository ) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, TokenRepository tokenRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.tokenRepository = tokenRepository;
     }
 
     @Override
@@ -103,6 +106,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
+        tokenRepository.deleteTokensByUserId(userId);
         userRepository.deleteById( userId);
     }
 
