@@ -98,6 +98,7 @@ public class AuthenticationService {
                     .userId(user.getUserId())
                     .role(user.getRole())
                     .mfaEnabled(false)
+                    .isBanned(user.isBanned())
                     .build();
 
     }

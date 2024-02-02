@@ -17,6 +17,7 @@ public class UserMapper {
                 .telephone(user.getTelephone())
                 .isBanned(user.isBanned())
                 .isPremium(user.isPremium())
+                .Role(user.getRole())
                 .build();
     }
 

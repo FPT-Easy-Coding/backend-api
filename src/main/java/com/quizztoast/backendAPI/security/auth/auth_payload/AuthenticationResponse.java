@@ -20,9 +20,7 @@ public class AuthenticationResponse {
     private String refreshToken;
     private boolean mfaEnabled;
     private String secretImageUri;
-    private String error;
+    private boolean isBanned;
     private Role role;
-    public AuthenticationResponse(String err) {
-        this.error = err;
-    }
+
 }
