@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 public class QuizAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long quiz_answer_id;
+    @Column(name = "quiz_answer_id", nullable = false)
+    private long quizAnswerId;
 
     @ManyToOne
     @JoinColumn(name = "quiz_question_id")
@@ -27,9 +28,9 @@ public class QuizAnswer {
     private String content;
 
     @Column(name = "is_correct", nullable = false)
-    private Boolean is_correct;
+    private Boolean isCorrect;
 
     @Column(name= "created_at" ,nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
 }

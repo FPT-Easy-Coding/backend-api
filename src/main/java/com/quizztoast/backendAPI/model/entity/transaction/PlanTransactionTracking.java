@@ -18,18 +18,18 @@ import java.time.LocalDate;
 public class PlanTransactionTracking {
 
     @EmbeddedId
-    private PlanTranid id;
+    private PlanTrackId id;
 
     // Constructors, getters, setters, etc.
 
     @Embeddable
-    public class PlanTranid implements Serializable {
+    public static class PlanTrackId implements Serializable {
 
         @ManyToOne
         @JoinColumn(name = "transaction_id")
-        private Transaction transaction_id;
+        private Transaction transactionId;
 
-        @Column(name = "date" )
+        @Column(name = "date")
         private LocalDate date;
 
         // Constructors, getters, setters, etc.

@@ -14,30 +14,31 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "transaction")
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int transaction_id;
+    @Column(name = "transaction_id", nullable = false)
+    private int transactionId;
 
-  @ManyToOne
-  @JoinColumn(name = "plan_id")
-    private Plan plan_id;
+    @ManyToOne
+    @JoinColumn(name = "plan_id")
+    private Plan planId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user_id;
+    private User userId;
 
-@ManyToOne
-@JoinColumn(name = "payment_id")
-    private Payment payment_id;
+    @ManyToOne
+    @JoinColumn(name = "payment_id")
+    private Payment paymentId;
 
-    @Column(name = "created_id", nullable = false)
-    private LocalDate created_id;
+    @Column(name = "created_at", nullable = false)
+    private LocalDate createdAt;
 
     @Column(name = "expired_at", nullable = false)
-    private LocalDate expired_at;
+    private LocalDate expiredAt;
 
     @Column(name = "status", nullable = false, length = 255)
     private String status;

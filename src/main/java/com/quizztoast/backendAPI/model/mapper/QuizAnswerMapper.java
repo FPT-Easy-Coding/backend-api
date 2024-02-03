@@ -18,8 +18,8 @@ public class QuizAnswerMapper {
     public static List<QuizAnswerDTO> ListQuizAnswerReqToDTO(List<QuizAnswerRequest> quiz)
     {
         List<QuizAnswerDTO> quizDTOList = new ArrayList<>();
-        for (QuizAnswerRequest quizset : quiz) {
-            quizDTOList.add(MapQuizAnswerRequestToDTO(quizset));
+        for (QuizAnswerRequest quizSet : quiz) {
+            quizDTOList.add(MapQuizAnswerRequestToDTO(quizSet));
         }
         return quizDTOList;
     }

@@ -12,17 +12,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "image")
 public class Image {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
- private int image_id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "image_id", nullable = false)
+    private int imageId;
+
     @OneToOne
     @JoinColumn(name = "user_id")
-private User source_id;
+    private User sourceId;
 
-    @Column(name = "webp_img" ,length = 255)
-private String webp_img;
+    @Column(name = "webp_img", length = 255)
+    private String webpImg;
 
 
 }

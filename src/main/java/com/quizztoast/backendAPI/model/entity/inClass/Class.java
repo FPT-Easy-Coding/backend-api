@@ -13,20 +13,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "class")
 public class Class {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int class_id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "class_id", nullable = false)
+    private int classId;
 
-  @Column(name= "user_id" ,nullable = false)
-  private Long user_id;
-  @Column(name= "class_name" ,nullable = false,length = 255)
-  private String class_name;
-  @Column(name= "slug_code" ,nullable = false,unique = true,length = 255)
-  private String slug_code;
-  @Column(name= "created_at" ,nullable = false)
-  private LocalDateTime created_at;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(name = "class_name", nullable = false, length = 255)
+    private String className;
+
+    @Column(name = "slug_code", nullable = false, unique = true, length = 255)
+    private String slugCode;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
 
 }

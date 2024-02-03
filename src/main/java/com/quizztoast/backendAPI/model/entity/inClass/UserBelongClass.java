@@ -15,7 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "user_belong_class")
 public class UserBelongClass {
 
     @EmbeddedId
@@ -23,11 +23,11 @@ public class UserBelongClass {
 
     // Constructors, getters, setters, etc.
     @Embeddable
-    public class UserBelongClassId implements Serializable {
+    public static class UserBelongClassId implements Serializable {
 
         @ManyToOne
         @JoinColumn(name = "user_id")
-        private User user;
+        private User userEntity;
 
         @ManyToOne
         @JoinColumn(name = "class_id")

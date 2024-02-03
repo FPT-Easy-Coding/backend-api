@@ -23,15 +23,15 @@ public class QuizBelongClass {
 
     // Constructors, getters, setters, etc.
     @Embeddable
-    public class QuizBeLongClassId implements Serializable {
+    public static class QuizBeLongClassId implements Serializable {
 
         @ManyToOne
         @JoinColumn(name = "exam_id")
-        private Exam exam_id;
+        private Exam examId;
 
         @ManyToOne
         @JoinColumn(name = "class_id")
-        private Class class_id;
+        private Class classId;
 
         // Constructors, getters, setters, etc.
     }

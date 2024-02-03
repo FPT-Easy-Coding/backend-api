@@ -12,21 +12,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "marketing")
 public class Marketing {
     @Id
     @OneToOne
     @JoinColumn(name = "image_id")
-    private Image Marketing_id;
+    private Image MarketingId;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user_id;
-    @Column(name= "content" ,nullable = false,length = 1000)
+    private User userId;
 
+    @Column(name = "content", nullable = false, length = 1000)
     private String content;
-    @Column(name= "embed_link" ,nullable = false,length = 255)
 
-    private String embed_link;
+    @Column(name = "embed_link", nullable = false, length = 255)
+    private String embedLink;
 
 
 }

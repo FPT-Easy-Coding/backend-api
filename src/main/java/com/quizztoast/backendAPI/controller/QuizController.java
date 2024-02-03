@@ -2,8 +2,7 @@ package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
-import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
-import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
+
 import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
 import com.quizztoast.backendAPI.service.impl.QuizServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;

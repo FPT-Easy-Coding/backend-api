@@ -22,10 +22,10 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User implements UserDetails {
-// Spring boot -> ORM -> JPA Api (Query: JPQL) -> Hibernate (HQL) -> SQL -> RDBMS
+    // Spring boot -> ORM -> JPA Api (Query: JPQL) -> Hibernate (HQL) -> SQL -> RDBMS
     @Id
     @GeneratedValue
-    @Column (name = "user_id")
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "username")
@@ -84,10 +84,12 @@ public class User implements UserDetails {
         this.email = email;
         this.role = role;
     }
+
     @Override
     public String getUsername() {
         return email;
     }
+
     @Override
     public String getPassword() {
         return password;

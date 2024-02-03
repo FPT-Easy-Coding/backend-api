@@ -15,18 +15,18 @@ public class QuizMapper {
                 .user_first_name(quiz.getUser().getFirstName())
                 .user_last_name(quiz.getUser().getLastName())
                 .user_id(quiz.getUser().getUserId())
-                .quiz_name(quiz.getQuiz_name())
-                .category_id(quiz.getCategory().getCategory_id())
+                .quiz_name(quiz.getQuizName())
+                .category_id(quiz.getCategory().getCategoryId())
                 .rate(quiz.getRate())
-                .number_of_questions(quiz.getQuiz_ques_id())
-                .create_at(quiz.getCreated_at())
+                .number_of_questions(quiz.getQuizQuesId())
+                .create_at(quiz.getCreatedAt())
                 .build();
     }
     public static List<QuizDTO> quizToQuizDTO(List<Quiz> quiz)
     {
         List<QuizDTO> quizDTOList = new ArrayList<>();
-        for (Quiz quizset : quiz) {
-            quizDTOList.add(mapQuizDTOToUser(quizset));
+        for (Quiz quizSet : quiz) {
+            quizDTOList.add(mapQuizDTOToUser(quizSet));
         }
         return quizDTOList;
     }

@@ -12,22 +12,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id", nullable = false)
     private int comment_id;
 
     //    @Column(name= "user_id" ,nullable = false)
 //    private int user_id;
     @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user_id;
+    @JoinColumn(name = "user_id")
+    private User userId;
 
     @ManyToOne
-    @JoinColumn(name="class_question_id")
-    private ClassQuestion class_question_id;
-    @Column(name= "content" ,nullable = false,length = 1000)
+    @JoinColumn(name = "class_question_id")
+    private ClassQuestion classQuestionId;
+
+    @Column(name = "content", nullable = false, length = 1000)
     private String content;
 
 

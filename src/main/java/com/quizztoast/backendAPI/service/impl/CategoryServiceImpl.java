@@ -42,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
         //check duplicate category_name
        if(categoryRepository.findByCategoryName(categoryRequest.getCategoryName()) != null )
        {
-           throw new FormatException( "Category_name","Category_name is exist");
+           throw new FormatException( "CategoryName","CategoryName is exist");
        }
         // Convert CategoryDTO to Category entity
       CategoryDTO categoryDTO = MapCategoryReqToDTO(categoryRequest);

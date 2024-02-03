@@ -14,23 +14,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "exam")
 public class Exam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-private int exam_id;
+    @Column(name = "exam_id", nullable = false)
+    private int examId;
+
     @ManyToOne
     @JoinColumn(name = "quiz_id")
-   private Quiz quiz_id;
+    private Quiz quizId;
 
-    @Column(name= "user_id" ,nullable = false)
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    private Long user_id;
-    @Column(name= "craeted_id" ,nullable = false)
+    @Column(name = "craeted_at", nullable = false)
+    private LocalDateTime craetedAt;
 
-    private LocalDateTime craeted_id;
-    @Column(name= "state" ,nullable = false,length = 255)
-
+    @Column(name = "state", nullable = false, length = 255)
     private String state;
 
 

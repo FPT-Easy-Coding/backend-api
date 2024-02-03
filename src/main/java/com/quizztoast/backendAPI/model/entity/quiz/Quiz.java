@@ -14,33 +14,34 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "quiz")
 public class Quiz {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int quiz_id;
+    @Column(name = "quiz_id", nullable = false)
+    private int quizId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name= "class_id" ,nullable = false)
-    private int class_id;
+    private int classId;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category; // Change the property name to match your entity
 
     @Column(name = "quiz_name", nullable = false)
-    private String quiz_name;
+    private String quizName;
 
     @Column(name= "rate" ,nullable = false,length = 255)
     private double rate;
 
     @Column(name= "created_at" ,nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name= "quiz_ques_id" ,nullable = false)
-    private int quiz_ques_id;
+    private int quizQuesId;
 }

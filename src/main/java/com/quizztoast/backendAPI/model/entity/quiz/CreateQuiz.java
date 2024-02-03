@@ -26,11 +26,11 @@ public class CreateQuiz {
 
         @ManyToOne
         @JoinColumn(name = "user_create_id")
-        private User user_id;
+        private User userId;
 
         @ManyToOne
         @JoinColumn(name = "quiz_id")
-        private Quiz quiz_id;
+        private Quiz quizId;
 
         // Constructors, getters, setters, etc.
     }

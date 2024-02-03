@@ -22,8 +22,7 @@ public enum Role {
                     ADMIN_DELETE,
                     ADMIN_CREATE
             )
-    )
-    ;
+    );
     private final Set<Permission> permissions;
 
     public List<SimpleGrantedAuthority> getAuthorities() {

@@ -26,11 +26,11 @@ public class DoExam {
 
         @ManyToOne
         @JoinColumn(name = "exam_id")
-        private Exam exam_id;
+        private Exam examId;
 
         @ManyToOne
         @JoinColumn(name = "user_id")
-        private User user_id;
+        private User userId;
 
         // Constructors, getters, setters, etc.
     }

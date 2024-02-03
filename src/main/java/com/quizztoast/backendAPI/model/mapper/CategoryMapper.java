@@ -15,7 +15,7 @@ public class CategoryMapper {
     }
     public static Category MapCategoryReqToCategory(CategoryRequest categoryRequest){
         return Category.builder()
-                .category_name(categoryRequest.getCategoryName())
+                .categoryName(categoryRequest.getCategoryName())
                 .build();
     }
 }

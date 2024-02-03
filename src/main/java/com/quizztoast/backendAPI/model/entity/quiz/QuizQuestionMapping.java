@@ -25,11 +25,11 @@ public class QuizQuestionMapping {
 
         @ManyToOne
         @JoinColumn(name = "quiz_id")
-        private Quiz quiz_id;
+        private Quiz quizId;
 
         @ManyToOne
         @JoinColumn(name = "quiz_question_id")
-        private QuizQuestion quiz_question_id;
+        private QuizQuestion quizQuestionId;
 
         // Constructors, getters, setters, etc.
     }

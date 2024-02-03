@@ -11,13 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "payment")
 public class Payment {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int payment_id;
-    @Column(name = "method" ,length = 50)
-    private String method ;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "payment_id")
+    private int paymentId;
+
+    @Column(name = "method", length = 50)
+    private String method;
 
 
 }
