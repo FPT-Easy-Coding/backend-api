@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "plan_transaction_tracking")
 public class PlanTransactionTracking {
 
     @EmbeddedId

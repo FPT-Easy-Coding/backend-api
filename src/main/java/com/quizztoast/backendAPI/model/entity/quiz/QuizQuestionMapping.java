@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "quiz_question_mapping")
 public class QuizQuestionMapping {
 
     @EmbeddedId
@@ -21,7 +21,7 @@ public class QuizQuestionMapping {
 
     // Constructors, getters, setters, etc.
     @Embeddable
-    public class QuizQuestionMappingId implements Serializable {
+    public static class QuizQuestionMappingId implements Serializable {
 
         @ManyToOne
         @JoinColumn(name = "quiz_id")
@@ -30,6 +30,14 @@ public class QuizQuestionMapping {
         @ManyToOne
         @JoinColumn(name = "quiz_question_id")
         private QuizQuestion quizQuestionId;
+
+        public void setQuizId(Quiz quiz) {
+            this.quizId = quiz;
+        }
+
+        public void setQuizQuestionId(QuizQuestion quizQuestion) {
+            this.quizQuestionId = quizQuestion;
+        }
 
         // Constructors, getters, setters, etc.
     }

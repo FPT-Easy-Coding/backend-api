@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `quizztoast` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `quizztoast`;
+CREATE DATABASE  IF NOT EXISTS `quizztoast4` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `quizztoast4`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: quizztoast
@@ -401,7 +401,7 @@ CREATE TABLE `quiz` (
   `class_id` int NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `quiz_name` varchar(255) NOT NULL,
-  `quiz_ques_id` int NOT NULL,
+  `number_of_quizquestion` int NOT NULL,
   `rate` int NOT NULL,
   `category_id` int DEFAULT NULL,
   `user_id` bigint DEFAULT NULL,
@@ -630,7 +630,7 @@ CREATE TABLE `user` (
   `created_at` datetime(6) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `first_name` varchar(255) DEFAULT NULL,
-  `google_id` varchar(255) DEFAULT NULL,
+  `provider` varchar(255) DEFAULT NULL,
   `is_banned` bit(1) DEFAULT NULL,
   `is_premium` bit(1) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,

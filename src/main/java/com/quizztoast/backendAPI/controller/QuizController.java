@@ -71,7 +71,7 @@ public class QuizController {
                     ),
             }
     )
-    @GetMapping("/getAll-quiz")
+    @GetMapping("/get-all-quiz")
     public List<QuizDTO> getAllQuizs(){
         return quizServiceImpl.getAllQuiz();
     }
@@ -234,7 +234,7 @@ public class QuizController {
                     ),
             }
     )
-@DeleteMapping("/delete/{quiz_id}")
+    @RequestMapping(value = "delete-quiz/quiz-id={quiz_id}", method = RequestMethod.DELETE)
 public ResponseEntity<String> deleteQuiz(@PathVariable int quiz_id)
 {
     return quizServiceImpl.deleteQuizById(quiz_id);
@@ -330,7 +330,7 @@ public ResponseEntity<String> deleteQuiz(@PathVariable int quiz_id)
                     ),
             }
     )
-@PutMapping("/updateQuiz/{quiz_id}")
+    @RequestMapping(value = "update-quiz/quiz-id={quiz_id}", method = RequestMethod.PUT)
 public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @RequestBody QuizRequest quizRequest)
 {
     return quizServiceImpl.UpdateQuiz(quiz_id,quizRequest);
@@ -425,7 +425,8 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @Requ
 
             }
     )
-    @GetMapping("getquiz/{content}")
+    @RequestMapping(value = "get-quiz/content={content}", method = RequestMethod.GET)
+
     public List<QuizDTO> findByContent(@PathVariable String content)
     {
         return quizServiceImpl.GetByContent(content);

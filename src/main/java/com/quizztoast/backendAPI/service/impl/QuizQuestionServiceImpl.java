@@ -7,6 +7,7 @@ import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
+import com.quizztoast.backendAPI.model.mapper.QuizQuestionMapper;
 import com.quizztoast.backendAPI.model.payload.Request.QuizAnswerRequest;
 import com.quizztoast.backendAPI.model.payload.Request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.quizztoast.backendAPI.model.mapper.QuizQuestionMapper.MapQuizQuesRequestToDTO;
+
 @Service
 @Transactional
 public class QuizQuestionServiceImpl implements QuizQuestionService {
@@ -77,7 +78,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             quizAnswerRepository.saveAll(quizAnswers);
 
             // Map QuizQuestionRequest to QuizQuestionDTO
-            QuizQuestionDTO quizQuestionDTO = MapQuizQuesRequestToDTO(Quizrequest);
+            QuizQuestionDTO quizQuestionDTO = QuizQuestionMapper.mapQuizQuesRequestToDTO(Quizrequest);
 
             return ResponseEntity.ok(quizQuestionDTO);
         }

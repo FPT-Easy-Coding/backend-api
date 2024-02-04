@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/quizquestion")
 @RequiredArgsConstructor
-@Tag(name = "Quiz-Question")
+@Tag(name = "QuizQuestion")
 public class QuizQuestionController {
   private final QuizQuestionServiceImpl quizQuestionServiceImpl;
     /**
@@ -112,7 +112,7 @@ public class QuizQuestionController {
                     ),
             }
     )
-    @PostMapping("create_quizquestion")
+    @PostMapping("create-quiz-question")
     public ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers(@Valid @RequestBody QuizQuestionRequest Quizrequest) {
 
         return quizQuestionServiceImpl.createQuizQuestionAndAnswers(Quizrequest);
@@ -200,7 +200,7 @@ public class QuizQuestionController {
                     ),
             }
     )
-    @GetMapping("/getallquizquestion")
+    @GetMapping("/getall-quiz-question")
     public List<QuizQuestion> getAllQuizQues(){
         return quizQuestionServiceImpl.getAllQuiz();
     }
@@ -322,7 +322,7 @@ public class QuizQuestionController {
 
             }
     )
-    @GetMapping("getquizquestion/{content}")
+    @RequestMapping(value = "get-quiz-question/content={content}", method = RequestMethod.GET)
     public List<QuizQuestion> findByContent(@PathVariable String content)
     {
         return quizQuestionServiceImpl.GetByContent(content);
@@ -399,7 +399,7 @@ public class QuizQuestionController {
 
             }
     )
-    @PutMapping("updatequizquestion/{quizquestion_id}")
+    @RequestMapping(value = "update-quiz-question/quizquestion-id={quizquestion_id}", method = RequestMethod.PUT)
     public ResponseEntity<QuizQuestion> UpdateQuizQuestion(@PathVariable int quizquestion_id,@Valid @RequestBody QuizQuestionRequest quizRequest)
     {
         return quizQuestionServiceImpl.UpdateQuizQuestion(quizquestion_id,quizRequest);
@@ -469,7 +469,8 @@ public class QuizQuestionController {
 
             }
     )
-    @DeleteMapping("delete/{quizquestionId}")
+    @RequestMapping(value = "delete-quiz-question/quizquestion-id={quizquestion_id}", method = RequestMethod.DELETE)
+
     public ResponseEntity<String> deleteQuiz(@PathVariable Long quizquestionId)
     {
         return quizQuestionServiceImpl.deleteQuizById(quizquestionId);

@@ -98,7 +98,7 @@ public class UserController {
                     )
             }
     )
-    @GetMapping("/fetchAll")
+    @GetMapping("/fetch-all")
     public ResponseEntity<List<UserDTO>> getAllUsers(){
         List<User> users = userServiceImpl.getAllUsers();
         List<UserDTO> userDTOs = UserMapper.usersToUserDTOs(users);
@@ -161,6 +161,7 @@ public class UserController {
     )
 
     @GetMapping("/profile/{id}")
+    @RequestMapping(value = "profile/user-id={id}", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
         User user = userServiceImpl.getUserById(id);
 

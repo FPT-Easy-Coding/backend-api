@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "create_quiz")
 public class CreateQuiz {
 
     @EmbeddedId
