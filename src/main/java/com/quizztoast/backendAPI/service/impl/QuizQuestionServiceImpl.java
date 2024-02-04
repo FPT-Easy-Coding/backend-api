@@ -51,8 +51,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             // Create QuizQuestion
             QuizQuestion quizQuestion = QuizQuestion.builder()
                     .content(Quizrequest.getQuestionContent())
-                    .category_id(category)
-                    .created_at(LocalDateTime.now())
+                    .categoryId(category)
+                    .createdAt(LocalDateTime.now())
                     .build();
 
             quizQuestionRepository.save(quizQuestion);
@@ -65,8 +65,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 //                }
                 QuizAnswer quizAnswer = QuizAnswer.builder()
                         .content(answerRequest.getContent())
-                        .is_correct(answerRequest.isCorrect())
-                        .created_at(LocalDateTime.now())
+                        .isCorrect(answerRequest.isCorrect())
+                        .createdAt(LocalDateTime.now())
                         .quizQuestion(quizQuestion)
                         .build();
 
@@ -115,17 +115,12 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                 throw  new FormatException("CategoryId","CategoryId not exist");
             }
             Category category = categoryRepository.findCategoryById(quizRequest.getCategoryId());
-           try {
+
                // Update quiz question fields
                quizQuestion.setContent(quizRequest.getQuestionContent());
-               quizQuestion.setCategory_id(category);
+               quizQuestion.setCategoryId(category);
                // Save the updated quiz question
                quizQuestionRepository.save(quizQuestion);
-
-           }catch (Exception e)
-           {
-               System.out.println(e);
-           }
 
             // Return the updated quiz question
             return ResponseEntity.ok(quizQuestion);
@@ -152,7 +147,6 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                 return ResponseEntity.ok().body("Delete Succesfull QuizQuestion ");
             }catch (Exception e)
             {
-                System.out.println(e);
                 return null;
             }
 

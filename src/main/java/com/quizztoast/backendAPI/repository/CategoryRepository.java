@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category,Integer> {
 
-   @Query("SELECT c FROM Category c WHERE c.category_id = :categoryId")
+   @Query("SELECT c FROM Category c WHERE c.categoryId = :categoryId")
     Category findCategoryById(int categoryId);
 
-    @Query("SELECT c FROM Category c WHERE c.category_name = :categoryName")
+    @Query("SELECT c FROM Category c WHERE c.categoryName = :categoryName")
     Category findByCategoryName(@Param("categoryName") String categoryName);
 }

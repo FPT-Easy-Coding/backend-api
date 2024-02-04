@@ -13,6 +13,6 @@ public interface QuizQuestionRepository extends JpaRepository<QuizQuestion ,Long
     List<QuizQuestion> findByContentContaining(String content);
 
     @Modifying
-    @Query("DELETE FROM QuizQuestion q WHERE q.quiz_question_id = :quizQuestionId")
+    @Query("DELETE FROM QuizQuestion q WHERE q.quizQuestionId = :quizQuestionId")
     void deleteQuestionById(@Param("quizQuestionId") Long quizQuestionId);
 }

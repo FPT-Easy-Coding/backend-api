@@ -10,6 +10,6 @@ import org.springframework.data.repository.query.Param;
 public interface QuizAnswerRepository extends JpaRepository<QuizAnswer,Long> {
     @Modifying
     @Transactional
-    @Query("DELETE FROM QuizAnswer qa WHERE qa.quizQuestion.quiz_question_id = :quizQuestionId")
+    @Query("DELETE FROM QuizAnswer qa WHERE qa.quizQuestion.quizQuestionId = :quizQuestionId")
     void deleteByQuizQuestionId(@Param("quizQuestionId") Long quizQuestionId);
 }

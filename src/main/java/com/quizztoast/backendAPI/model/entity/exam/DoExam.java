@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "do_exam")
 public class DoExam {
 
     @EmbeddedId
@@ -22,7 +22,7 @@ public class DoExam {
 
     // Constructors, getters, setters, etc.
     @Embeddable
-    public class DoExamId implements Serializable {
+    public static class DoExamId implements Serializable {
 
         @ManyToOne
         @JoinColumn(name = "exam_id")

@@ -14,17 +14,17 @@ import java.util.Optional;
 
 public interface QuizRepository extends JpaRepository<Quiz,Long> {
 
-    @Query("SELECT CASE WHEN COUNT(q) > 0 THEN true ELSE false END FROM Quiz q WHERE q.quiz_id = :quizId")
+    @Query("SELECT CASE WHEN COUNT(q) > 0 THEN true ELSE false END FROM Quiz q WHERE q.quizId = :quizId")
     boolean existsById(@Param("quizId") int quizId);
     @Modifying
-    @Query("DELETE FROM Quiz q WHERE q.quiz_id = :quizId")
+    @Query("DELETE FROM Quiz q WHERE q.quizId = :quizId")
     void deleteQuizById(@Param("quizId") int quizId);
 
 
-    @Query("SELECT q FROM Quiz q WHERE q.quiz_id = :quizId")
+    @Query("SELECT q FROM Quiz q WHERE q.quizId = :quizId")
     Quiz getQuizById(@Param("quizId") int quizId);
 
 
-    @Query("SELECT q FROM Quiz q WHERE q.quiz_name LIKE %:content%")
+    @Query("SELECT q FROM Quiz q WHERE q.quizName LIKE %:content%")
     List<Quiz> findByContent(@Param("content") String content);
 }

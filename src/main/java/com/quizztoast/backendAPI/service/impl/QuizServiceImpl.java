@@ -36,8 +36,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public List<QuizDTO> getAllQuiz() {
         List<Quiz> listQuiz = quizRepository.findAll();
-        List<QuizDTO> quizDTOList = quizToQuizDTO(listQuiz);
-        return  quizDTOList;
+        return quizToQuizDTO(listQuiz);
     }
 
     @Override
@@ -60,10 +59,10 @@ public class QuizServiceImpl implements QuizService {
         Quiz quiz = new Quiz();
         quiz.setUser(userRepository.findById(quizRequest.getUser_id()).orElse(null));
         quiz.setCategory(categoryRepository.findById(quizRequest.getCategory_id()).orElse(null));
-        quiz.setQuiz_name(quizRequest.getQuiz_name());
+        quiz.setQuizName(quizRequest.getQuiz_name());
         quiz.setRate(quizRequest.getRate());
-        quiz.setQuiz_ques_id(quizRequest.getList_question().size());
-        quiz.setCreated_at(LocalDateTime.now());
+        quiz.setQuizQuesId(quizRequest.getList_question().size());
+        quiz.setCreatedAt(LocalDateTime.now());
 
         // Save the Quiz object to the Quiz table
         quizRepository.save(quiz);
@@ -102,10 +101,10 @@ public class QuizServiceImpl implements QuizService {
         //update quiz
         Quiz quiz = quizRepository.getQuizById(quizId);
         quiz.setUser(userRepository.findById(quizRequest.getUser_id()).orElse(null));
-        quiz.setQuiz_name(quizRequest.getQuiz_name());
+        quiz.setQuizName(quizRequest.getQuiz_name());
         quiz.setCategory(categoryRepository.findById(quizRequest.getCategory_id()).orElse(null));
         quiz.setRate(quizRequest.getRate());
-        quiz.setCreated_at(quizRequest.getCreate_at());
+        quiz.setCreatedAt(quizRequest.getCreate_at());
         //save quiz
         quizRepository.save(quiz);
         //mapper QuizDTO
@@ -120,7 +119,6 @@ public class QuizServiceImpl implements QuizService {
         {
             throw  new FormatException("quiz_name","quiz_name not exist");
         }
-        List<QuizDTO> listQuizDTO =quizToQuizDTO(quizRepository.findByContent(content));
-        return listQuizDTO;
+        return quizToQuizDTO(quizRepository.findByContent(content));
     }
 }

@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
     private Category convertToEntity(CategoryDTO categoryDTO) {
         Category category = new Category();
-        category.setCategory_name(categoryDTO.getCategoryName());
+        category.setCategoryName(categoryDTO.getCategoryName());
         // Map other properties from DTO to entity as needed
 
         return category;
