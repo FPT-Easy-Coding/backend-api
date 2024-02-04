@@ -67,7 +67,7 @@ public class QuizServiceImpl implements QuizService {
         quiz.setCategory(categoryRepository.findById(quizRequest.getCategory_id()).orElse(null));
         quiz.setQuizName(quizRequest.getQuiz_name());
         quiz.setRate(quizRequest.getRate());
-        quiz.setQuizQuesId(quizRequest.getList_question().size());
+        quiz.setNumberOfQuizQuestion(quizRequest.getList_question().size());
         quiz.setCreatedAt(LocalDateTime.now());
 
         // Save the Quiz object to the Quiz table

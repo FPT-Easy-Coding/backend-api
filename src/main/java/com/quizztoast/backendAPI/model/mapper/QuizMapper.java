@@ -18,7 +18,7 @@ public class QuizMapper {
                 .quiz_name(quiz.getQuizName())
                 .category_id(quiz.getCategory().getCategoryId())
                 .rate(quiz.getRate())
-                .number_of_questions(quiz.getQuizQuesId())
+                .number_of_questions(quiz.getNumberOfQuizQuestion())
                 .create_at(quiz.getCreatedAt())
                 .build();
     }
