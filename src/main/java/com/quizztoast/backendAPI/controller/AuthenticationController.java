@@ -1,10 +1,14 @@
 package com.quizztoast.backendAPI.controller;
 
+import com.quizztoast.backendAPI.model.entity.token.VerificationToken;
+import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.repository.VerificationTokenRepository;
 import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationRequest;
 import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationResponse;
-import com.quizztoast.backendAPI.security.auth.auth_payload.RegisterRequest;
+import com.quizztoast.backendAPI.security.auth.auth_payload.RegistrationRequest;
 import com.quizztoast.backendAPI.security.auth.auth_payload.VerificationRequest;
-import com.quizztoast.backendAPI.security.auth.auth_service.AuthenticationService;
+import com.quizztoast.backendAPI.security.auth.auth_service.AuthenticationServiceImpl;
+
 import com.quizztoast.backendAPI.security.recaptcha.ReCaptchaRegisterService;
 
 import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
@@ -22,23 +26,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 
 @RestController
-@RequestMapping("api/v1/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication")
 public class AuthenticationController {
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceImpl authenticationServiceImpl;
     private final ReCaptchaRegisterService reCaptchaRegisterService;
-
+    private final VerificationTokenRepository verificationTokenRepository;
     private final UserServiceImpl userServiceImpl;
-
-
 
     @Operation(
             summary = "Registers a new user",
@@ -50,12 +52,13 @@ public class AuthenticationController {
                             content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
                             examples = {
                                     @ExampleObject(
-                                            value = " {\n" +
-                                                    "    \"accessToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjAzNTc4Nn0.GbOt25veZBXl3YHwJrW101CT-gvNGC20RTQK4uBwdAk\",\n" +
-                                                    "    \"refreshToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjU1NDE4Nn0.BJAeEOcrPjd23_PlJfoMtkq345yxnRhv0eHoObNyjfo\",\n" +
-                                                    "    \"mfaEnabled\": true,\n" +
-                                                    "    \"secretImageUri\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeAQAAAADlUEq3AAADHElEQVR4Xu2asZHjMAxFoXFw4ZagUlSaWJpKcQkOHXiMw/+AxtSK9vji+wiWMvnI4C9AALLNv7eH/Z75YIJ7E9yb4N4E9/Z/wE+j+eOPX/GAYY2lH99s8jsXL4KHMJ68PS93LBsGfPKb2crJQgQP4NByaaHzbd5Wzm9GOCb9/hPiC/4IQ9Lr0sJFb7PHYBZbBX8Dxweb3RnPi0+I9diKEwS/h+NPxHMqi4sxPtVWiL8jgs+w0cpFTwMXBQ/hg7XJPe9Hempvgnt76VyBvLSpShi4KAYmmknwEI6/cfmtASOeWQTymoytiG7I/YpuwT2cE3Exgko46udILSGw5/1IE3yC0XM445kuyug2qB4Cx40IFxU8hp+cQIMGp2TzVqobz4rb8tC1Ce7TMaKblx/m6bC5tRnsEN2COxh2jbnq0/KaDJ2j4eXyteQWfIbhlIbCGe0agxzLyDD0VD+mY8EvmC6aNyJ0Dosgx2QUNPi0D4JPsGfFbFzOgiaWeT/WQUgtggdw6ZwljNEboWxWMnkQTxR8hi98H4AXK54FjWOZ0Q2/nSG+4DdwuKcx5UY6DpszK88pcIiPQfAIdghcPQfvR3hqVjI4aElE8Al2zMc6PRU6Y4D4cw7W6yz44HW7wFQWg2cjgq3Yg5AXPIaNzcaDAu855YHZvBG3jHzBJziKlvySEc+tghxUqV6fBJ/h0hmU4zsgGru2pfGEX62H4Bd8oZaeLlpOiUrGqnA+RLfgHk6dEd3RZTjCetlPyLfxoASP4Mwb6ZvN8v1KRbehLTlEt+AD7Hi/MrH6W1HXxB7elpDb4aI8R/AY5kS9oQpxV7po/WIAJwh+B8c6vmu0fEOVlQz63j3fHFxU8A6XPdFzbCs6EArMsIaLxvBKx4J7mFrmryxC4KQwj+iurTTBZxj+F1dhlsp4LpixTp0Fv4PviGBUzLEMnbmWnS7+AxXygj/AeP+OrBx7WMmU3BuDXPBH2EvnSM6sZFrnt4JHMB5RwsQduNeCDOslJw85RfAow3LZ0GwsnJyrH9lACR7A35rg3gT3Jrg3wb0J7u3f4L/kiTr3Hk1oVAAAAABJRU5ErkJggg==\"\n" +
-                                                    "}"
+                                            value = """
+                                                     {
+                                                        "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjAzNTc4Nn0.GbOt25veZBXl3YHwJrW101CT-gvNGC20RTQK4uBwdAk",
+                                                        "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjU1NDE4Nn0.BJAeEOcrPjd23_PlJfoMtkq345yxnRhv0eHoObNyjfo",
+                                                        "mfaEnabled": true,
+                                                        "secretImageUri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeAQAAAADlUEq3AAADHElEQVR4Xu2asZHjMAxFoXFw4ZagUlSaWJpKcQkOHXiMw/+AxtSK9vji+wiWMvnI4C9AALLNv7eH/Z75YIJ7E9yb4N4E9/Z/wE+j+eOPX/GAYY2lH99s8jsXL4KHMJ68PS93LBsGfPKb2crJQgQP4NByaaHzbd5Wzm9GOCb9/hPiC/4IQ9Lr0sJFb7PHYBZbBX8Dxweb3RnPi0+I9diKEwS/h+NPxHMqi4sxPtVWiL8jgs+w0cpFTwMXBQ/hg7XJPe9Hempvgnt76VyBvLSpShi4KAYmmknwEI6/cfmtASOeWQTymoytiG7I/YpuwT2cE3Exgko46udILSGw5/1IE3yC0XM445kuyug2qB4Cx40IFxU8hp+cQIMGp2TzVqobz4rb8tC1Ce7TMaKblx/m6bC5tRnsEN2COxh2jbnq0/KaDJ2j4eXyteQWfIbhlIbCGe0agxzLyDD0VD+mY8EvmC6aNyJ0Dosgx2QUNPi0D4JPsGfFbFzOgiaWeT/WQUgtggdw6ZwljNEboWxWMnkQTxR8hi98H4AXK54FjWOZ0Q2/nSG+4DdwuKcx5UY6DpszK88pcIiPQfAIdghcPQfvR3hqVjI4aElE8Al2zMc6PRU6Y4D4cw7W6yz44HW7wFQWg2cjgq3Yg5AXPIaNzcaDAu855YHZvBG3jHzBJziKlvySEc+tghxUqV6fBJ/h0hmU4zsgGru2pfGEX62H4Bd8oZaeLlpOiUrGqnA+RLfgHk6dEd3RZTjCetlPyLfxoASP4Mwb6ZvN8v1KRbehLTlEt+AD7Hi/MrH6W1HXxB7elpDb4aI8R/AY5kS9oQpxV7po/WIAJwh+B8c6vmu0fEOVlQz63j3fHFxU8A6XPdFzbCs6EArMsIaLxvBKx4J7mFrmryxC4KQwj+iurTTBZxj+F1dhlsp4LpixTp0Fv4PviGBUzLEMnbmWnS7+AxXygj/AeP+OrBx7WMmU3BuDXPBH2EvnSM6sZFrnt4JHMB5RwsQduNeCDOslJw85RfAow3LZ0GwsnJyrH9lACR7A35rg3gT3Jrg3wb0J7u3f4L/kiTr3Hk1oVAAAAABJRU5ErkJggg=="
+                                                    }"""
                                     )
                             })
                     ),
@@ -65,10 +68,11 @@ public class AuthenticationController {
                             content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"mfaEnabled\": false,\n" +
-                                                            "    \"error\": \"Email already taken\"\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "mfaEnabled": false,
+                                                                "error": "Email already taken"
+                                                            }"""
                                             )
                                     })
                     ),
@@ -87,9 +91,11 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @Valid
-            @RequestBody RegisterRequest request
+            @RequestBody RegistrationRequest registrationRequest,
+            HttpServletRequest request
     ) {
-        AuthenticationResponse response = authenticationService.register(request);
+
+        AuthenticationResponse response = authenticationServiceImpl.register(registrationRequest,request);
         return ResponseEntity.ok(response);
     }
     //    @PostMapping("/register")
@@ -107,13 +113,27 @@ public class AuthenticationController {
 //        return ResponseEntity.ok(authenticationService.register(request));
 //    }
 
+    @GetMapping("/register/verifyEmail")
+    public RedirectView verifyEmail(@RequestParam("token") String token) {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        if (verificationToken == null || verificationToken.getUser() == null) {
+            // Redirect to an error page or handle the case where the token or user is not found
+            return new RedirectView("/error");
+        }
 
+        if (verificationToken.getUser().isVerified()) {
+            // Redirect to the login page of the React frontend
+            return new RedirectView("https://http://localhost:5173/login");
+        }
 
-
-    private Map<String, String> createErrorResponse(String key, String message) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put(key, message);
-        return errorResponse;
+        String verificationResult = userServiceImpl.validateVerificationToken(verificationToken);
+        if (verificationResult.equalsIgnoreCase("valid")) {
+            // Redirect to the login page of the React frontend
+            return new RedirectView("https://http://localhost:5173/login");
+        } else {
+            // Redirect to an error page or handle the verification failure scenario
+            return new RedirectView("/error");
+        }
     }
     /**
      * Authenticates a user.
@@ -131,9 +151,10 @@ public class AuthenticationController {
 ,  content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
                             examples = {
                                     @ExampleObject(
-                                            value = "{\n" +
-                                                    "    \"mfaEnabled\": true\n" +
-                                                    "}"
+                                            value = """
+                                                    {
+                                                        "mfaEnabled": true
+                                                    }"""
                                     )
                             })
                     ),
@@ -143,16 +164,17 @@ public class AuthenticationController {
                             content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"data\": [\n" +
-                                                            "        {\n" +
-                                                            "            \"fieldName\": \"email\",\n" +
-                                                            "            \"errorMessage\": \"Invalid email address\"\n" +
-                                                            "        }\n" +
-                                                            "    ],\n" +
-                                                            "    \"message\": \"Validation Failed\",\n" +
-                                                            "    \"error\": true\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "email",
+                                                                        "errorMessage": "Invalid email address"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
                                             )
                                     })
                     )
@@ -182,13 +204,12 @@ public class AuthenticationController {
 //            return ResponseEntity.ok(response);
 //        }
 //        return ResponseEntity.accepted().build();
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        return ResponseEntity.ok(authenticationServiceImpl.authenticate(request));
     }
 
     /**
      * refresh-token using a Post request.
      *
-     * @return A message indicating the success of the Post operation.
      */
     @Operation(
             summary = "Refreshes the authentication token",
@@ -226,14 +247,14 @@ public class AuthenticationController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        authenticationService.refreshToken(request,response);
+        authenticationServiceImpl.refreshToken(request,response);
     }
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyCode(
             @RequestBody VerificationRequest verificationRequest
     ){
-            return ResponseEntity.ok(authenticationService.verifyCode(verificationRequest));
+            return ResponseEntity.ok(authenticationServiceImpl.verifyCode(verificationRequest));
     }
 
 

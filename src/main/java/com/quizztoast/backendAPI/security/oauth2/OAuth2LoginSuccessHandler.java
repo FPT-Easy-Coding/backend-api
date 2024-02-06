@@ -8,20 +8,21 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private final UserServiceImpl userServiceImpl;
-    @Autowired
+
     private final UserRepository userRepository;
 
     @Override
@@ -38,14 +39,14 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         String givenName = attributes.getOrDefault("given_name", "").toString();
         String familyName = attributes.getOrDefault("family_name", "").toString();
         System.out.println(attributes);
-        User user = userServiceImpl.getUserByEmail(email);
-        if (user == null) {
-            user = new User();
-            user.setEmail(email);
-            user.setLastName(familyName);
-            user.setFirstName(givenName);
-            user.setRole(Role.USER);
-            userRepository.save(user);
+        Optional<User> user = userServiceImpl.getUserByEmail(email);
+        if (user.isEmpty()) {
+            var newUser = new User();
+            newUser.setEmail(email);
+            newUser.setLastName(familyName);
+            newUser.setFirstName(givenName);
+            newUser.setRole(Role.USER);
+            userRepository.save(newUser);
         }
 
         userServiceImpl.updateAuthenticationType(email, oauth2ClientName);

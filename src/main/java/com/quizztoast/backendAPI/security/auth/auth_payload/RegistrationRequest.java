@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class RegistrationRequest {
     @Valid
 
     @NotNull(message = "firstname cannot be null")

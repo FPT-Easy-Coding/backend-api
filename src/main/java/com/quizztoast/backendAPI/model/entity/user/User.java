@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -23,6 +24,7 @@ import java.util.List;
 @Table(name = "user")
 public class User implements UserDetails {
     // Spring boot -> ORM -> JPA Api (Query: JPQL) -> Hibernate (HQL) -> SQL -> RDBMS
+
     @Id
     @GeneratedValue
     @Column(name = "user_id")
@@ -41,6 +43,7 @@ public class User implements UserDetails {
     private String lastName;
 
     @Column(name = "email", unique = true)
+    @NaturalId(mutable = true)
     @Email(message = "Invalid email address")
     private String email;
 
@@ -52,6 +55,9 @@ public class User implements UserDetails {
 
     @Column(name = "is_banned")
     private boolean isBanned;
+
+    @Column(name = "is_verified")
+    private boolean isVerified;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
