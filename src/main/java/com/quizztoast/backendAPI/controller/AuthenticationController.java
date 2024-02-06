@@ -129,7 +129,7 @@ public class AuthenticationController {
         String verificationResult = userServiceImpl.validateVerificationToken(verificationToken);
         if (verificationResult.equalsIgnoreCase("valid")) {
             // Redirect to the login page of the React frontend
-            return new RedirectView("https://http://localhost:5173/login");
+            return new RedirectView("http://localhost:5173/home");
         } else {
             // Redirect to an error page or handle the verification failure scenario
             return new RedirectView("/error");

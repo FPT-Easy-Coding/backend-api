@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.security.auth.event;
+package com.quizztoast.backendAPI.event;
 
 import com.quizztoast.backendAPI.model.entity.user.User;
 import lombok.Getter;

@@ -11,7 +11,8 @@ import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationReques
 import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationResponse;
 import com.quizztoast.backendAPI.security.auth.auth_payload.RegistrationRequest;
 import com.quizztoast.backendAPI.security.auth.auth_payload.VerificationRequest;
-import com.quizztoast.backendAPI.security.auth.event.RegistrationCompleteEvent;
+
+import com.quizztoast.backendAPI.event.publisher.RegistrationEventPublisher;
 import com.quizztoast.backendAPI.security.jwt.JWTService;
 import com.quizztoast.backendAPI.security.tfa.TwoFactorAuthenticationService;
 
@@ -20,7 +21,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -40,7 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TwoFactorAuthenticationService tfaService;
-    private final ApplicationEventPublisher publisher;
+    private final RegistrationEventPublisher eventPublisher;
 
     public String applicationUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
@@ -49,7 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     public AuthenticationResponse register(RegistrationRequest registrationRequest, HttpServletRequest request) {
         var user = userServiceImpl.createUser(registrationRequest);
-        publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
+        eventPublisher.publishRegistrationEvent(user, applicationUrl(request));
         // If MFA enabled --> generate Secret
 //            if (registerRequest.isMfaEnabled()) {
 //                user.setSecret(tfaService.generateNewSecret());

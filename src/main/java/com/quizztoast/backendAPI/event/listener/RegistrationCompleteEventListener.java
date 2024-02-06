@@ -1,7 +1,7 @@
-package com.quizztoast.backendAPI.security.auth.event.listener;
+package com.quizztoast.backendAPI.event.listener;
 
 import com.quizztoast.backendAPI.model.entity.user.User;
-import com.quizztoast.backendAPI.security.auth.event.RegistrationCompleteEvent;
+import com.quizztoast.backendAPI.event.RegistrationCompleteEvent;
 import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
