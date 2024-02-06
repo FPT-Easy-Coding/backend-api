@@ -42,6 +42,6 @@ public class Quiz {
     @Column(name= "created_at" ,nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name= "quiz_ques_id" ,nullable = false)
-    private int quizQuesId;
+    @Column(name= "number_of_quiz",nullable = false)
+    private int numberOfQuizQuestion;
 }

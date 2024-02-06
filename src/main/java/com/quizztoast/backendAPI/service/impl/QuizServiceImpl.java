@@ -3,11 +3,15 @@ package com.quizztoast.backendAPI.service.impl;
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestionMapping;
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
+import com.quizztoast.backendAPI.model.mapper.QuizQuestionMapper;
+import com.quizztoast.backendAPI.model.payload.Request.QuizAnswerRequest;
+import com.quizztoast.backendAPI.model.payload.Request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
-import com.quizztoast.backendAPI.repository.CategoryRepository;
-import com.quizztoast.backendAPI.repository.QuizRepository;
-import com.quizztoast.backendAPI.repository.UserRepository;
+import com.quizztoast.backendAPI.repository.*;
 import com.quizztoast.backendAPI.service.QuizService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +30,17 @@ public class QuizServiceImpl implements QuizService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
   private final QuizRepository quizRepository;
+    private final QuizAnswerRepository quizAnswerRepository;
 
-    public QuizServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, QuizRepository quizRepository) {
+    private  final QuizQuestionRepository quizQuestionRepository;
+    private final QuizQuestionMappingRepository quizQuestionMappingRepository;
+    public QuizServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionRepository quizQuestionRepository, QuizQuestionMappingRepository quizQuestionMappingRepository) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.quizRepository = quizRepository;
+        this.quizAnswerRepository = quizAnswerRepository;
+        this.quizQuestionRepository = quizQuestionRepository;
+        this.quizQuestionMappingRepository = quizQuestionMappingRepository;
     }
 
     @Override
@@ -43,34 +53,67 @@ public class QuizServiceImpl implements QuizService {
     public ResponseEntity<QuizDTO> createQuiz(@Valid @RequestBody QuizRequest quizRequest) {
         // Check user_id must be in User table
         if (!userRepository.existsById(quizRequest.getUser_id())) {
-            throw new FormatException("User_id","User_id not found");
+            throw new FormatException("User_id", "User_id not found");
         }
 
-        // Kiểm tra quiz_name phải là duy nhất trong bảng Quiz
-//        if (repository.existsByQuiz_name(quizdto.getQuiz_name())) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//        }
-
-        //check category
+        // Check category
         if (!categoryRepository.existsById(quizRequest.getCategory_id())) {
-            throw new FormatException("Category_id","Category_id not found");
+            throw new FormatException("Category_id", "Category_id not found");
         }
+
         // Create Quiz object from quizRequest
         Quiz quiz = new Quiz();
         quiz.setUser(userRepository.findById(quizRequest.getUser_id()).orElse(null));
         quiz.setCategory(categoryRepository.findById(quizRequest.getCategory_id()).orElse(null));
         quiz.setQuizName(quizRequest.getQuiz_name());
         quiz.setRate(quizRequest.getRate());
-        quiz.setQuizQuesId(quizRequest.getList_question().size());
+        quiz.setNumberOfQuizQuestion(quizRequest.getList_question().size());
         quiz.setCreatedAt(LocalDateTime.now());
 
         // Save the Quiz object to the Quiz table
-        quizRepository.save(quiz);
-        //mapper QuizDTO
-        QuizDTO quizDTo = QuizMapper.mapQuizDTOToUser(quiz);
+        quizRepository.saveAndFlush(quiz);
+
+        // Iterate through quiz questions
+        for (QuizQuestionRequest quizQuestionRequest : quizRequest.getList_question()) {
+            // Set quizQuestion properties
+            QuizQuestion quizQuestion = new QuizQuestion();
+            quizQuestion.setCreatedAt(LocalDateTime.now());
+            quizQuestion.setContent(quizQuestionRequest.getQuestionContent());
+            quizQuestion.setCategoryId(categoryRepository.findCategoryById(quizQuestionRequest.getCategoryId()));
+
+            // Save quizQuestion to Quiz_question table
+            quizQuestionRepository.saveAndFlush(quizQuestion);
+
+            // Iterate through quiz answers
+            for (QuizAnswerRequest quizAnswerRequest : quizQuestionRequest.getAnswers()) {
+                // Set quizAnswer properties
+                QuizAnswer quizAnswer = new QuizAnswer();
+                quizAnswer.setContent(quizAnswerRequest.getContent());
+                quizAnswer.setIsCorrect(quizAnswerRequest.isCorrect());
+                quizAnswer.setCreatedAt(LocalDateTime.now());
+
+                // Set quizQuestion for quizAnswer and save
+                quizAnswer.setQuizQuestion(quizQuestion);
+                quizAnswerRepository.saveAndFlush(quizAnswer);
+            }
+
+            // Create QuizQuestionMapping
+            QuizQuestionMapping quizQuestionMapping = new QuizQuestionMapping();
+            QuizQuestionMapping.QuizQuestionMappingId id = new QuizQuestionMapping.QuizQuestionMappingId();
+            id.setQuizId(quiz);
+            id.setQuizQuestionId(quizQuestion);
+            quizQuestionMapping.setId(id);
+
+            // Save QuizQuestionMapping
+            quizQuestionMappingRepository.save(quizQuestionMapping);
+        }
+
+        // Mapper QuizDTO
+        QuizDTO quizDTO = QuizMapper.mapQuizDTOToUser(quiz);
         // Returns the QuizDTO object after creation
-        return ResponseEntity.ok(quizDTo);
+        return ResponseEntity.ok(quizDTO);
     }
+
 
     @Override
     public ResponseEntity<String> deleteQuizById(int quizId) {
