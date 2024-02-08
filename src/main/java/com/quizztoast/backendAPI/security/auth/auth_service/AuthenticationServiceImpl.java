@@ -90,9 +90,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = userRepository.findByEmail(authenticationRequest.getEmail())
                 .orElseThrow();
 
-        if (!user.isVerified()) {
-            throw new RuntimeException("User is not verified");
-        }
+//        if (!user.isVerified()) {
+//            throw new RuntimeException("User is not verified");
+//        }
         if (user.isMfaEnabled()) {
             return AuthenticationResponse.builder()
                     .accessToken("")
