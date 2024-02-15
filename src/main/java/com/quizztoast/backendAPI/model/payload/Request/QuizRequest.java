@@ -19,15 +19,14 @@ import java.util.List;
 public class QuizRequest {
 
     @Valid
-    @NotNull(message = "user_id cannot be null")
-    private Long user_id;
-    @NotNull(message = "category_id cannot be null")
-    private Integer category_id;
-    @NotNull(message = "quiz_name cannot be null")
-    @NotBlank(message = "quiz_name cannot be blank")
-    private String quiz_name;
-    private List<QuizQuestionRequest> list_question;
+    @NotNull(message = "userId cannot be null")
+    private Long userId;
+    @NotNull(message = "categoryId cannot be null")
+    private Integer categoryId;
+    @NotBlank(message = "quizName cannot be blank")
+    private String quizName;
+    private List<QuizQuestionRequest> listQuestion;
     private Double rate;
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
 
 }

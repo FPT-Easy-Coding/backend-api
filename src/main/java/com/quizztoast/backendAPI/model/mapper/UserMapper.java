@@ -2,15 +2,26 @@ package com.quizztoast.backendAPI.model.mapper;
 
 import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.repository.QuizRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class UserMapper {
+
+    private static QuizRepository quizRepository;
+
+    @Autowired
+    public void setQuizRepository(QuizRepository quizRepository) {
+        UserMapper.quizRepository = quizRepository;
+    }
     // Convert User JPA Entity into UserDto
     public static UserDTO mapToUserDto(User user) {
         return UserDTO.builder()
-                .userName(user.getUsername())
+                .userName(user.getUserName())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
@@ -34,6 +45,8 @@ public class UserMapper {
                 .isBanned(user.isBanned())
                 .isPremium(user.isPremium())
                 .createdAt(user.getCreatedAt())
+               .numberOfQuizSet(quizRepository.countQuizbyUserId(user.getUserId()))
+                .view(quizRepository.countViewByUserId(user.getUserId()))
                 .build();
     }
 

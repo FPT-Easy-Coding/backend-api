@@ -53,6 +53,9 @@ public class User implements UserDetails {
     @Column(name = "is_banned")
     private boolean isBanned;
 
+    @Column(name = "view")
+    private Long viewQuizCreateByUser;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;

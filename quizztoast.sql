@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `quizztoast4` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `quizztoast4`;
+CREATE DATABASE  IF NOT EXISTS `quizztoast` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `quizztoast`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: quizztoast
@@ -397,7 +397,7 @@ DROP TABLE IF EXISTS `quiz`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `quiz` (
-  `quiz_id` int NOT NULL AUTO_INCREMENT,
+ `quiz_id` int NOT NULL AUTO_INCREMENT,
   `class_id` int NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `quiz_name` varchar(255) NOT NULL,
@@ -405,6 +405,8 @@ CREATE TABLE `quiz` (
   `rate` int NOT NULL,
   `category_id` int DEFAULT NULL,
   `user_id` bigint DEFAULT NULL,
+  `view`bigint,
+  `time_recent_view_quiz` datetime(6),
   PRIMARY KEY (`quiz_id`),
   KEY `FK82x9fxd5tsbb3i1ewrp3cr8xa` (`category_id`),
   KEY `FK1tofsm1qynhakggx7ttqh8ihu` (`user_id`),
@@ -419,7 +421,6 @@ CREATE TABLE `quiz` (
 
 LOCK TABLES `quiz` WRITE;
 /*!40000 ALTER TABLE `quiz` DISABLE KEYS */;
-INSERT INTO `quiz` VALUES (1,12,'2024-01-22 12:30:00.000000','test Quiz',0,5,NULL,NULL),(2,1,'2024-01-23 16:57:06.630185','ABC',0,3,1,10952);
 /*!40000 ALTER TABLE `quiz` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -447,9 +448,7 @@ CREATE TABLE `quiz_answer` (
 --
 
 LOCK TABLES `quiz_answer` WRITE;
-/*!40000 ALTER TABLE `quiz_answer` DISABLE KEYS */;
-INSERT INTO `quiz_answer` VALUES (3,'2','2024-01-23 10:13:27.466647',_binary '',3),(4,'string','2024-01-23 10:25:45.652079',_binary '',4),(5,'2','2024-01-23 10:25:56.360883',_binary '',5),(6,'string','2024-01-23 10:27:49.596625',_binary '',6),(7,'string','2024-01-23 11:47:48.707868',_binary '',7),(8,'string','2024-01-23 11:49:17.393576',_binary '',8);
-/*!40000 ALTER TABLE `quiz_answer` ENABLE KEYS */;
+
 UNLOCK TABLES;
 
 --
@@ -500,11 +499,7 @@ CREATE TABLE `quiz_question` (
 -- Dumping data for table `quiz_question`
 --
 
-LOCK TABLES `quiz_question` WRITE;
-/*!40000 ALTER TABLE `quiz_question` DISABLE KEYS */;
-INSERT INTO `quiz_question` VALUES (3,'1+1=','2024-01-23 10:13:27.457673',NULL),(4,'string','2024-01-23 10:25:45.594236',NULL),(5,'1+1=','2024-01-23 10:25:56.353902',NULL),(6,'1+1=','2024-01-23 10:27:49.548752',NULL),(7,'string','2024-01-23 11:47:48.653116',NULL),(8,'string','2024-01-23 11:49:17.388588',NULL);
-/*!40000 ALTER TABLE `quiz_question` ENABLE KEYS */;
-UNLOCK TABLES;
+
 
 --
 -- Table structure for table `quiz_question_mapping`
@@ -556,11 +551,7 @@ CREATE TABLE `token` (
 -- Dumping data for table `token`
 --
 
-LOCK TABLES `token` WRITE;
-/*!40000 ALTER TABLE `token` DISABLE KEYS */;
-INSERT INTO `token` VALUES (10502,_binary '',_binary '','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1OTEyMDYyLCJleHAiOjE3MDU5OTg0NjJ9.WlXPho3LjB7D_sgIKERwSvzF1FNEOb7Adf11p_0quj4','BEARER',10952),(10552,_binary '\0',_binary '\0','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjAzNTc4Nn0.GbOt25veZBXl3YHwJrW101CT-gvNGC20RTQK4uBwdAk','BEARER',11002),(10602,_binary '',_binary '','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1OTQ5OTc0LCJleHAiOjE3MDYwMzYzNzR9.Oz_2zQJn78Oy_ApmykjWk_s-Bmbq7omd0v-2JCN_RAI','BEARER',10952),(10603,_binary '\0',_binary '\0','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1OTQ5OTk5LCJleHAiOjE3MDYwMzYzOTl9.Rivssn7JjKZFQ4Kr8U1xa5gErKTJxKDSMoe5TdrWRL4','BEARER',10952);
-/*!40000 ALTER TABLE `token` ENABLE KEYS */;
-UNLOCK TABLES;
+
 
 --
 -- Table structure for table `token_seq`
@@ -640,6 +631,7 @@ CREATE TABLE `user` (
   `secret` varchar(255) DEFAULT NULL,
   `telephone` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
+  `view` bigint  DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -648,11 +640,7 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (10952,NULL,'admin2@gmail.com','Admin',NULL,_binary '\0',_binary '\0','Demo',_binary '\0','$2a$10$sPVhhDkMde/zWh5NX2rqheJHijkckE1erEmAcLMgV1/UZJUZpXaCS','ADMIN',NULL,NULL,NULL),(11002,NULL,'anhananh123@gmail.com','string',NULL,_binary '\0',_binary '\0','string',_binary '','$2a$10$p8cqU8kKhCqet0bUQNgSUee0YCh7syVmTn0ZcHS/a7hZX0y.f8cmi','USER','CXNY7FH5HH3HW2BXC2LFIGSEMSEIETEG','0987777777','hieuee');
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
+
 
 --
 -- Table structure for table `user_belong_class`

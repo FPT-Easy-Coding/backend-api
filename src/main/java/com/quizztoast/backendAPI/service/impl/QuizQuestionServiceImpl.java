@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.service.impl;
 
 
+import com.nimbusds.oauth2.sdk.util.StringUtils;
 import com.quizztoast.backendAPI.exception.FormatException;
 
 import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
@@ -42,16 +44,15 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers(@Valid @RequestBody QuizQuestionRequest Quizrequest) {
-
+    public ResponseEntity<?> createQuizQuestionAndAnswers(@Valid @RequestBody QuizQuestionRequest quizRequest) {
         try {
             // Find the category by ID
-            Category category = categoryRepository.findById(Quizrequest.getCategoryId())
-                    .orElseThrow(() -> new FormatException("category_id","Category not found"));
+            Category category = categoryRepository.findById(quizRequest.getCategoryId())
+                    .orElseThrow(() -> new FormatException("categoryId", "Category not found"));
 
             // Create QuizQuestion
             QuizQuestion quizQuestion = QuizQuestion.builder()
-                    .content(Quizrequest.getQuestionContent())
+                    .content(quizRequest.getQuestionContent())
                     .categoryId(category)
                     .createdAt(LocalDateTime.now())
                     .build();
@@ -60,10 +61,10 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
             // Create QuizAnswer list
             List<QuizAnswer> quizAnswers = new ArrayList<>();
-            for (QuizAnswerRequest answerRequest : Quizrequest.getAnswers()) {
-//                if (StringUtils.isBlank(answerRequest.getContent())) {
-//                    throw new FormatException("QuizAnswer", "QuizAnswer content cannot be blank");
-//                }
+            for (QuizAnswerRequest answerRequest : quizRequest.getAnswers()) {
+                if (StringUtils.isBlank(answerRequest.getContent())) {
+                    throw new FormatException("QuizAnswer", "QuizAnswer content cannot be blank");
+                }
                 QuizAnswer quizAnswer = QuizAnswer.builder()
                         .content(answerRequest.getContent())
                         .isCorrect(answerRequest.isCorrect())
@@ -78,17 +79,17 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             quizAnswerRepository.saveAll(quizAnswers);
 
             // Map QuizQuestionRequest to QuizQuestionDTO
-            QuizQuestionDTO quizQuestionDTO = QuizQuestionMapper.mapQuizQuesRequestToDTO(Quizrequest);
+            QuizQuestionDTO quizQuestionDTO = QuizQuestionMapper.mapQuizQuesRequestToDTO(quizRequest);
 
             return ResponseEntity.ok(quizQuestionDTO);
-        }
-         catch (Exception e) {
-            // Handle other exceptions
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        } catch (FormatException ex) {
+            throw new  FormatException("categoryId", "Category not found");
+            // Return the FormatException directly
 
+        }
     }
-@Override
+
+    @Override
     public List<QuizQuestion> getAllQuiz() {
     return quizQuestionRepository.findAll();
     }

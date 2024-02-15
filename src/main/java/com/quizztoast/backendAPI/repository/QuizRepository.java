@@ -25,6 +25,10 @@ public interface QuizRepository extends JpaRepository<Quiz,Long> {
     Quiz getQuizById(@Param("quizId") int quizId);
 
 
-    @Query("SELECT q FROM Quiz q WHERE q.quizName LIKE %:content%")
-    List<Quiz> findByContent(@Param("content") String content);
+    List<Quiz> findByQuizNameContaining(String content);
+
+    @Query("SELECT SUM(q.viewOfQuiz) FROM Quiz q WHERE q.user.userId = :userId")
+    Long countViewByUserId(Long userId);
+    @Query("SELECT COUNT(q) FROM Quiz q WHERE q.user.userId = :userId")
+    Integer countQuizbyUserId(@Param("userId") Long userId);
 }

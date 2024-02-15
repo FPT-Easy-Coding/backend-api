@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 public interface QuizQuestionService {
-    ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers( QuizQuestionRequest Quizrequest);
+    ResponseEntity<?> createQuizQuestionAndAnswers( QuizQuestionRequest Quizrequest);
      List<QuizQuestion> getAllQuiz();
     List<QuizQuestion> GetByContent(String content);
     ResponseEntity<QuizQuestion> UpdateQuizQuestion(int quizquestionId, QuizQuestionRequest quizRequest);

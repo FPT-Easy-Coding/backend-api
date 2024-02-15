@@ -158,7 +158,6 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleErrorResponse(HttpStatus.CONFLICT.value(), "Username already exists."));
             }
             // Validate other business rules if needed
-
             // Actual implementation for creating a new resource can be added here
             User newUser = userServiceImpl.addNewUser(user);
             UserDTO userDTO = UserMapper.mapUserDtoToAdmin(newUser);

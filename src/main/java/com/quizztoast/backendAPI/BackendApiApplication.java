@@ -21,10 +21,10 @@ public class BackendApiApplication {
 //    ){
 //        return args -> {
 //            var admin = RegisterRequest.builder()
-//                    .firstName("Admin")
-//                    .lastName("Demo")
-//                    .email("admin2@gmail.com")
-//                    .password("password")
+//                    .firstName("Admin11")
+//                    .lastName("Demo12")
+//                    .email("user@gmail.com")
+//                    .password("Anhananh!123")
 //
 //                    .build();
 //            System.out.println("Admin token: " + authenticationService.register(admin).getAccessToken());

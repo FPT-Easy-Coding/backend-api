@@ -12,14 +12,18 @@ public class QuizMapper {
 
     public static QuizDTO mapQuizDTOToUser(Quiz quiz){
         return QuizDTO.builder()
-                .user_first_name(quiz.getUser().getFirstName())
-                .user_last_name(quiz.getUser().getLastName())
-                .user_id(quiz.getUser().getUserId())
-                .quiz_name(quiz.getQuizName())
-                .category_id(quiz.getCategory().getCategoryId())
+                .userFirstName(quiz.getUser().getFirstName())
+                .userLastName(quiz.getUser().getLastName())
+                .userName(quiz.getUser().getUserName())
+                .userId(quiz.getUser().getUserId())
+                .quizId(quiz.getQuizId())
+                .quizName(quiz.getQuizName())
+                .categoryId(quiz.getCategory().getCategoryId())
                 .rate(quiz.getRate())
-                .number_of_questions(quiz.getNumberOfQuizQuestion())
-                .create_at(quiz.getCreatedAt())
+                .view(quiz.getViewOfQuiz())
+                .numberOfQuestions(quiz.getNumberOfQuizQuestion())
+                .createAt(quiz.getCreatedAt())
+                .timeRecentViewQuiz(quiz.getTimeRecentViewQuiz())
                 .build();
     }
     public static List<QuizDTO> quizToQuizDTO(List<Quiz> quiz)

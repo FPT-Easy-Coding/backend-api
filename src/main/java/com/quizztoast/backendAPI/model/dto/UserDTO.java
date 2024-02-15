@@ -24,7 +24,8 @@ public class UserDTO {
     private boolean isPremium;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Date createdAt;
-
+    private  Long view;
+  private int numberOfQuizSet;
     public UserDTO(String userName, String firstName, String lastName, String email, String telephone) {
     }
 }

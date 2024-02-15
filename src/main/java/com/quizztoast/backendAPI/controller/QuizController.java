@@ -3,7 +3,9 @@ package com.quizztoast.backendAPI.controller;
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
 
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
 import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
+import com.quizztoast.backendAPI.model.payload.Response.QuizQuestionResponse;
 import com.quizztoast.backendAPI.service.impl.QuizServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,13 +15,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/quiz")
+@RequestMapping("api/v1/quiz")
 @RequiredArgsConstructor
 @Tag(name = "Quiz")
 public class QuizController {
@@ -33,7 +36,6 @@ public class QuizController {
      */
     @Operation(
             description = "Get All Quiz",
-            summary = "",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns All Quiz .",
@@ -42,7 +44,51 @@ public class QuizController {
                                     ,
                                     examples = {
                                             @ExampleObject(
-                                                    value = "[{\"quiz_id\":1,\"user_id\":null,\"class_id\":12,\"category_id\":null,\"quiz_name\":\"test Quiz\",\"rate\":5,\"created_at\":\"2024-01-22T12:30:00\",\"quiz_ques_id\":0}]"
+                                                    value = """
+                                                            [
+                                                                  {
+                                                                      "userId": 11052,
+                                                                      "quizId": 3,
+                                                                      "userName": null,
+                                                                      "userFirstName": "Admin11",
+                                                                      "userLastName": "Demo12",
+                                                                      "categoryId": 1,
+                                                                      "quizName": "string",
+                                                                      "rate": 0.0,
+                                                                      "numberOfQuestions": 2,
+                                                                      "createAt": "2024-02-14T00:24:25.899801",
+                                                                      "view": 3,
+                                                                      "timeRecentViewQuiz": "2024-02-14T01:00:28.664278"
+                                                                  },
+                                                                  {
+                                                                      "userId": 11102,
+                                                                      "quizId": 4,
+                                                                      "userName": "HieuLee",
+                                                                      "userFirstName": "hieu",
+                                                                      "userLastName": "le",
+                                                                      "categoryId": 1,
+                                                                      "quizName": "string",
+                                                                      "rate": 0.0,
+                                                                      "numberOfQuestions": 2,
+                                                                      "createAt": "2024-02-14T00:30:47.862129",
+                                                                      "view": 3,
+                                                                      "timeRecentViewQuiz": "2024-02-14T00:54:59.838241"
+                                                                  },
+                                                                  {
+                                                                      "userId": 11102,
+                                                                      "quizId": 5,
+                                                                      "userName": "HieuLee",
+                                                                      "userFirstName": "hieu",
+                                                                      "userLastName": "le",
+                                                                      "categoryId": 1,
+                                                                      "quizName": "test2",
+                                                                      "rate": 0.0,
+                                                                      "numberOfQuestions": 2,
+                                                                      "createAt": "2024-02-14T00:31:01.345869",
+                                                                      "view": 4,
+                                                                      "timeRecentViewQuiz": "2024-02-14T00:52:01.176093"
+                                                                  }
+                                                              ]"""
                                             )
                                     }
                             )
@@ -63,7 +109,6 @@ public class QuizController {
                             )
                     ),
                     @ApiResponse(
-                            description = "",
                             responseCode = "404",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema
@@ -82,7 +127,6 @@ public class QuizController {
      */
     @Operation(
             description = "Create Quiz",
-            summary = "",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns All Quiz .",
@@ -92,24 +136,22 @@ public class QuizController {
                                     examples = {
                                             @ExampleObject(
                                                     value = """
-                                                        {
-                                                            "quiz_id": 1,
-                                                            "user_id": 10952,
-                                                            "class_id": 1,
-                                                            "category_id": 1,
-                                                            "quiz_name": "ABC",
-                                                            "rate": 3,
-                                                            "create_at": "2024-01-23T09:55:17.447",
-                                                            "quiz_ques_ids": [
-                                                                0
-                                                            ]
-                                                        }"""
+                                                            {
+                                                                "userId": 1,
+                                                                "quizId": 1,
+                                                                "userFirstName": "Admin11",
+                                                                "userLastName": "Demo12",
+                                                                "categoryId": 2,
+                                                                "quizName": "hihi",
+                                                                "rate": 0.0,
+                                                                "numberOfQuestions": 1,
+                                                                "createAt": "2024-02-08T01:36:03.7677883"
+                                                            }"""
                                             )
                                     }
                             )
                     ),
                     @ApiResponse(
-                            description = "" ,
 
                             responseCode = "400",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
@@ -118,35 +160,37 @@ public class QuizController {
                                             @ExampleObject(
                                                     value = """
                                                             {
-                                                                 "data": [
-                                                                     {
-                                                                         "fieldName": "user_id",
-                                                                         "errorMessage": "user_id cannot be null"
-                                                                     },
-                                                                     {
-                                                                         "fieldName": "category_id",
-                                                                         "errorMessage": "category_id cannot be null"
-                                                                     },
-                                                                     {
-                                                                         "fieldName": "quiz_name",
-                                                                         "errorMessage": "quiz_name cannot be blank"
-                                                                     }
-                                                                 ],
-                                                                 "message": "Validation Failed",
-                                                                 "error": true
-                                                             }"""
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "categoryId",
+                                                                        "errorMessage": "categoryId cannot be null"
+                                                                    },
+                                                                    {
+                                                                        "fieldName": "quizName",
+                                                                        "errorMessage": "quizName cannot be null"
+                                                                    },
+                                                                    {
+                                                                        "fieldName": "userId",
+                                                                        "errorMessage": "userId cannot be null"
+                                                                    },
+                                                                    {
+                                                                        "fieldName": "quizName",
+                                                                        "errorMessage": "quizName cannot be blank"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
                                             )
                                     }
 
                             )
                     ),
                     @ApiResponse(
-                            description = "" ,
                             responseCode = "403",
                             content = @Content
                     ),
                     @ApiResponse(
-                            description = "",
                             responseCode = "404",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
                                     ,
@@ -156,8 +200,8 @@ public class QuizController {
                                                             {
                                                                 "data": [
                                                                     {
-                                                                        "fieldName": "User_id",
-                                                                        "errorMessage": "User_id not found"
+                                                                        "fieldName": "userId",
+                                                                        "errorMessage": "userId not found"
                                                                     }
                                                                 ],
                                                                 "message": "Validation Failed",
@@ -184,7 +228,6 @@ public class QuizController {
      */
     @Operation(
             description = "Delete Quiz",
-            summary = "",
             responses = {
                     @ApiResponse(
                             description = "Delete succesfull",
@@ -200,12 +243,10 @@ public class QuizController {
                             )
                     ),
                     @ApiResponse(
-                            description = "" ,
                             responseCode = "400",
                             content = @Content
                     ),
                     @ApiResponse(
-                            description = "" ,
                             responseCode = "403",
                             content = @Content
                     ),
@@ -246,8 +287,7 @@ public ResponseEntity<String> deleteQuiz(@PathVariable int quiz_id)
      * @return quiz set.
      */
     @Operation(
-            description = "Get All Quiz",
-            summary = "",
+            description = "Update Quiz by QuizId",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns All Quiz .",
@@ -258,18 +298,21 @@ public ResponseEntity<String> deleteQuiz(@PathVariable int quiz_id)
                                             @ExampleObject(
                                                     value = """
                                                             {
-                                                                "user_id": 202,
-                                                                "category_id": 1,
-                                                                "quiz_name": "111111111",
+                                                                "userId": 1,
+                                                                "quizId": 1,
+                                                                "userFirstName": "Admin11",
+                                                                "userLastName": "Demo12",
+                                                                "categoryId": 1,
+                                                                "quizName": "string",
                                                                 "rate": 0.0,
-                                                                "create_at": "2024-01-29T15:24:46.975"
+                                                                "numberOfQuestions": 1,
+                                                                "createAt": "2024-02-07T18:42:38.645"
                                                             }"""
                                             )
                                     }
                             )
                     ),
                     @ApiResponse(
-                            description = "" ,
 
                             responseCode = "400",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
@@ -278,35 +321,33 @@ public ResponseEntity<String> deleteQuiz(@PathVariable int quiz_id)
                                             @ExampleObject(
                                                     value = """
                                                             {
-                                                                 "data": [
-                                                                     {
-                                                                         "fieldName": "user_id",
-                                                                         "errorMessage": "user_id cannot be null"
-                                                                     },
-                                                                     {
-                                                                         "fieldName": "category_id",
-                                                                         "errorMessage": "category_id cannot be null"
-                                                                     },
-                                                                     {
-                                                                         "fieldName": "quiz_name",
-                                                                         "errorMessage": "quiz_name cannot be blank"
-                                                                     }
-                                                                 ],
-                                                                 "message": "Validation Failed",
-                                                                 "error": true
-                                                             }"""
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "categoryId",
+                                                                        "errorMessage": "categoryId cannot be null"
+                                                                    },
+                                                                    {
+                                                                        "fieldName": "userId",
+                                                                        "errorMessage": "userId cannot be null"
+                                                                    },
+                                                                    {
+                                                                        "fieldName": "quizName",
+                                                                        "errorMessage": "quizName cannot be blank"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
                                             )
                                     }
 
                             )
                     ),
                     @ApiResponse(
-                            description = "" ,
                             responseCode = "403",
                             content = @Content
                     ),
                     @ApiResponse(
-                            description = "",
                             responseCode = "404",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
                                     ,
@@ -314,15 +355,15 @@ public ResponseEntity<String> deleteQuiz(@PathVariable int quiz_id)
                                             @ExampleObject(
                                                     value = """
                                                             {
-                                                                 "data": [
-                                                                     {
-                                                                         "fieldName": "User_id",
-                                                                         "errorMessage": "User_id not found"
-                                                                     }
-                                                                 ],
-                                                                 "message": "Validation Failed",
-                                                                 "error": true
-                                                             }"""
+                                                                "data": [
+                                                                    {
+                                                                        "fieldName": "userId",
+                                                                        "errorMessage": "userId not found"
+                                                                    }
+                                                                ],
+                                                                "message": "Validation Failed",
+                                                                "error": true
+                                                            }"""
                                             )
                                     }
 
@@ -337,12 +378,102 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @Requ
 }
 
     /**
-     * get Quiz and answer by name  using a Post request.
+     * get Quiz and answer by name  QuizId a Get request.
+     *
+     * @return  QuizQuestionResponse .
+     */
+    @Operation(
+            description = "Get QuizQuestion And QuizAnswer by QuizId",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns Quiz By Name QuizQuestion .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            [
+                                                                 {
+                                                                     "questionContent": "hello",
+                                                                     "answers": [
+                                                                         {
+                                                                             "content": "xinchao",
+                                                                             "correct": true
+                                                                         }
+                                                                     ]
+                                                                 },
+                                                                 {
+                                                                     "questionContent": "what la cai gi?",
+                                                                     "answers": [
+                                                                         {
+                                                                             "content": "hoi ngu",
+                                                                             "correct": false
+                                                                         },
+                                                                         {
+                                                                             "content": "là cai gi",
+                                                                             "correct": true
+                                                                         }
+                                                                     ]
+                                                                 }
+                                                             ]"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request" ,
+
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                  "data": [
+                                                                      {
+                                                                          "fieldName": "quizId",
+                                                                          "errorMessage": "Quiz with given ID not found"
+                                                                      }
+                                                                  ],
+                                                                  "message": "Validation Failed",
+                                                                  "error": true
+                                                              }"""
+                                            )
+                                    }
+                            )
+
+                    )
+
+            }
+    )
+    @RequestMapping(value = "get-quiz/quiz-id={quiz_id}", method = RequestMethod.GET)
+    public List<QuizQuestionResponse> getQuizQestionByQuizId (@PathVariable int quiz_id)
+    {
+        return quizServiceImpl.getQuizQuestionsAndAnswersByQuizId(quiz_id);
+    }
+
+    /**
+     * get Quiz by name  using a Get request.
      *
      * @return  Quiz .
      */
     @Operation(
-            description = "Get Quiz By Content",
+            description = "Get Quiz by QuizName",
             summary = "",
             responses = {
                     @ApiResponse(
@@ -355,13 +486,48 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @Requ
                                                     value = """
                                                             [
                                                                 {
-                                                                    "user_id": 252,
-                                                                    "category_id": 1,
-                                                                    "quiz_name": "string",
-                                                                    "rate": 0.0,
-                                                                    "create_at": "2024-01-30T12:46:39.926883"
+                                                                  "userId": 11052,
+                                                                  "quizId": 3,
+                                                                  "userName": null,
+                                                                  "userFirstName": "Admin11",
+                                                                  "userLastName": "Demo12",
+                                                                  "categoryId": 1,
+                                                                  "quizName": "string",
+                                                                  "rate": 0,
+                                                                  "numberOfQuestions": 2,
+                                                                  "createAt": "2024-02-14T00:24:25.899801",
+                                                                  "view": 3,
+                                                                  "timeRecentViewQuiz": "2024-02-14T01:00:28.664278"
+                                                                },
+                                                                {
+                                                                  "userId": 11102,
+                                                                  "quizId": 4,
+                                                                  "userName": "HieuLee",
+                                                                  "userFirstName": "hieu",
+                                                                  "userLastName": "le",
+                                                                  "categoryId": 1,
+                                                                  "quizName": "string",
+                                                                  "rate": 0,
+                                                                  "numberOfQuestions": 2,
+                                                                  "createAt": "2024-02-14T00:30:47.862129",
+                                                                  "view": 3,
+                                                                  "timeRecentViewQuiz": "2024-02-14T00:54:59.838241"
+                                                                },
+                                                                {
+                                                                  "userId": 11102,
+                                                                  "quizId": 5,
+                                                                  "userName": "HieuLee",
+                                                                  "userFirstName": "hieu",
+                                                                  "userLastName": "le",
+                                                                  "categoryId": 1,
+                                                                  "quizName": "test2",
+                                                                  "rate": 0,
+                                                                  "numberOfQuestions": 2,
+                                                                  "createAt": "2024-02-14T00:31:01.345869",
+                                                                  "view": 4,
+                                                                  "timeRecentViewQuiz": "2024-02-14T00:52:01.176093"
                                                                 }
-                                                            ]"""
+                                                              ]"""
                                             )
                                     }
                             )
@@ -370,25 +536,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @Requ
                             description = "Bad Request" ,
 
                             responseCode = "400",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
-                                    ,
-                                    examples = {
-                                            @ExampleObject(
-                                                    value = """
-                                                            {
-                                                                "data": [
-                                                                    {
-                                                                        "fieldName": "questionContent",
-                                                                        "errorMessage": "questionContent cannot be blank"
-                                                                    }
-                                                                ],
-                                                                "message": "Validation Failed",
-                                                                "error": true
-                                                            }"""
-                                            )
-                                    }
-
-                            )
+                            content = @Content
                     ),
                     @ApiResponse(
                             description = "\t\n" +
@@ -411,7 +559,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @Requ
                                                                 "data": [
                                                                     {
                                                                         "fieldName": "quiz_name",
-                                                                        "errorMessage": "quiz_name not exist"
+                                                                        "errorMessage": "Quiz not exist"
                                                                     }
                                                                 ],
                                                                 "message": "Validation Failed",
@@ -425,10 +573,107 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @Requ
 
             }
     )
-    @RequestMapping(value = "get-quiz/content={content}", method = RequestMethod.GET)
+    @RequestMapping(value = "get-quiz/QuizName={QuizName}", method = RequestMethod.GET)
+    public List<QuizDTO> getQuizsByContent(@PathVariable String QuizName){
 
-    public List<QuizDTO> findByContent(@PathVariable String content)
-    {
-        return quizServiceImpl.GetByContent(content);
+        return quizServiceImpl.GetQuizByContent(QuizName);
     }
+    /**
+     * Increase view of quiz by quizid using a PUT request.
+     *
+     * @return  message succesfull .
+     */
+    @Operation(
+            description = "Get Quiz by QuizName",
+            summary = "",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns Quiz By Name QuizQuestion .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            increase Succesfull!"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request" ,
+
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+
+                            content = @Content
+
+                    )
+
+            }
+    )
+    @RequestMapping(value = "/increase-view/{quizId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> increaseView(@PathVariable int quizId){
+       return quizServiceImpl.increaseView(quizId);
+    }
+
+    /**
+     * Update TimeRecent  of quiz by quizid using a PUT request.
+     *
+     * @return  TimeRecent .
+     */
+    @Operation(
+            description = "Get Quiz by QuizName",
+            summary = "",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns Quiz By Name QuizQuestion .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            "2024-02-14T01:00:28.6642776"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request" ,
+
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+
+                            content = @Content
+
+                    )
+
+            }
+    )
+    @RequestMapping(value = "/update-time-quiz/{quizId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateTimeQuiz(@PathVariable int quizId){
+        return quizServiceImpl.upDateTimeQuiz(quizId);
+    }
+
 }

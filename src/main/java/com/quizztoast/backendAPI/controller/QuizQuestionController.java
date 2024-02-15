@@ -2,10 +2,8 @@ package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
-import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
 import com.quizztoast.backendAPI.model.payload.Request.QuizQuestionRequest;
-import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
 import com.quizztoast.backendAPI.service.impl.QuizQuestionServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,7 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/quiz-question")
 @RequiredArgsConstructor
-@Tag(name = "QuizQuestion")
+@Tag(name = "Quiz Question")
+
 public class QuizQuestionController {
   private final QuizQuestionServiceImpl quizQuestionServiceImpl;
     /**
@@ -33,7 +32,6 @@ public class QuizQuestionController {
      */
     @Operation(
             description = "Create QuizQuestion and answer ",
-            summary = "",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns All Quiz .",
@@ -59,7 +57,6 @@ public class QuizQuestionController {
                             )
                     ),
                     @ApiResponse(
-                            description = "" ,
 
                             responseCode = "400",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
@@ -83,12 +80,11 @@ public class QuizQuestionController {
                             )
                     ),
                     @ApiResponse(
-                            description = "" ,
                             responseCode = "403",
                             content = @Content
                     ),
                     @ApiResponse(
-                            description = "BadRequest",
+                            description = "Not Found",
                             responseCode = "404",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
                                     ,
@@ -113,7 +109,7 @@ public class QuizQuestionController {
             }
     )
     @PostMapping("create-quiz-question")
-    public ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers(@Valid @RequestBody QuizQuestionRequest Quizrequest) {
+    public ResponseEntity<?> createQuizQuestionAndAnswers(@Valid @RequestBody QuizQuestionRequest Quizrequest) {
 
         return quizQuestionServiceImpl.createQuizQuestionAndAnswers(Quizrequest);
     }
@@ -124,7 +120,6 @@ public class QuizQuestionController {
      */
     @Operation(
             description = "Get All QuizQuestion",
-            summary = "",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns All Quiz .",
@@ -136,39 +131,21 @@ public class QuizQuestionController {
                                                     value = """
                                                             [
                                                                 {
-                                                                    "quiz_question_id": 2,
-                                                                    "created_at": "2024-01-30T13:15:22.464031",
-                                                                    "content": "bbbbbbbaaa",
-                                                                    "category_id": {
-                                                                        "category_id": 1,
-                                                                        "category_name": "string"
+                                                                    "quizQuestionId": 1,
+                                                                    "createdAt": "2024-02-08T01:36:03.776852",
+                                                                    "content": "string",
+                                                                    "categoryId": {
+                                                                        "categoryId": 1,
+                                                                        "categoryName": "String"
                                                                     }
                                                                 },
                                                                 {
-                                                                    "quiz_question_id": 3,
-                                                                    "created_at": "2024-01-30T13:16:21.040623",
-                                                                    "content": "bbbbbbbaaa",
-                                                                    "category_id": {
-                                                                        "category_id": 1,
-                                                                        "category_name": "string"
-                                                                    }
-                                                                },
-                                                                {
-                                                                    "quiz_question_id": 5,
-                                                                    "created_at": "2024-01-30T13:20:29.802077",
-                                                                    "content": "bbbbbbbaaa",
-                                                                    "category_id": {
-                                                                        "category_id": 1,
-                                                                        "category_name": "string"
-                                                                    }
-                                                                },
-                                                                {
-                                                                    "quiz_question_id": 6,
-                                                                    "created_at": "2024-01-30T13:21:57.1021",
-                                                                    "content": "bbbbbbbaaa",
-                                                                    "category_id": {
-                                                                        "category_id": 1,
-                                                                        "category_name": "string"
+                                                                    "quizQuestionId": 2,
+                                                                    "createdAt": "2024-02-08T01:50:25.107304",
+                                                                    "content": "string",
+                                                                    "categoryId": {
+                                                                        "categoryId": 1,
+                                                                        "categoryName": "String"
                                                                     }
                                                                 }
                                                             ]"""
@@ -192,7 +169,6 @@ public class QuizQuestionController {
                             )
                     ),
                     @ApiResponse(
-                            description = "",
                             responseCode = "404",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema
@@ -200,7 +176,7 @@ public class QuizQuestionController {
                     ),
             }
     )
-    @GetMapping("/getall-quiz-question")
+    @GetMapping("/get-all-quiz-question")
     public List<QuizQuestion> getAllQuizQues(){
         return quizQuestionServiceImpl.getAllQuiz();
     }
@@ -210,8 +186,7 @@ public class QuizQuestionController {
      * @return  QuizQuestion and answer .
      */
     @Operation(
-            description = "Get All QuizQuestion",
-            summary = "",
+            description = "Get QuizQuestion by Content",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns Quiz By Name QuizQuestion .",
@@ -296,7 +271,6 @@ public class QuizQuestionController {
                             )
                     ),
                     @ApiResponse(
-                            description = "",
                             responseCode = "404",
 
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
@@ -322,8 +296,8 @@ public class QuizQuestionController {
 
             }
     )
-    @RequestMapping(value = "get-quiz-question/content={content}", method = RequestMethod.GET)
-    public List<QuizQuestion> findByContent(@PathVariable String content)
+    @RequestMapping(value = "/get-quiz-question", method = RequestMethod.GET)
+    public List<QuizQuestion> findByContent(@RequestParam(name = "content") String content)
     {
         return quizQuestionServiceImpl.GetByContent(content);
     }
@@ -334,7 +308,6 @@ public class QuizQuestionController {
      */
     @Operation(
             description = "Update QuizQuestion",
-            summary = "",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns Quiz By Name QuizQuestion .",
@@ -345,12 +318,12 @@ public class QuizQuestionController {
                                             @ExampleObject(
                                                     value = """
                                                             {
-                                                                "quiz_question_id": 3,
-                                                                "created_at": "2024-01-30T13:16:21.040623",
-                                                                "content": "helloEveryone",
-                                                                "category_id": {
-                                                                    "category_id": 1,
-                                                                    "category_name": "string"
+                                                                "quizQuestionId": 1,
+                                                                "createdAt": "2024-02-08T01:36:03.776852",
+                                                                "content": "string",
+                                                                "categoryId": {
+                                                                    "categoryId": 1,
+                                                                    "categoryName": "String"
                                                                 }
                                                             }"""
                                             )
@@ -373,7 +346,6 @@ public class QuizQuestionController {
                             )
                     ),
                     @ApiResponse(
-                            description = "",
                             responseCode = "404",
 
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
@@ -412,7 +384,6 @@ public class QuizQuestionController {
      */
     @Operation(
             description = "Delete QuizQuestion",
-            summary = "",
             responses = {
                     @ApiResponse(
                             description = "Success. Returns Quiz By Name QuizQuestion .",
@@ -443,7 +414,6 @@ public class QuizQuestionController {
                             )
                     ),
                     @ApiResponse(
-                            description = "",
                             responseCode = "404",
 
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
@@ -471,8 +441,8 @@ public class QuizQuestionController {
     )
     @RequestMapping(value = "delete-quiz-question/quizquestion-id={quizquestion_id}", method = RequestMethod.DELETE)
 
-    public ResponseEntity<String> deleteQuiz(@PathVariable Long quizquestionId)
+    public ResponseEntity<String> deleteQuiz(@PathVariable Long quizquestion_id)
     {
-        return quizQuestionServiceImpl.deleteQuizById(quizquestionId);
+        return quizQuestionServiceImpl.deleteQuizById(quizquestion_id);
     }
 }
