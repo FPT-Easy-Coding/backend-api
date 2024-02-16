@@ -199,6 +199,7 @@ public class UserServiceImpl implements UserService {
             return "Token already expired";
         }
         userRepository.save(user);
+//        passwordResetTokenRepository.delete(passwordResetToken);
         return "valid";
     }
 

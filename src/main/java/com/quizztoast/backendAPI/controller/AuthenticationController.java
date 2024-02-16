@@ -262,10 +262,13 @@ public class AuthenticationController {
     }
 
     @GetMapping("/reset-password")
-    public RedirectView resetPasswordForm(
-            @RequestParam("token") String token
-    ) {
-        // Find the user based on the token
+    public RedirectView resetPasswordForm(HttpServletRequest request) {
+        String token = request.getParameter("token");
+        if (token == null || token.isEmpty()) {
+            // Token not provided or empty
+            return new RedirectView("/error");
+        }
+
         Optional<User> user = userServiceImpl.getUserByPasswordResetToken(token);
         if (user.isEmpty()) {
             // Token not found or user not associated with the token
@@ -275,6 +278,7 @@ public class AuthenticationController {
         // Redirect to the password reset form in the React frontend
         return new RedirectView("http://localhost:5173/reset-password?token=" + token);
     }
+
 
 
     @PostMapping("/reset-password")
