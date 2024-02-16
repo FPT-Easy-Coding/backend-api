@@ -1,10 +1,8 @@
 package com.quizztoast.backendAPI.model.mapper;
 
 import com.quizztoast.backendAPI.model.dto.CategoryDTO;
-import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
-import com.quizztoast.backendAPI.model.payload.Request.CategoryRequest;
-import com.quizztoast.backendAPI.model.payload.Request.QuizAnswerRequest;
+import com.quizztoast.backendAPI.model.payload.request.CategoryRequest;
 
 public class CategoryMapper {
 

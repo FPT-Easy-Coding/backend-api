@@ -2,7 +2,7 @@ package com.quizztoast.backendAPI.exception.annotation.credentials;
 
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.UserRepository;
-import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationRequest;
+import com.quizztoast.backendAPI.security.auth.AuthenticationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

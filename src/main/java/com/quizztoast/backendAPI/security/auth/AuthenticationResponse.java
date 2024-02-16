@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.security.auth.auth_payload;
+package com.quizztoast.backendAPI.security.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.quizztoast.backendAPI.model.entity.user.Role;

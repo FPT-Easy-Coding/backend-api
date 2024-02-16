@@ -1,11 +1,12 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.UserDTO;
+import com.quizztoast.backendAPI.model.payload.response.UserProfileResponse;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.UserMapper;
-import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
+import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
 
-import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
+import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -163,13 +164,30 @@ public class UserController {
 
     @GetMapping("/profile/{id}")
     @RequestMapping(value = "profile/user-id={id}", method = RequestMethod.GET)
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<UserProfileResponse> getUserById(@PathVariable("id") Long id) {
         User user = userServiceImpl.getUserById(id);
 
         // Convert User entity to UserDTO
-        UserDTO userDTO = UserMapper.mapToUserDto(user);
+        UserProfileResponse userProfile = UserMapper.mapToUserProfile(user);
 
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.ok(userProfile);
     }
-    
+
+//    private String passwordResetEmailLink(User user, String applicationUrl, String token) {
+//        String url = applicationUrl + "/reset-password?token=" + token;
+//
+//    }
+//    public String resetPasswordRequest(
+//            @RequestBody PasswordResetRequest passwordResetRequest,
+//            final HttpServletRequest request
+//            ) {
+//        Optional<User> user = userServiceImpl.getUserByEmail(passwordResetRequest.getEmail());
+//        String passwordResetUrl = "";
+//        if (user.isPresent()) {
+//            String passwordResetToken = UUID.randomUUID().toString();
+//            userServiceImpl.createPasswordResetTokenForUser(user.get(), passwordResetToken);
+//            passwordResetUrl = passwordResetEmailLink(user.get(), applicationUrl(request), passwordResetToken);
+//        }
+//        return passwordResetUrl;
+//    }
 }

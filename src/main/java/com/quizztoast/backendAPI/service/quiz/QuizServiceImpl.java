@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.service.impl;
+package com.quizztoast.backendAPI.service.quiz;
 
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
@@ -7,12 +7,10 @@ import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestionMapping;
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
-import com.quizztoast.backendAPI.model.mapper.QuizQuestionMapper;
-import com.quizztoast.backendAPI.model.payload.Request.QuizAnswerRequest;
-import com.quizztoast.backendAPI.model.payload.Request.QuizQuestionRequest;
-import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
+import com.quizztoast.backendAPI.model.payload.request.QuizAnswerRequest;
+import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
+import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
 import com.quizztoast.backendAPI.repository.*;
-import com.quizztoast.backendAPI.service.QuizService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

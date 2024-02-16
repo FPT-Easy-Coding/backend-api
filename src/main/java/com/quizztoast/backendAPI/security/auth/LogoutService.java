@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.security.auth.auth_service;
+package com.quizztoast.backendAPI.security.auth;
 
 import com.quizztoast.backendAPI.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;

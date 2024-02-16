@@ -1,9 +1,4 @@
-package com.quizztoast.backendAPI.security.auth.auth_service;
-
-import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationRequest;
-import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationResponse;
-import com.quizztoast.backendAPI.security.auth.auth_payload.RegistrationRequest;
-import com.quizztoast.backendAPI.security.auth.auth_payload.VerificationRequest;
+package com.quizztoast.backendAPI.security.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

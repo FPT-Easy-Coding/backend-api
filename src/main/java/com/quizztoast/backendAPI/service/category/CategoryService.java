@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.service;
+package com.quizztoast.backendAPI.service.category;
 
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import org.springframework.http.ResponseEntity;

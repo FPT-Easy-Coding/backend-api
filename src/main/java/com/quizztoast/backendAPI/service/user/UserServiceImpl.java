@@ -1,15 +1,16 @@
-package com.quizztoast.backendAPI.service.impl;
+package com.quizztoast.backendAPI.service.user;
 
+import com.quizztoast.backendAPI.model.entity.token.PasswordResetToken;
 import com.quizztoast.backendAPI.model.entity.token.VerificationToken;
 import com.quizztoast.backendAPI.model.entity.user.Provider;
 import com.quizztoast.backendAPI.model.entity.user.User;
 
+import com.quizztoast.backendAPI.repository.PasswordResetTokenRepository;
 import com.quizztoast.backendAPI.repository.TokenRepository;
 import com.quizztoast.backendAPI.repository.UserRepository;
 import com.quizztoast.backendAPI.repository.VerificationTokenRepository;
-import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
-import com.quizztoast.backendAPI.security.auth.auth_payload.RegistrationRequest;
-import com.quizztoast.backendAPI.service.UserService;
+import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
+import com.quizztoast.backendAPI.security.auth.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +22,6 @@ import jakarta.persistence.EntityNotFoundException;
 
 import java.security.Principal;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
@@ -49,6 +50,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
+
 
     @Override
     public User createUser(RegistrationRequest user) {
@@ -166,7 +168,7 @@ public class UserServiceImpl implements UserService {
     public String validateVerificationToken(VerificationToken token) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token.getToken());
         if (verificationToken == null) {
-            return "invalid verification token";
+            return "invalid reset password token";
         }
         User user = verificationToken.getUser();
         if ((verificationToken.getTokenExpirationTime().compareTo(new Date())) < 0) {
@@ -178,4 +180,38 @@ public class UserServiceImpl implements UserService {
         verificationTokenRepository.delete(verificationToken);
         return "valid";
     }
+
+    @Override
+    public void savePasswordResetTokenForUser(User user, String token) {
+        PasswordResetToken passwordResetToken = new PasswordResetToken(user, token);
+        passwordResetTokenRepository.save(passwordResetToken);
+    }
+
+    @Override
+    public String validatePasswordResetToken(String token) {
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
+        if (passwordResetToken == null) {
+            return "invalid verification token";
+        }
+        User user = passwordResetToken.getUser();
+        if ((passwordResetToken.getTokenExpirationTime().compareTo(new Date())) < 0) {
+            passwordResetTokenRepository.delete(passwordResetToken);
+            return "Token already expired";
+        }
+        userRepository.save(user);
+        return "valid";
+    }
+
+    @Override
+    public Optional<User> getUserByPasswordResetToken(String token) {
+        return Optional.ofNullable(passwordResetTokenRepository.findByToken(token).getUser());
+    }
+
+    @Override
+    public void resetUserPassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+
 }

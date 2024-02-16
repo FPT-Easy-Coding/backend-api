@@ -1,12 +1,9 @@
-package com.quizztoast.backendAPI.service;
+package com.quizztoast.backendAPI.service.quiz;
 
 import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
-import com.quizztoast.backendAPI.model.payload.Request.QuizQuestionRequest;
-import com.quizztoast.backendAPI.model.payload.Request.QuizRequest;
-import jakarta.validation.Valid;
+import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 

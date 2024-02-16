@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.security.auth.auth_payload;
+package com.quizztoast.backendAPI.security.auth;
 import com.quizztoast.backendAPI.exception.annotation.credentials.ValidCredentials;
 import com.quizztoast.backendAPI.exception.annotation.email_exits.EmailExists;
 import jakarta.validation.Valid;

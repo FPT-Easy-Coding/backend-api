@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.security.auth.auth_payload;
+package com.quizztoast.backendAPI.model.payload.request;
 
 import lombok.Builder;
 import lombok.Getter;

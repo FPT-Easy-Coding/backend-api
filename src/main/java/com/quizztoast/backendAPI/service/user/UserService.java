@@ -1,10 +1,10 @@
-package com.quizztoast.backendAPI.service;
+package com.quizztoast.backendAPI.service.user;
 
 import com.quizztoast.backendAPI.model.entity.token.VerificationToken;
 import com.quizztoast.backendAPI.model.entity.user.User;
 
-import com.quizztoast.backendAPI.security.auth.auth_payload.ChangePasswordRequest;
-import com.quizztoast.backendAPI.security.auth.auth_payload.RegistrationRequest;
+import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
+import com.quizztoast.backendAPI.security.auth.RegistrationRequest;
 
 import org.springframework.stereotype.Service;
 
@@ -32,4 +32,9 @@ public interface UserService {
     void saveVerificationToken(User user, String verificationToken);
 
     String validateVerificationToken(VerificationToken verificationToken);
+
+     void savePasswordResetTokenForUser(User user, String token);
+    String validatePasswordResetToken(String token);
+    Optional<User> getUserByPasswordResetToken(String token);
+    void resetUserPassword(User user, String newPassword);
 }

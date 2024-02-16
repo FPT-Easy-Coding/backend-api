@@ -2,7 +2,7 @@ package com.quizztoast.backendAPI.event.listener;
 
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.event.RegistrationCompleteEvent;
-import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
+import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
         User user = event.getUser();
         String verificationToken = UUID.randomUUID().toString();
         userServiceImpl.saveVerificationToken(user, verificationToken);
-        String applicationUrl = event.getApplicationUrl() + "/api/v1/auth/register/verifyEmail?token=" + verificationToken;
+        String applicationUrl = event.getApplicationUrl() + "/api/v1/auth/register/verify-email?token=" + verificationToken;
         try {
             sendVerificationEmail(user, applicationUrl);
         } catch (MessagingException | UnsupportedEncodingException e) {

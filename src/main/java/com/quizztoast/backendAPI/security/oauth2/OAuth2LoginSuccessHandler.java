@@ -3,7 +3,7 @@ package com.quizztoast.backendAPI.security.oauth2;
 import com.quizztoast.backendAPI.model.entity.user.Role;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.repository.UserRepository;
-import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
+import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

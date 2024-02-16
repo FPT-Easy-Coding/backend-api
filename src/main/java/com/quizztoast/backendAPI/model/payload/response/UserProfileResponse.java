@@ -1,27 +1,23 @@
-package com.quizztoast.backendAPI.model.dto;
+package com.quizztoast.backendAPI.model.payload.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.quizztoast.backendAPI.model.entity.user.Role;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
-import java.util.Date;
-
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class UserDTO {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserProfileResponse {
     private Long userId;
     private String userName;
     private String firstName;
     private String lastName;
     private String email;
     private String telephone;
-    private Role Role;
+    private com.quizztoast.backendAPI.model.entity.user.Role Role;
     private boolean isBanned;
     private boolean isPremium;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Date createdAt;
 }

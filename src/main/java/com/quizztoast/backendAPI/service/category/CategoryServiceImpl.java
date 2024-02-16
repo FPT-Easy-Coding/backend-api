@@ -1,17 +1,14 @@
-package com.quizztoast.backendAPI.service.impl;
+package com.quizztoast.backendAPI.service.category;
 
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.CategoryDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
-import com.quizztoast.backendAPI.model.payload.Request.CategoryRequest;
+import com.quizztoast.backendAPI.model.payload.request.CategoryRequest;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
-import com.quizztoast.backendAPI.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 

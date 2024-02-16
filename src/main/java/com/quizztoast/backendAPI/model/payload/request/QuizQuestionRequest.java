@@ -1,6 +1,5 @@
-package com.quizztoast.backendAPI.model.payload.Request;
+package com.quizztoast.backendAPI.model.payload.request;
 
-import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

@@ -2,9 +2,8 @@ package com.quizztoast.backendAPI.model.mapper;
 
 import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
-import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
-import com.quizztoast.backendAPI.model.payload.Request.QuizQuestionRequest;
+import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 
 import java.time.LocalDateTime;

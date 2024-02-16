@@ -1,6 +1,6 @@
 package com.quizztoast.backendAPI.exception.annotation.email_exits;
 
-import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
+import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

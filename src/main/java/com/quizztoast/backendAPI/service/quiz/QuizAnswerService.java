@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.service;
+package com.quizztoast.backendAPI.service.quiz;
 
 import org.springframework.stereotype.Service;
 

@@ -2,22 +2,24 @@ package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.entity.token.VerificationToken;
 import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.model.payload.request.PasswordResetRequest;
 import com.quizztoast.backendAPI.repository.VerificationTokenRepository;
-import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationRequest;
-import com.quizztoast.backendAPI.security.auth.auth_payload.AuthenticationResponse;
-import com.quizztoast.backendAPI.security.auth.auth_payload.RegistrationRequest;
-import com.quizztoast.backendAPI.security.auth.auth_payload.VerificationRequest;
-import com.quizztoast.backendAPI.security.auth.auth_service.AuthenticationServiceImpl;
+import com.quizztoast.backendAPI.security.auth.AuthenticationRequest;
+import com.quizztoast.backendAPI.security.auth.AuthenticationResponse;
+import com.quizztoast.backendAPI.security.auth.RegistrationRequest;
+import com.quizztoast.backendAPI.security.auth.VerificationRequest;
+import com.quizztoast.backendAPI.security.auth.AuthenticationServiceImpl;
 
 import com.quizztoast.backendAPI.security.recaptcha.ReCaptchaRegisterService;
 
-import com.quizztoast.backendAPI.service.impl.UserServiceImpl;
+import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -30,6 +32,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 
+import java.util.Optional;
+import java.util.UUID;
 
 
 @RestController
@@ -49,23 +53,23 @@ public class AuthenticationController {
                     @ApiResponse(
                             description = "Success. User registered successfully.",
                             responseCode = "200",
-                            content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
-                            examples = {
-                                    @ExampleObject(
-                                            value = """
-                                                     {
-                                                        "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjAzNTc4Nn0.GbOt25veZBXl3YHwJrW101CT-gvNGC20RTQK4uBwdAk",
-                                                        "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjU1NDE4Nn0.BJAeEOcrPjd23_PlJfoMtkq345yxnRhv0eHoObNyjfo",
-                                                        "mfaEnabled": true,
-                                                        "secretImageUri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeAQAAAADlUEq3AAADHElEQVR4Xu2asZHjMAxFoXFw4ZagUlSaWJpKcQkOHXiMw/+AxtSK9vji+wiWMvnI4C9AALLNv7eH/Z75YIJ7E9yb4N4E9/Z/wE+j+eOPX/GAYY2lH99s8jsXL4KHMJ68PS93LBsGfPKb2crJQgQP4NByaaHzbd5Wzm9GOCb9/hPiC/4IQ9Lr0sJFb7PHYBZbBX8Dxweb3RnPi0+I9diKEwS/h+NPxHMqi4sxPtVWiL8jgs+w0cpFTwMXBQ/hg7XJPe9Hempvgnt76VyBvLSpShi4KAYmmknwEI6/cfmtASOeWQTymoytiG7I/YpuwT2cE3Exgko46udILSGw5/1IE3yC0XM445kuyug2qB4Cx40IFxU8hp+cQIMGp2TzVqobz4rb8tC1Ce7TMaKblx/m6bC5tRnsEN2COxh2jbnq0/KaDJ2j4eXyteQWfIbhlIbCGe0agxzLyDD0VD+mY8EvmC6aNyJ0Dosgx2QUNPi0D4JPsGfFbFzOgiaWeT/WQUgtggdw6ZwljNEboWxWMnkQTxR8hi98H4AXK54FjWOZ0Q2/nSG+4DdwuKcx5UY6DpszK88pcIiPQfAIdghcPQfvR3hqVjI4aElE8Al2zMc6PRU6Y4D4cw7W6yz44HW7wFQWg2cjgq3Yg5AXPIaNzcaDAu855YHZvBG3jHzBJziKlvySEc+tghxUqV6fBJ/h0hmU4zsgGru2pfGEX62H4Bd8oZaeLlpOiUrGqnA+RLfgHk6dEd3RZTjCetlPyLfxoASP4Mwb6ZvN8v1KRbehLTlEt+AD7Hi/MrH6W1HXxB7elpDb4aI8R/AY5kS9oQpxV7po/WIAJwh+B8c6vmu0fEOVlQz63j3fHFxU8A6XPdFzbCs6EArMsIaLxvBKx4J7mFrmryxC4KQwj+iurTTBZxj+F1dhlsp4LpixTp0Fv4PviGBUzLEMnbmWnS7+AxXygj/AeP+OrBx7WMmU3BuDXPBH2EvnSM6sZFrnt4JHMB5RwsQduNeCDOslJw85RfAow3LZ0GwsnJyrH9lACR7A35rg3gT3Jrg3wb0J7u3f4L/kiTr3Hk1oVAAAAABJRU5ErkJggg=="
-                                                    }"""
-                                    )
-                            })
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SimpleErrorResponse.class),
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                             {
+                                                                "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjAzNTc4Nn0.GbOt25veZBXl3YHwJrW101CT-gvNGC20RTQK4uBwdAk",
+                                                                "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhhbmFuaDEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDU5NDkzODYsImV4cCI6MTcwNjU1NDE4Nn0.BJAeEOcrPjd23_PlJfoMtkq345yxnRhv0eHoObNyjfo",
+                                                                "mfaEnabled": true,
+                                                                "secretImageUri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeAQAAAADlUEq3AAADHElEQVR4Xu2asZHjMAxFoXFw4ZagUlSaWJpKcQkOHXiMw/+AxtSK9vji+wiWMvnI4C9AALLNv7eH/Z75YIJ7E9yb4N4E9/Z/wE+j+eOPX/GAYY2lH99s8jsXL4KHMJ68PS93LBsGfPKb2crJQgQP4NByaaHzbd5Wzm9GOCb9/hPiC/4IQ9Lr0sJFb7PHYBZbBX8Dxweb3RnPi0+I9diKEwS/h+NPxHMqi4sxPtVWiL8jgs+w0cpFTwMXBQ/hg7XJPe9Hempvgnt76VyBvLSpShi4KAYmmknwEI6/cfmtASOeWQTymoytiG7I/YpuwT2cE3Exgko46udILSGw5/1IE3yC0XM445kuyug2qB4Cx40IFxU8hp+cQIMGp2TzVqobz4rb8tC1Ce7TMaKblx/m6bC5tRnsEN2COxh2jbnq0/KaDJ2j4eXyteQWfIbhlIbCGe0agxzLyDD0VD+mY8EvmC6aNyJ0Dosgx2QUNPi0D4JPsGfFbFzOgiaWeT/WQUgtggdw6ZwljNEboWxWMnkQTxR8hi98H4AXK54FjWOZ0Q2/nSG+4DdwuKcx5UY6DpszK88pcIiPQfAIdghcPQfvR3hqVjI4aElE8Al2zMc6PRU6Y4D4cw7W6yz44HW7wFQWg2cjgq3Yg5AXPIaNzcaDAu855YHZvBG3jHzBJziKlvySEc+tghxUqV6fBJ/h0hmU4zsgGru2pfGEX62H4Bd8oZaeLlpOiUrGqnA+RLfgHk6dEd3RZTjCetlPyLfxoASP4Mwb6ZvN8v1KRbehLTlEt+AD7Hi/MrH6W1HXxB7elpDb4aI8R/AY5kS9oQpxV7po/WIAJwh+B8c6vmu0fEOVlQz63j3fHFxU8A6XPdFzbCs6EArMsIaLxvBKx4J7mFrmryxC4KQwj+iurTTBZxj+F1dhlsp4LpixTp0Fv4PviGBUzLEMnbmWnS7+AxXygj/AeP+OrBx7WMmU3BuDXPBH2EvnSM6sZFrnt4JHMB5RwsQduNeCDOslJw85RfAow3LZ0GwsnJyrH9lACR7A35rg3gT3Jrg3wb0J7u3f4L/kiTr3Hk1oVAAAAABJRU5ErkJggg=="
+                                                            }"""
+                                            )
+                                    })
                     ),
                     @ApiResponse(
                             description = "Conflict. User with the provided username or email already exists.",
                             responseCode = "422",
-                            content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
                                                     value = """
@@ -79,7 +83,7 @@ public class AuthenticationController {
                     @ApiResponse(
                             description = "Bad Request. Invalid data provided.",
                             responseCode = "400",
-                            content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
                                                     value = "{\"data\":[{\"fieldName\":\"email\",\"errorMessage\":\"email must be a gmail account\"}],\"message\":\"Validation Failed\",\"error\":true}"
@@ -95,7 +99,7 @@ public class AuthenticationController {
             HttpServletRequest request
     ) {
 
-        AuthenticationResponse response = authenticationServiceImpl.register(registrationRequest,request);
+        AuthenticationResponse response = authenticationServiceImpl.register(registrationRequest, request);
         return ResponseEntity.ok(response);
     }
     //    @PostMapping("/register")
@@ -113,28 +117,7 @@ public class AuthenticationController {
 //        return ResponseEntity.ok(authenticationService.register(request));
 //    }
 
-    @GetMapping("/register/verifyEmail")
-    public RedirectView verifyEmail(@RequestParam("token") String token) {
-        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
-        if (verificationToken == null || verificationToken.getUser() == null) {
-            // Redirect to an error page or handle the case where the token or user is not found
-            return new RedirectView("/error");
-        }
 
-        if (verificationToken.getUser().isVerified()) {
-            // Redirect to the login page of the React frontend
-            return new RedirectView("https://http://localhost:5173/login");
-        }
-
-        String verificationResult = userServiceImpl.validateVerificationToken(verificationToken);
-        if (verificationResult.equalsIgnoreCase("valid")) {
-            // Redirect to the login page of the React frontend
-            return new RedirectView("http://localhost:5173/home");
-        } else {
-            // Redirect to an error page or handle the verification failure scenario
-            return new RedirectView("/error");
-        }
-    }
     /**
      * Authenticates a user.
      *
@@ -148,7 +131,7 @@ public class AuthenticationController {
                     @ApiResponse(
                             description = "Success. User authenticated successfully.",
                             responseCode = "200"
-,  content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
+                            , content = @Content(mediaType = "application/json", schema = @Schema(implementation = SimpleErrorResponse.class),
                             examples = {
                                     @ExampleObject(
                                             value = """
@@ -161,7 +144,7 @@ public class AuthenticationController {
                     @ApiResponse(
                             description = "Success. User authenticated successfully.",
                             responseCode = "400",
-                            content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
                                                     value = """
@@ -182,23 +165,24 @@ public class AuthenticationController {
                     @ApiResponse(
                             description = "Success. User authenticated successfully.",
                             responseCode = "404",
-                            content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
-                                                    value = "{\n" +
-                                                            "    \"mfaEnabled\": false,\n" +
-                                                            "    \"error\": \"Incorrect email or password\"\n" +
-                                                            "}"
+                                                    value = """
+                                                            {
+                                                                "mfaEnabled": false,
+                                                                "error": "Incorrect email or password"
+                                                            }"""
                                             )
                                     })
                     )
             }
     )
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate (
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @Valid
             @RequestBody AuthenticationRequest request
-    ){
+    ) {
 //        var response = authenticationService.register(request);
 //        if(request.isMfaEnabled()){
 //            return ResponseEntity.ok(response);
@@ -209,7 +193,6 @@ public class AuthenticationController {
 
     /**
      * refresh-token using a Post request.
-     *
      */
     @Operation(
             summary = "Refreshes the authentication token",
@@ -218,7 +201,7 @@ public class AuthenticationController {
                     @ApiResponse(
                             description = "Success. Token refreshed successfully.",
                             responseCode = "200",
-                            content = @Content(mediaType = "application/json",schema = @Schema(implementation = SimpleErrorResponse.class),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SimpleErrorResponse.class),
                                     examples = {
                                             @ExampleObject(
                                                     value = "{\"userId\":10552,\"accessToken\":\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1ODYyNTMxLCJleHAiOjE3MDU5NDg5MzF9.SetWXiiWdKwvzuAmsNPgHG0N8x_n4b06q_L4fbjwg4w\",\"refreshToken\":\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjJAZ21haWwuY29tIiwiaWF0IjoxNzA1ODU4OTIzLCJleHAiOjE3MDU5NDUzMjN9.XJ3eecQzrRzz0H9hFZICV2QCPXnsSFLUd6732YlbDRc\",\"mfaEnabled\":false}"
@@ -243,20 +226,102 @@ public class AuthenticationController {
             }
     )
     @PostMapping("/refresh-token")
-    public void refreshToken (
+    public void refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        authenticationServiceImpl.refreshToken(request,response);
+        authenticationServiceImpl.refreshToken(request, response);
     }
+
+    @GetMapping("/register/verify-email")
+    public RedirectView verifyEmail(
+            @RequestParam("token") String token
+    ) {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        if (verificationToken == null || verificationToken.getUser() == null) {
+            // Redirect to an error page or handle the case where the token or user is not found
+            return new RedirectView("/error");
+        }
+
+        if (verificationToken.getUser().isVerified()) {
+            // Redirect to the login page of the React frontend
+            return new RedirectView("https://http://localhost:5173/login");
+        }
+
+        String verificationResult = userServiceImpl.validateVerificationToken(verificationToken);
+        if (verificationResult.equalsIgnoreCase("valid")) {
+            // Redirect to the login page of the React frontend
+            return new RedirectView("http://localhost:5173/home");
+        } else {
+            // Redirect to an error page or handle the verification failure scenario
+            return new RedirectView("/error");
+        }
+    }
+
+    @GetMapping("/reset-password")
+    public RedirectView resetPasswordForm(
+            @RequestParam("token") String token
+    ) {
+        // Find the user based on the token
+        Optional<User> user = userServiceImpl.getUserByPasswordResetToken(token);
+        if (user.isEmpty()) {
+            // Token not found or user not associated with the token
+            return new RedirectView("/error");
+        }
+
+        // Redirect to the password reset form in the React frontend
+        return new RedirectView("http://localhost:5173/reset-password?token=" + token);
+    }
+
+
+    @PostMapping("/reset-password")
+    public String resetPassword(
+            @RequestBody PasswordResetRequest passwordResetRequest,
+            @RequestParam("token") String passwordResetToken
+    ) {
+        String tokenValidationResult = userServiceImpl.validatePasswordResetToken(passwordResetToken);
+        if (!tokenValidationResult.equalsIgnoreCase("valid")) {
+            return "Invalid token password reset token";
+        }
+        Optional<User> theUser = userServiceImpl.getUserByPasswordResetToken(passwordResetToken);
+        if (theUser.isPresent()) {
+            userServiceImpl.resetUserPassword(theUser.get(), passwordResetRequest.getNewPassword());
+            return "Password has been reset successfully";
+        }
+        return "Invalid password reset token";
+    }
+
+    @PostMapping("/reset-password-request")
+    public String resetPasswordRequest(
+            @RequestBody PasswordResetRequest passwordResetRequest,
+            HttpServletRequest request
+    ) {
+        String email = passwordResetRequest.getEmail();
+        if (email == null || email.isEmpty()) {
+            // Handle the case where 'email' parameter is missing or empty
+            return "Email parameter is missing or empty";
+        }
+
+        Optional<User> user = userServiceImpl.getUserByEmail(email);
+        if (user.isPresent()) {
+            String passwordResetToken = UUID.randomUUID().toString();
+            userServiceImpl.savePasswordResetTokenForUser(user.get(), passwordResetToken);
+            String applicationUrl = authenticationServiceImpl.applicationUrl(request);
+            String passwordResetUrl = authenticationServiceImpl.generatePasswordResetUrl(applicationUrl, passwordResetToken);
+            // Send the password reset email directly without publishing an event
+            authenticationServiceImpl.sendPasswordResetEmail(user.get(), passwordResetUrl);
+            return passwordResetUrl;
+        }
+        return null; // Handle user not found case
+    }
+
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyCode(
             @RequestBody VerificationRequest verificationRequest
-    ){
-            return ResponseEntity.ok(authenticationServiceImpl.verifyCode(verificationRequest));
+    ) {
+        return ResponseEntity.ok(authenticationServiceImpl.verifyCode(verificationRequest));
     }
-
 
 
 }

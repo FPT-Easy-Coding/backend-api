@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.model.mapper;
 
 import com.quizztoast.backendAPI.model.dto.UserDTO;
+import com.quizztoast.backendAPI.model.payload.response.UserProfileResponse;
 import com.quizztoast.backendAPI.model.entity.user.User;
 
 import java.util.ArrayList;
@@ -8,8 +9,8 @@ import java.util.List;
 
 public class UserMapper {
     // Convert User JPA Entity into UserDto
-    public static UserDTO mapToUserDto(User user) {
-        return UserDTO.builder()
+    public static UserProfileResponse mapToUserProfile(User user) {
+        return UserProfileResponse.builder()
                 .userName(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
