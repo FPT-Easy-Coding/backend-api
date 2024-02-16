@@ -3,6 +3,8 @@ package com.quizztoast.backendAPI.controller;
 import com.quizztoast.backendAPI.model.entity.token.VerificationToken;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.payload.request.PasswordResetRequest;
+import com.quizztoast.backendAPI.model.payload.response.EmailForgottenResponse;
+import com.quizztoast.backendAPI.model.payload.response.MessageResponse;
 import com.quizztoast.backendAPI.repository.VerificationTokenRepository;
 import com.quizztoast.backendAPI.security.auth.AuthenticationRequest;
 import com.quizztoast.backendAPI.security.auth.AuthenticationResponse;
@@ -25,6 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
@@ -275,31 +278,30 @@ public class AuthenticationController {
 
 
     @PostMapping("/reset-password")
-    public String resetPassword(
+    public ResponseEntity<Object> resetPassword(
             @RequestBody PasswordResetRequest passwordResetRequest,
             @RequestParam("token") String passwordResetToken
     ) {
         String tokenValidationResult = userServiceImpl.validatePasswordResetToken(passwordResetToken);
         if (!tokenValidationResult.equalsIgnoreCase("valid")) {
-            return "Invalid token password reset token";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "Invalid token password reset token"));
         }
         Optional<User> theUser = userServiceImpl.getUserByPasswordResetToken(passwordResetToken);
         if (theUser.isPresent()) {
             userServiceImpl.resetUserPassword(theUser.get(), passwordResetRequest.getNewPassword());
-            return "Password has been reset successfully";
+            return ResponseEntity.ok(new MessageResponse(true, "Password has been reset successfully"));
         }
-        return "Invalid password reset token";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "Invalid password reset token"));
     }
 
     @PostMapping("/reset-password-request")
-    public String resetPasswordRequest(
+    public ResponseEntity<Object> resetPasswordRequest(
             @RequestBody PasswordResetRequest passwordResetRequest,
             HttpServletRequest request
     ) {
         String email = passwordResetRequest.getEmail();
         if (email == null || email.isEmpty()) {
-            // Handle the case where 'email' parameter is missing or empty
-            return "Email parameter is missing or empty";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new EmailForgottenResponse(false));
         }
 
         Optional<User> user = userServiceImpl.getUserByEmail(email);
@@ -308,11 +310,11 @@ public class AuthenticationController {
             userServiceImpl.savePasswordResetTokenForUser(user.get(), passwordResetToken);
             String applicationUrl = authenticationServiceImpl.applicationUrl(request);
             String passwordResetUrl = authenticationServiceImpl.generatePasswordResetUrl(applicationUrl, passwordResetToken);
-            // Send the password reset email directly without publishing an event
             authenticationServiceImpl.sendPasswordResetEmail(user.get(), passwordResetUrl);
-            return passwordResetUrl;
+            return ResponseEntity.ok(new EmailForgottenResponse(true));
         }
-        return null; // Handle user not found case
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new EmailForgottenResponse(false));
     }
 
 
