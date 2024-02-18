@@ -21,6 +21,7 @@ public class QuizQuestionResponse {
     private String userFirstName;
     private String userLastName;
     private int categoryId;
+    private String categoryName;
     private String quizName;
     private double rate;
     private int numberOfQuestions;

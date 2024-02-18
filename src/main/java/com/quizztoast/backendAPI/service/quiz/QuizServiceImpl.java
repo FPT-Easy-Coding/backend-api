@@ -179,6 +179,7 @@ public class QuizServiceImpl implements QuizService {
         response.setUserFirstName(quiz.getUser().getFirstName());
         response.setUserLastName(quiz.getUser().getLastName());
         response.setCategoryId(quiz.getCategory().getCategoryId());
+        response.setCategoryName(quiz.getCategory().getCategoryName());
         response.setQuizName(quiz.getQuizName());
         response.setRate(quiz.getRate());
         response.setNumberOfQuestions(quiz.getNumberOfQuizQuestion());
