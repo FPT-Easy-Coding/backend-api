@@ -21,7 +21,7 @@ public interface QuizService {
     ResponseEntity<QuizDTO> UpdateQuiz(int quizId,QuizRequest quizRequest);
 
     List<QuizDTO> GetQuizByContent(String content);
-    List<QuizQuestionResponse> getQuizQuestionsAndAnswersByQuizId(int quizId);
+    ResponseEntity<?> getQuizQuestionsAndAnswersByQuizId(int quizId);
 
     ResponseEntity<?> increaseView(int quizId);
     ResponseEntity<?> upDateTimeQuiz(int quizId);

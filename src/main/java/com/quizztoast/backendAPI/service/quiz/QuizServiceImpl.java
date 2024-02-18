@@ -12,6 +12,7 @@ import com.quizztoast.backendAPI.model.payload.request.QuizAnswerRequest;
 import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
 import com.quizztoast.backendAPI.model.payload.response.QuizQuestionResponse;
+import com.quizztoast.backendAPI.model.payload.response.QuestionData;
 import com.quizztoast.backendAPI.repository.*;
 import com.quizztoast.backendAPI.service.quiz.QuizService;
 import jakarta.validation.Valid;
@@ -164,29 +165,38 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-    public List<QuizQuestionResponse> getQuizQuestionsAndAnswersByQuizId(int quizId) {
+    public ResponseEntity<?> getQuizQuestionsAndAnswersByQuizId(int quizId) {
+        Quiz quiz = quizRepository.getQuizById(quizId);
 
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
-        List<QuizQuestionResponse> listQuizQuestion = new ArrayList<>();
 
-        // get quiz question ids by quizId from quizQuestionMapping
+        QuizQuestionResponse response = new QuizQuestionResponse();
+        response.setUserId(quiz.getUser().getUserId());
+        response.setQuizId(quizId);
+        response.setUserName(quiz.getUser().getUserName());
+        response.setUserFirstName(quiz.getUser().getFirstName());
+        response.setUserLastName(quiz.getUser().getLastName());
+        response.setCategoryId(quiz.getCategory().getCategoryId());
+        response.setQuizName(quiz.getQuizName());
+        response.setRate(quiz.getRate());
+        response.setNumberOfQuestions(quiz.getNumberOfQuizQuestion());
+        response.setCreateAt(quiz.getCreatedAt());
+        response.setView(quiz.getViewOfQuiz());
+        response.setTimeRecentViewQuiz(quiz.getTimeRecentViewQuiz());
+        response.setQuestions(new ArrayList<>());
+
         List<QuizQuestion> quizQuestionIds = quizQuestionMappingRepository.findQuizQuestionIdsByQuizId(quizId);
 
         for (QuizQuestion quizQuestionIdObject : quizQuestionIds) {
-
-            // get quiz question by quiz question id
-            QuizQuestionResponse questionResponse = new QuizQuestionResponse();
+            QuestionData questionData = new QuestionData();
             QuizQuestion quizQuestion = quizQuestionRepository.findByQuizQuestionId(quizQuestionIdObject.getQuizQuestionId());
 
-            // Set question content
-            questionResponse.setQuestionContent(quizQuestion.getContent());
+            questionData.setQuestionContent(quizQuestion.getContent());
 
-            // Get list of QuizAnswerDTO for the question
             List<QuizAnswerDTO> quizAnswerDTOList = new ArrayList<>();
 
-            // Get list of QuizAnswer for the question
             List<QuizAnswer> quizAnswersList = quizAnswerRepository.findByQuizQuestion(quizQuestion);
             for (QuizAnswer quizAnswerEntity : quizAnswersList) {
                 QuizAnswerDTO quizAnswerDTO = new QuizAnswerDTO();
@@ -195,15 +205,14 @@ public class QuizServiceImpl implements QuizService {
                 quizAnswerDTOList.add(quizAnswerDTO);
             }
 
-            // Set list of answers for the question
-            questionResponse.setAnswers(quizAnswerDTOList);
-
-            // Add questionResponse to the list
-            listQuizQuestion.add(questionResponse);
+            questionData.setAnswers(quizAnswerDTOList);
+            response.getQuestions().add(questionData);
         }
 
-        return listQuizQuestion;
+        return ResponseEntity.ok(response);
     }
+
+
 
     @Override
     public List<QuizDTO> GetQuizByContent(String QuizName) {

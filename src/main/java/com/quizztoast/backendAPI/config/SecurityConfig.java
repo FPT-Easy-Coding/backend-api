@@ -28,6 +28,8 @@ public class SecurityConfig {
             "/api/v1/auth/**",
             "/api/v1/users/**",
             "/api/v1/admin/**",
+            "api/v1/quiz/**",
+            "/api/v1/quiz-question/**",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",

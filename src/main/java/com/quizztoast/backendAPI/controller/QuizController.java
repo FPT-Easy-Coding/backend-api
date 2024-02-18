@@ -479,7 +479,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
             }
     )
     @RequestMapping(value = "get-quiz", method = RequestMethod.GET)
-    public List<QuizQuestionResponse> getQuizQestionByQuizId (@RequestParam(name = "id") int quizId) {
+    public ResponseEntity<?> getQuizQestionByQuizId (@RequestParam(name = "id") int quizId) {
         return quizServiceImpl.getQuizQuestionsAndAnswersByQuizId(quizId);
     }
 
