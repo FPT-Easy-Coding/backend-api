@@ -44,4 +44,8 @@ public class Quiz {
 
     @Column(name= "number_of_quiz",nullable = false)
     private int numberOfQuizQuestion;
+    @Column(name = "view")
+    private Long viewOfQuiz;
+    @Column(name = "time_recent_view_quiz")
+    private LocalDateTime timeRecentViewQuiz ;
 }
