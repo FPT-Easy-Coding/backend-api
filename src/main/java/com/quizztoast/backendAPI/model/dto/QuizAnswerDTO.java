@@ -8,5 +8,6 @@ import lombok.Data;
 public class QuizAnswerDTO {
 
     private String content;
-    private boolean isCorrect;
+    private boolean isIsCorrect;
+
 }

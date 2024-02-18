@@ -10,7 +10,7 @@ public class QuizAnswerMapper {
     public static QuizAnswerDTO MapQuizAnswerRequestToDTO(QuizAnswerRequest quiz){
         return QuizAnswerDTO.builder()
                 .content(quiz.getContent())
-                .isCorrect(quiz.isCorrect())
+                .isIsCorrect(quiz.isCorrect())
                 .build();
     }
     public static List<QuizAnswerDTO> ListQuizAnswerReqToDTO(List<QuizAnswerRequest> quiz)
