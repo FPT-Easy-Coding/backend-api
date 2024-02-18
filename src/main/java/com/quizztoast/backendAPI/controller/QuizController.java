@@ -394,29 +394,49 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@PathVariable int quiz_id,@Valid @Requ
                                             @ExampleObject(
                                                     value = """
                                                             [
-                                                                 {
-                                                                     "questionContent": "hello",
-                                                                     "answers": [
-                                                                         {
-                                                                             "content": "xinchao",
-                                                                             "correct": true
-                                                                         }
-                                                                     ]
-                                                                 },
-                                                                 {
-                                                                     "questionContent": "what la cai gi?",
-                                                                     "answers": [
-                                                                         {
-                                                                             "content": "hoi ngu",
-                                                                             "correct": false
-                                                                         },
-                                                                         {
-                                                                             "content": "là cai gi",
-                                                                             "correct": true
-                                                                         }
-                                                                     ]
-                                                                 }
-                                                             ]"""
+                                                                {
+                                                                    "questionContent": "cau 1",
+                                                                    "answers": [
+                                                                        {
+                                                                            "content": "hello",
+                                                                            "isCorrect": true
+                                                                        },
+                                                                        {
+                                                                            "content": "xin chao",
+                                                                            "isCorrect": false
+                                                                        },
+                                                                        {
+                                                                            "content": "xin chao",
+                                                                            "isCorrect": false
+                                                                        },
+                                                                        {
+                                                                            "content": "xin chao",
+                                                                            "isCorrect": false
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "questionContent": "cau 2",
+                                                                    "answers": [
+                                                                        {
+                                                                            "content": "1",
+                                                                            "isCorrect": true
+                                                                        },
+                                                                        {
+                                                                            "content": "2",
+                                                                            "isCorrect": false
+                                                                        },
+                                                                        {
+                                                                            "content": "3",
+                                                                            "isCorrect": false
+                                                                        },
+                                                                        {
+                                                                            "content": "4",
+                                                                            "isCorrect": false
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]"""
                                             )
                                     }
                             )

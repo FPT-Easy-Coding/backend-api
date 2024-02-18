@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class QuizAnswerDTO {
 
     private String content;
-    private boolean isCorrect;
+    private boolean isIsCorrect;
+
 }

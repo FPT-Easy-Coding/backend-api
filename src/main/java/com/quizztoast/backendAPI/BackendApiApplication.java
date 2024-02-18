@@ -21,8 +21,8 @@ public class BackendApiApplication {
 //    ){
 //        return args -> {
 //            var admin = RegisterRequest.builder()
-//                    .firstName("Admin11")
-//                    .lastName("Demo12")
+//                    .firstName("Admin1")
+//                    .lastName("Demo1")
 //                    .email("user@gmail.com")
 //                    .password("Anhananh!123")
 //

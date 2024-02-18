@@ -191,7 +191,7 @@ public class QuizServiceImpl implements QuizService {
             for (QuizAnswer quizAnswerEntity : quizAnswersList) {
                 QuizAnswerDTO quizAnswerDTO = new QuizAnswerDTO();
                 quizAnswerDTO.setContent(quizAnswerEntity.getContent());
-                quizAnswerDTO.setCorrect(quizAnswerEntity.getIsCorrect());
+                quizAnswerDTO.setIsCorrect(quizAnswerEntity.getIsCorrect());
                 quizAnswerDTOList.add(quizAnswerDTO);
             }
 
