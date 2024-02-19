@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CategoryRequest {
     @Valid
-    @NotNull(message = "categoryId cannot be null")
-    @NotBlank(message = "categoryId cannot be Blank")
+    @NotNull(message = "categoryName cannot be null")
+    @NotBlank(message = "categoryName cannot be Blank")
     private String categoryName;
 }

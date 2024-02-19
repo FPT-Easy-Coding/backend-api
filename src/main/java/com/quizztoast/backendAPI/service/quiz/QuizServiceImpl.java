@@ -140,28 +140,72 @@ public class QuizServiceImpl implements QuizService {
         if (!userRepository.existsById(quizRequest.getUserId())) {
             throw new FormatException("userId", "userId not found");
         }
-        //check quiz exist
+
+        // Check quiz exist
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
-        //check category
+
+        // Check category
         if (!categoryRepository.existsById(quizRequest.getCategoryId())) {
             throw new FormatException("categoryId", "categoryId not found");
         }
-        //update quiz
+
+
+
+        // Save quiz questions, answers, and mappings
+        for (QuizQuestionRequest questionRequest : quizRequest.getListQuestion()) {
+            QuizQuestion quizQuestion = new QuizQuestion();
+            quizQuestion.setCategoryId(categoryRepository.findById(quizRequest.getCategoryId()).orElse(null));
+            quizQuestion.setContent(questionRequest.getQuestionContent());
+            quizQuestion.setCreatedAt(LocalDateTime.now());
+
+            // Save question
+            quizQuestionRepository.save(quizQuestion);
+
+            // Save answers
+            for (QuizAnswerRequest answerRequest : questionRequest.getAnswers()) {
+                QuizAnswer quizAnswer = new QuizAnswer();
+                quizAnswer.setContent(answerRequest.getContent());
+                quizAnswer.setIsCorrect(answerRequest.isCorrect());
+quizAnswer.setCreatedAt(LocalDateTime.now());
+quizAnswer.setQuizQuestion(quizQuestion);
+                // Save answer
+                quizAnswerRepository.save(quizAnswer);
+
+                // Map question and answer
+                QuizQuestionMapping.QuizQuestionMappingId mappingId = new QuizQuestionMapping.QuizQuestionMappingId();
+                mappingId.setQuizId(quizRepository.getQuizById(quizId));
+                mappingId.setQuizQuestionId(quizQuestion);
+
+                QuizQuestionMapping mapping = new QuizQuestionMapping();
+                mapping.setId(mappingId);
+
+                // Save mapping
+                quizQuestionMappingRepository.save(mapping);
+
+
+                // Save mapping
+                quizQuestionMappingRepository.save(mapping);
+            }
+        }
+        // Update quiz
         Quiz quiz = quizRepository.getQuizById(quizId);
         quiz.setUser(userRepository.findById(quizRequest.getUserId()).orElse(null));
         quiz.setQuizName(quizRequest.getQuizName());
         quiz.setCategory(categoryRepository.findById(quizRequest.getCategoryId()).orElse(null));
         quiz.setRate(quizRequest.getRate());
         quiz.setCreatedAt(quizRequest.getCreateAt());
-        //save quiz
+        quiz.setNumberOfQuizQuestion(quizQuestionMappingRepository.countNumberofquiz(quiz));
+        // Save quiz
         quizRepository.save(quiz);
-        //mapper QuizDTO
-        QuizDTO quizDTo = mapQuizDTOToUser(quiz);
+        // Map and return QuizDTO
+        QuizDTO quizDTO = mapQuizDTOToUser(quiz);
+
         // Returns the QuizDTO object after creation
-        return ResponseEntity.ok(quizDTo);
+        return ResponseEntity.ok(quizDTO);
     }
+
 
 
     @Override
@@ -252,6 +296,20 @@ public class QuizServiceImpl implements QuizService {
         quiz.setTimeRecentViewQuiz(LocalDateTime.now());
         quizRepository.save(quiz);
         return ResponseEntity.ok(quiz.getTimeRecentViewQuiz());
+    }
+
+    public ResponseEntity<?> getQuizByCategory(int categoryId) {
+        //check category id
+        if (categoryRepository.findCategoryById(categoryId) == null) {
+            throw new FormatException("CategoryId", "CategoryId is not exist");
+        }
+        List<QuizDTO> quizDTOList = new ArrayList<>();
+        for(Quiz quiz :quizRepository.findQuizByCategory(categoryId))
+        {
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz);
+            quizDTOList.add(quizDTO);
+        }
+        return ResponseEntity.ok(quizDTOList);
     }
 }
 

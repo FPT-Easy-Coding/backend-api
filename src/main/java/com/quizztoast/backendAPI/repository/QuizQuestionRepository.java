@@ -21,4 +21,6 @@ public interface QuizQuestionRepository extends JpaRepository<QuizQuestion ,Long
 
     QuizQuestion findByQuizQuestionId(Long quizQuestionId);
 
+    @Query("SELECT q FROM QuizQuestion q WHERE q.categoryId.categoryId = :id")
+    QuizQuestion[] findQuizQuesstionByCategoryId(int id);
 }

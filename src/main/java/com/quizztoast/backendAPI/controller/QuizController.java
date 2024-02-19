@@ -685,5 +685,113 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
     public ResponseEntity<?> updateTimeQuiz(@RequestParam(name = "id") int quizId){
         return quizServiceImpl.upDateTimeQuiz(quizId);
     }
+    /**
+     * get quiz by categoryId a Get request.
+     *
+     * @return  List quiz .
+     */
+    @Operation(
+            description = "Get QuizQuestion And QuizAnswer by QuizId",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns Quiz By Name QuizQuestion .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            [
+                                                                {
+                                                                    "userId": 11052,
+                                                                    "quizId": 3,
+                                                                    "userName": null,
+                                                                    "userFirstName": "Admin11",
+                                                                    "userLastName": "Demo12",
+                                                                    "categoryId": 2,
+                                                                    "quizName": "update",
+                                                                    "rate": 0.0,
+                                                                    "numberOfQuestions": 2,
+                                                                    "createAt": "2024-02-18T16:17:46.924",
+                                                                    "view": 4,
+                                                                    "timeRecentViewQuiz": "2024-02-18T19:37:35.941471"
+                                                                },
+                                                                {
+                                                                    "userId": 11052,
+                                                                    "quizId": 4,
+                                                                    "userName": null,
+                                                                    "userFirstName": "Admin11",
+                                                                    "userLastName": "Demo12",
+                                                                    "categoryId": 2,
+                                                                    "quizName": "update",
+                                                                    "rate": 0.0,
+                                                                    "numberOfQuestions": 2,
+                                                                    "createAt": "2024-02-18T16:17:46.924",
+                                                                    "view": 19,
+                                                                    "timeRecentViewQuiz": "2024-02-19T12:46:59.21315"
+                                                                },
+                                                                {
+                                                                    "userId": 11052,
+                                                                    "quizId": 7,
+                                                                    "userName": null,
+                                                                    "userFirstName": "Admin11",
+                                                                    "userLastName": "Demo12",
+                                                                    "categoryId": 2,
+                                                                    "quizName": "update",
+                                                                    "rate": 0.0,
+                                                                    "numberOfQuestions": 7,
+                                                                    "createAt": "2024-02-18T16:17:46.924",
+                                                                    "view": 0,
+                                                                    "timeRecentViewQuiz": null
+                                                                }
+                                                            ]"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request" ,
 
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            description =" categoryid not found",
+                            responseCode = "404",
+
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                   "data": [
+                                                                       {
+                                                                           "fieldName": "CategoryId",
+                                                                           "errorMessage": "CategoryId is not exist"
+                                                                       }
+                                                                   ],
+                                                                   "message": "Validation Failed",
+                                                                   "error": true
+                                                               }"""
+                                            )
+                                    }
+                            )
+
+                    )
+
+            }
+    )
+    @RequestMapping(value = "get-quiz-by-category", method = RequestMethod.GET)
+    public ResponseEntity<?> getQuizbyCategory (@RequestParam(name = "id") int categoryId) {
+        return quizServiceImpl.getQuizByCategory(categoryId);
+    }
 }

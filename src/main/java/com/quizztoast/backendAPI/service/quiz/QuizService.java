@@ -25,4 +25,6 @@ public interface QuizService {
 
     ResponseEntity<?> increaseView(int quizId);
     ResponseEntity<?> upDateTimeQuiz(int quizId);
+
+    ResponseEntity<?> getQuizByCategory(int categoryId);
 }

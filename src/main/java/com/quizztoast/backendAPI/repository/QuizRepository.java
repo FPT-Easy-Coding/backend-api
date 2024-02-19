@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.repository;
 
 import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,9 @@ public interface QuizRepository extends JpaRepository<Quiz,Long> {
     Long countViewByUserId(Long userId);
     @Query("SELECT COUNT(q) FROM Quiz q WHERE q.user.userId = :userId")
     Integer countQuizbyUserId(@Param("userId") Long userId);
+    @Query("SELECT COUNT(q) FROM Quiz q WHERE q.category.categoryId = :categoryId")
+    int findTotalQuizByCategory(int categoryId);
+
+    @Query("SELECT q FROM Quiz q WHERE q.category.categoryId = :categoryId")
+    List<Quiz> findQuizByCategory(int categoryId);
 }

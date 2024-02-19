@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,4 +22,6 @@ public class Category {
 
     @Column(name= "category_name" ,nullable = false,length = 50)
     private String categoryName;
+    private LocalDateTime createAt;
+    private int totalQuiz;
 }
