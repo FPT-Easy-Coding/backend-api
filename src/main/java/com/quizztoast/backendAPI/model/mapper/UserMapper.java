@@ -12,7 +12,7 @@ public class UserMapper {
     public static UserProfileResponse mapToUserProfile(User user) {
         return UserProfileResponse.builder()
                 .userId(user.getUserId())
-                .userName(user.getUsername())
+                .userName(user.getUserName())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
