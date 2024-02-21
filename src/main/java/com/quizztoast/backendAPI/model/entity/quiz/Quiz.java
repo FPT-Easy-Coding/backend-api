@@ -42,6 +42,10 @@ public class Quiz {
     @Column(name= "created_at" ,nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name= "number_of_quiz",nullable = false)
+    @Column(name= "number_of_quizquestion",nullable = false)
     private int numberOfQuizQuestion;
+    @Column(name = "view")
+    private Long viewOfQuiz;
+    @Column(name = "time_recent_view_quiz")
+    private LocalDateTime timeRecentViewQuiz ;
 }
