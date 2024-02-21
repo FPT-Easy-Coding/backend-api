@@ -3,10 +3,8 @@ package com.quizztoast.backendAPI.service.quiz;
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
-import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
-import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
-import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
-import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestionMapping;
+import com.quizztoast.backendAPI.model.entity.quiz.*;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.QuizAnswerRequest;
 import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
@@ -15,6 +13,7 @@ import com.quizztoast.backendAPI.model.payload.response.QuizQuestionResponse;
 import com.quizztoast.backendAPI.model.payload.response.QuestionData;
 import com.quizztoast.backendAPI.repository.*;
 import com.quizztoast.backendAPI.service.quiz.QuizService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,14 +38,15 @@ public class QuizServiceImpl implements QuizService {
 
     private final QuizQuestionRepository quizQuestionRepository;
     private final QuizQuestionMappingRepository quizQuestionMappingRepository;
-
-    public QuizServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionRepository quizQuestionRepository, QuizQuestionMappingRepository quizQuestionMappingRepository) {
+    private final CreateQuizCategory createQuizCategory ;
+    public QuizServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionRepository quizQuestionRepository, QuizQuestionMappingRepository quizQuestionMappingRepository, CreateQuizCategory createQuizCategory) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.quizRepository = quizRepository;
         this.quizAnswerRepository = quizAnswerRepository;
         this.quizQuestionRepository = quizQuestionRepository;
         this.quizQuestionMappingRepository = quizQuestionMappingRepository;
+        this.createQuizCategory = createQuizCategory;
     }
 
     @Override
@@ -79,7 +79,13 @@ public class QuizServiceImpl implements QuizService {
         quiz.setTimeRecentViewQuiz(null);
         // Save the Quiz object to the Quiz table
         quizRepository.save(quiz);
-
+        //save to table Create Quiz
+        CreateQuiz createQuiz = new CreateQuiz();
+        CreateQuiz.CreateQ createQId = new CreateQuiz.CreateQ();
+        createQId.setUserId(userRepository.findByUserId(quizRequest.getUserId()));
+        createQId.setQuizId(quiz);
+        createQuiz.setId(createQId);
+        createQuizCategory.save(createQuiz);
         // Iterate through quiz questions
         for (QuizQuestionRequest quizQuestionRequest : quizRequest.getListQuestion()) {
             // Set quizQuestion properties
@@ -252,6 +258,21 @@ public class QuizServiceImpl implements QuizService {
         quiz.setTimeRecentViewQuiz(LocalDateTime.now());
         quizRepository.save(quiz);
         return ResponseEntity.ok(quiz.getTimeRecentViewQuiz());
+    }
+    @Override
+    public ResponseEntity<?> GetQuizCreateByUser(Long userId) {
+        if ( userRepository.findByUserId(userId) == null) {
+            throw new FormatException("userId", "userId not found");
+        }
+//get list quizId from CreateQuiz
+        List<QuizDTO> listQuizDTO = new ArrayList<>();
+      for(Integer quizId :quizRepository.findQuizId(userId))
+      {
+          Quiz quiz = quizRepository.getQuizById(quizId);
+          QuizDTO quizDTO = mapQuizDTOToUser(quiz);
+          listQuizDTO.add(quizDTO);
+      }
+      return ResponseEntity.ok(listQuizDTO);
     }
 }
 

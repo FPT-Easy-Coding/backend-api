@@ -272,7 +272,7 @@ public class QuizController {
                     ),
             }
     )
-    @RequestMapping(value = "delete-quiz/", method = RequestMethod.DELETE)
+    @RequestMapping(value = "delete-quiz", method = RequestMethod.DELETE)
 public ResponseEntity<String> deleteQuiz(@RequestParam(name = "id") int quiz_id)
 {
     return quizServiceImpl.deleteQuizById(quiz_id);
@@ -685,5 +685,98 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
     public ResponseEntity<?> updateTimeQuiz(@RequestParam(name = "id") int quizId){
         return quizServiceImpl.upDateTimeQuiz(quizId);
     }
+    /**
+     * get Quiz and answer by name  QuizId a Get request.
+     *
+     * @return  QuizQuestionResponse .
+     */
+    @Operation(
+            description = "Get All Quiz create by UserID",
+            responses = {
+                    @ApiResponse(
+                            description = "Success. Returns Quiz By Name QuizQuestion .",
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            [
+                                                              {
+                                                                "userId": 11152,
+                                                                "quizId": 6,
+                                                                "userName": "aaaaaa",
+                                                                "userFirstName": "hhhhh",
+                                                                "userLastName": "llllll",
+                                                                "categoryId": 1,
+                                                                "quizName": "testQuizLearn",
+                                                                "rate": 0,
+                                                                "numberOfQuestions": 2,
+                                                                "createAt": "2024-02-15T16:14:50.039677",
+                                                                "view": 67,
+                                                                "timeRecentViewQuiz": "2024-02-21T01:46:07.597165"
+                                                              },
+                                                              {
+                                                                "userId": 11152,
+                                                                "quizId": 8,
+                                                                "userName": "aaaaaa",
+                                                                "userFirstName": "hhhhh",
+                                                                "userLastName": "llllll",
+                                                                "categoryId": 1,
+                                                                "quizName": "testCreateQUiz",
+                                                                "rate": 0,
+                                                                "numberOfQuestions": 1,
+                                                                "createAt": "2024-02-22T02:07:29.811597",
+                                                                "view": 0,
+                                                                "timeRecentViewQuiz": null
+                                                              }
+                                                            ]"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request" ,
 
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "\t\n" +
+                                    "Unauthorized or Invalid Token. Access denied.",
+                            responseCode = "403",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                              "data": [
+                                                                {
+                                                                  "fieldName": "userId",
+                                                                  "errorMessage": "userId not found"
+                                                                }
+                                                              ],
+                                                              "message": "Validation Failed",
+                                                              "error": true
+                                                            }"""
+                                            )
+                                    }
+                            )
+
+                    )
+
+            }
+    )
+    @RequestMapping(value = "get-quiz-create-by-user", method = RequestMethod.GET)
+    public ResponseEntity<?> GetQuizCreateByUser (@RequestParam(name = "user-id") Long userId) {
+        return quizServiceImpl.GetQuizCreateByUser(userId);
+    }
 }
