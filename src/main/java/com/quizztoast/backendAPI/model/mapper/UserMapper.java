@@ -11,6 +11,7 @@ public class UserMapper {
     // Convert User JPA Entity into UserDto
     public static UserProfileResponse mapToUserProfile(User user) {
         return UserProfileResponse.builder()
+                .userId(user.getUserId())
                 .userName(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
