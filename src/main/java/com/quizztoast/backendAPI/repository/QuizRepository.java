@@ -28,4 +28,8 @@ public interface QuizRepository extends JpaRepository<Quiz,Long> {
     Long countViewByUserId(Long userId);
     @Query("SELECT COUNT(q) FROM Quiz q WHERE q.user.userId = :userId")
     Integer countQuizbyUserId(@Param("userId") Long userId);
+
+
+    @Query("SELECT c.quizId FROM Quiz c WHERE c.user.userId = :userId")
+    List<Integer> findQuizId(Long userId);
 }

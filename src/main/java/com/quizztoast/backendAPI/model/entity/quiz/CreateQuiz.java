@@ -30,8 +30,14 @@ public class CreateQuiz {
 
         @ManyToOne
         @JoinColumn(name = "quiz_id")
-        private Quiz quiz;
+        private Quiz quizId;
+        public void setQuizId(Quiz quiz) {
+            this.quizId = quiz;
+        }
 
+        public void setUserId(User userId) {
+            this.userId = userId;
+        }
         // Constructors, getters, setters, etc.
     }
 

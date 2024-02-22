@@ -6,6 +6,7 @@ import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
 import com.quizztoast.backendAPI.security.auth.RegistrationRequest;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -36,4 +37,5 @@ public interface UserService {
     String validatePasswordResetToken(String token);
     Optional<User> getUserByPasswordResetToken(String token);
     void resetUserPassword(User user, String newPassword);
+    ResponseEntity<?> getProfileUserCreateQuiz(int quizId);
 }

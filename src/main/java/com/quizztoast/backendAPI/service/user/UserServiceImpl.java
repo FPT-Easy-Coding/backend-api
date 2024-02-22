@@ -1,18 +1,18 @@
 package com.quizztoast.backendAPI.service.user;
 
+import com.quizztoast.backendAPI.exception.FormatException;
+import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.model.entity.token.PasswordResetToken;
 import com.quizztoast.backendAPI.model.entity.token.VerificationToken;
 import com.quizztoast.backendAPI.model.entity.user.Provider;
 import com.quizztoast.backendAPI.model.entity.user.User;
 
-import com.quizztoast.backendAPI.repository.PasswordResetTokenRepository;
-import com.quizztoast.backendAPI.repository.TokenRepository;
-import com.quizztoast.backendAPI.repository.UserRepository;
-import com.quizztoast.backendAPI.repository.VerificationTokenRepository;
+import com.quizztoast.backendAPI.repository.*;
 import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
 import com.quizztoast.backendAPI.security.auth.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.quizztoast.backendAPI.model.mapper.UserMapper.mapUserDtoToAdmin;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -35,7 +37,8 @@ public class UserServiceImpl implements UserService {
     private final TokenRepository tokenRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
-
+    private final QuizRepository quizRepository;
+    private final CreateQuizCategory createQuizCategory;
     @Override
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
         var user = ((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
@@ -214,5 +217,14 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-
+    @Override
+    public ResponseEntity<?> getProfileUserCreateQuiz(int quizId) {
+        if (!quizRepository.existsById(quizId)) {
+            throw new FormatException("quizId", "Quiz with given ID not found");
+        }
+        //get userDTO by quizId
+        User user = userRepository.findByUserId(createQuizCategory.findUserId(quizId));
+        UserDTO userDTO = mapUserDtoToAdmin(user);
+        return ResponseEntity.ok(userDTO);
+    }
 }

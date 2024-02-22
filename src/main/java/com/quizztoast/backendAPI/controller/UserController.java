@@ -1,5 +1,7 @@
 package com.quizztoast.backendAPI.controller;
 
+import com.quizztoast.backendAPI.exception.FormatException;
+import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.model.payload.response.SimpleErrorResponse;
 import com.quizztoast.backendAPI.model.payload.response.UserProfileResponse;
@@ -191,4 +193,75 @@ public class UserController {
 //        }
 //        return passwordResetUrl;
 //    }
+
+    /**
+     * Get User create quizset by quiz-id using a Get request.
+     *
+     * @return User .
+     */
+    @Operation(
+            description = "Get User Create Quiz",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuizDTO.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                                       "userId": 11152,
+                                                                                       "userName": "aaaaaa",
+                                                                                       "firstName": "hhhhh",
+                                                                                       "lastName": "llllll",
+                                                                                       "email": "user2@gmail.com",
+                                                                                       "telephone": "0987654321",
+                                                                                       "createdAt": "2024-02-15T07:53:00.299+00:00",
+                                                                                       "role": "USER",
+                                                                                       "banned": false,
+                                                                                       "premium": false
+                                                                                     }"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Not Found",
+                            responseCode = "404",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormatException.class)
+                                    ,
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                 "data": [
+                                                                     {
+                                                                         "fieldName": "quizId",
+                                                                         "errorMessage": "Quiz with given ID not found"
+                                                                     }
+                                                                 ],
+                                                                 "message": "Validation Failed",
+                                                                 "error": true
+                                                             }"""
+                                            )
+                                    }
+
+                            )
+                    ),
+            }
+    )
+    @RequestMapping(value = "profile-user-create-quiz", method = RequestMethod.GET)
+    public ResponseEntity<?> deleteQuiz(@RequestParam(name = "quiz-id") int quiz_id)
+    {
+        return userServiceImpl.getProfileUserCreateQuiz(quiz_id);
+    }
+
 }

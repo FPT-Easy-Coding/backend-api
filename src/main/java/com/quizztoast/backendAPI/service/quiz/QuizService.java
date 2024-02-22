@@ -29,4 +29,5 @@ public interface QuizService {
     ResponseEntity<?> upDateTimeQuiz(int quizId);
 
     public List<DoQuiz> getLearnedQuizzesByUser(User user);
+    ResponseEntity<?> GetQuizCreateByUser(Long userId);
 }
