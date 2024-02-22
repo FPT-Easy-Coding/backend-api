@@ -5,6 +5,7 @@ import com.quizztoast.backendAPI.model.dto.CategoryDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.payload.request.CategoryRequest;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
+import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,10 @@ import static com.quizztoast.backendAPI.model.mapper.CategoryMapper.MapCategoryR
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    private final QuizQuestionRepository quizQuestionRepository;
+    public CategoryServiceImpl(CategoryRepository categoryRepository, QuizQuestionRepository quizQuestionRepository) {
         this.categoryRepository = categoryRepository;
+        this.quizQuestionRepository = quizQuestionRepository;
     }
 
     @Override
@@ -59,5 +61,35 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getAllCategory() {
        return categoryRepository.findAll();
+    }
+
+
+    @Override
+    public Category updateCategory(int id, CategoryRequest categoryRequest) {
+        //check category id
+        if (categoryRepository.findCategoryById(id) == null) {
+            throw new FormatException("CategoryId", "CategoryId is not exist");
+        }
+        //check category name
+        Category category = categoryRepository.findCategoryById(id);
+        if (category.getCategoryName().equals(categoryRequest.getCategoryName())) {
+            throw new FormatException("CategoryName", "CategoryName is exist");
+        }
+        category.setCategoryName(categoryRequest.getCategoryName());
+        return category;
+    }
+    @Override
+    public ResponseEntity<?> deleteCategory(int id) {
+        //check category id
+        if (categoryRepository.findCategoryById(id) == null) {
+            throw new FormatException("CategoryId", "CategoryId is not exist");
+        }
+        Category category = categoryRepository.findCategoryById(id);
+        //check question of categoryid
+        if (quizQuestionRepository.findQuizQuesstionByCategoryId(id).length!=0 ) {
+            throw new FormatException("CategoryId", "exist quiz have categoryId");
+        }
+        categoryRepository.deleteByCategoryId(id);
+        return ResponseEntity.ok("delete successfull");
     }
 }
