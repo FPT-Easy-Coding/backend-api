@@ -7,7 +7,6 @@ import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
-import com.quizztoast.backendAPI.model.payload.response.QuizQuestionResponse;
 import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.service.quiz.QuizServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
@@ -122,7 +121,7 @@ public class QuizController {
             }
     )
     @GetMapping("/get-all-quiz")
-    public List<QuizDTO> getAllQuizs(){
+    public List<QuizDTO> getAllQuiz(){
         return quizServiceImpl.getAllQuiz();
     }
     /**
@@ -487,7 +486,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
             }
     )
     @RequestMapping(value = "get-quiz", method = RequestMethod.GET)
-    public ResponseEntity<?> getQuizQestionByQuizId (@RequestParam(name = "id") int quizId) {
+    public ResponseEntity<?> getQuizQuestionByQuizId (@RequestParam(name = "id") int quizId) {
         return quizServiceImpl.getQuizQuestionsAndAnswersByQuizId(quizId);
     }
 

@@ -28,7 +28,6 @@ public class ClassroomController {
     @GetMapping("/learned/{userId}")
     @RequestMapping(value = "learned/user-id={userId}", method = RequestMethod.GET)
     public ResponseEntity<List<ClassroomResponse>> getLearnedQuizzesByUser(@PathVariable Long userId) {
-        // Assume you have a method to fetch the user by ID from the database
         User user = userServiceImpl.getUserById(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();

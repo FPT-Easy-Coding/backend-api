@@ -5,10 +5,7 @@ import com.quizztoast.backendAPI.model.entity.token.PasswordResetToken;
 import com.quizztoast.backendAPI.model.entity.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -126,14 +123,9 @@ public class User implements UserDetails {
         return userName;
     }
 
-    @OneToOne(mappedBy = "user", optional = false)
+    @Setter
+    @Getter
+    @OneToOne(mappedBy = "user")
     private PasswordResetToken passwordResetToken;
 
-    public PasswordResetToken getPasswordResetToken() {
-        return passwordResetToken;
-    }
-
-    public void setPasswordResetToken(PasswordResetToken passwordResetToken) {
-        this.passwordResetToken = passwordResetToken;
-    }
 }

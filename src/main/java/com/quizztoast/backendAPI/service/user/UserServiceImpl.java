@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final QuizRepository quizRepository;
-    private final CreateQuizCategory createQuizCategory;
+    private final CreateQuizCategoryRepository createQuizCategoryRepository;
     @Override
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
         var user = ((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
@@ -223,7 +223,7 @@ public class UserServiceImpl implements UserService {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
         //get userDTO by quizId
-        User user = userRepository.findByUserId(createQuizCategory.findUserId(quizId));
+        User user = userRepository.findByUserId(createQuizCategoryRepository.findUserId(quizId));
         UserDTO userDTO = mapUserDtoToAdmin(user);
         return ResponseEntity.ok(userDTO);
     }

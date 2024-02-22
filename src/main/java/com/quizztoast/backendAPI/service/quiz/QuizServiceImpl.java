@@ -4,17 +4,17 @@ import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.*;
+
 import com.quizztoast.backendAPI.model.entity.user.User;
-import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.QuizAnswerRequest;
 import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
 import com.quizztoast.backendAPI.model.payload.response.QuizQuestionResponse;
 import com.quizztoast.backendAPI.model.payload.response.QuestionData;
 import com.quizztoast.backendAPI.repository.*;
-import com.quizztoast.backendAPI.service.quiz.QuizService;
-import jakarta.persistence.EntityNotFoundException;
+
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ import static com.quizztoast.backendAPI.model.mapper.QuizMapper.quizToQuizDTO;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class QuizServiceImpl implements QuizService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
@@ -39,19 +40,9 @@ public class QuizServiceImpl implements QuizService {
     private final QuizQuestionRepository quizQuestionRepository;
     private final QuizQuestionMappingRepository quizQuestionMappingRepository;
     private final DoQuizRepository doQuizRepository;
-    private final CreateQuizCategory createQuizCategory;
+    private final CreateQuizCategoryRepository createQuizCategoryRepository;
 
 
-    public QuizServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionRepository quizQuestionRepository, QuizQuestionMappingRepository quizQuestionMappingRepository, DoQuizRepository doQuizRepository, CreateQuizCategory createQuizCategory) {
-        this.categoryRepository = categoryRepository;
-        this.userRepository = userRepository;
-        this.quizRepository = quizRepository;
-        this.quizAnswerRepository = quizAnswerRepository;
-        this.quizQuestionRepository = quizQuestionRepository;
-        this.quizQuestionMappingRepository = quizQuestionMappingRepository;
-        this.doQuizRepository = doQuizRepository;
-        this.createQuizCategory = createQuizCategory;
-    }
 
     @Override
     public List<QuizDTO> getAllQuiz() {
@@ -89,7 +80,7 @@ public class QuizServiceImpl implements QuizService {
         createQId.setUser(userRepository.findByUserId(quizRequest.getUserId()));
         createQId.setQuiz(quiz);
         createQuiz.setId(createQId);
-        createQuizCategory.save(createQuiz);
+        createQuizCategoryRepository.save(createQuiz);
         // Iterate through quiz questions
         for (QuizQuestionRequest quizQuestionRequest : quizRequest.getListQuestion()) {
             // Set quizQuestion properties
