@@ -39,10 +39,10 @@ public class QuizServiceImpl implements QuizService {
     private final QuizQuestionRepository quizQuestionRepository;
     private final QuizQuestionMappingRepository quizQuestionMappingRepository;
     private final DoQuizRepository doQuizRepository;
+    private final CreateQuizCategory createQuizCategory;
 
-    public QuizServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionRepository quizQuestionRepository, QuizQuestionMappingRepository quizQuestionMappingRepository, DoQuizRepository doQuizRepository) {
-    private final CreateQuizCategory createQuizCategory ;
-    public QuizServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionRepository quizQuestionRepository, QuizQuestionMappingRepository quizQuestionMappingRepository, CreateQuizCategory createQuizCategory) {
+
+    public QuizServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionRepository quizQuestionRepository, QuizQuestionMappingRepository quizQuestionMappingRepository, DoQuizRepository doQuizRepository, CreateQuizCategory createQuizCategory) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.quizRepository = quizRepository;
@@ -86,8 +86,8 @@ public class QuizServiceImpl implements QuizService {
         //save to table Create Quiz
         CreateQuiz createQuiz = new CreateQuiz();
         CreateQuiz.CreateQ createQId = new CreateQuiz.CreateQ();
-        createQId.setUserId(userRepository.findByUserId(quizRequest.getUserId()));
-        createQId.setQuizId(quiz);
+        createQId.setUser(userRepository.findByUserId(quizRequest.getUserId()));
+        createQId.setQuiz(quiz);
         createQuiz.setId(createQId);
         createQuizCategory.save(createQuiz);
         // Iterate through quiz questions
@@ -231,18 +231,17 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public List<QuizDTO> GetQuizByContent(String QuizName) {
-        if(quizRepository.findByQuizNameContaining(QuizName).isEmpty())
-        {
-            throw  new FormatException("quiz_name","Quiz not exist");
+        if (quizRepository.findByQuizNameContaining(QuizName).isEmpty()) {
+            throw new FormatException("quiz_name", "Quiz not exist");
         }
         List<QuizDTO> quizDTOList = new ArrayList<>();
-        for(Quiz quiz :quizRepository.findByQuizNameContaining(QuizName))
-        {
+        for (Quiz quiz : quizRepository.findByQuizNameContaining(QuizName)) {
             QuizDTO quizDTO = mapQuizDTOToUser(quiz);
             quizDTOList.add(quizDTO);
         }
         return quizDTOList;
     }
+
     @Override
     public ResponseEntity<?> increaseView(int quizId) {
         //find quiz by quizid
@@ -251,11 +250,12 @@ public class QuizServiceImpl implements QuizService {
         }
         Quiz quiz = quizRepository.getQuizById(quizId);
         // update view +1
-        quiz.setViewOfQuiz(quiz.getViewOfQuiz()+1);
+        quiz.setViewOfQuiz(quiz.getViewOfQuiz() + 1);
         //save to db
         quizRepository.save(quiz);
         return ResponseEntity.ok("increase Succesfull!");
     }
+
     @Override
     public ResponseEntity<?> upDateTimeQuiz(int quizId) {
         //find quiz by quizid
@@ -272,20 +272,20 @@ public class QuizServiceImpl implements QuizService {
     public List<DoQuiz> getLearnedQuizzesByUser(User user) {
         return doQuizRepository.findByIdUser(user);
     }
+
     @Override
     public ResponseEntity<?> GetQuizCreateByUser(Long userId) {
-        if ( userRepository.findByUserId(userId) == null) {
+        if (userRepository.findByUserId(userId) == null) {
             throw new FormatException("userId", "userId not found");
         }
 //get list quizId from CreateQuiz
         List<QuizDTO> listQuizDTO = new ArrayList<>();
-      for(Integer quizId :quizRepository.findQuizId(userId))
-      {
-          Quiz quiz = quizRepository.getQuizById(quizId);
-          QuizDTO quizDTO = mapQuizDTOToUser(quiz);
-          listQuizDTO.add(quizDTO);
-      }
-      return ResponseEntity.ok(listQuizDTO);
+        for (Integer quizId : quizRepository.findQuizId(userId)) {
+            Quiz quiz = quizRepository.getQuizById(quizId);
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz);
+            listQuizDTO.add(quizDTO);
+        }
+        return ResponseEntity.ok(listQuizDTO);
     }
 }
 

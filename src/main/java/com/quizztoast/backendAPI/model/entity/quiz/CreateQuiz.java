@@ -2,10 +2,7 @@ package com.quizztoast.backendAPI.model.entity.quiz;
 
 import com.quizztoast.backendAPI.model.entity.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -22,6 +19,8 @@ public class CreateQuiz {
 
     // Constructors, getters, setters, etc.
     @Embeddable
+    @Getter
+    @Setter
     public static class CreateQ implements Serializable {
 
         @ManyToOne
@@ -30,15 +29,7 @@ public class CreateQuiz {
 
         @ManyToOne
         @JoinColumn(name = "quiz_id")
-        private Quiz quizId;
-        public void setQuizId(Quiz quiz) {
-            this.quizId = quiz;
-        }
+        private Quiz quiz;
 
-        public void setUserId(User userId) {
-            this.userId = userId;
-        }
-        // Constructors, getters, setters, etc.
     }
-
 }

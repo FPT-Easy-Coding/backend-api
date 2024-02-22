@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface CreateQuizCategory extends JpaRepository<CreateQuiz,CreateQuiz.CreateQ> {
-    @Query("SELECT c.id.userId.userId FROM CreateQuiz c WHERE c.id.quizId.quizId = :quizId")
+public interface CreateQuizCategoryRepository extends JpaRepository<CreateQuiz,CreateQuiz.CreateQ> {
+    @Query("SELECT c.id.user.userId FROM CreateQuiz c WHERE c.id.quiz.quizId = :quizId")
     Long findUserId(int quizId);
 
 }
