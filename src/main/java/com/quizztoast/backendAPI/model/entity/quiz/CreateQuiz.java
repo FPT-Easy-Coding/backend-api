@@ -22,15 +22,15 @@ public class CreateQuiz {
 
     // Constructors, getters, setters, etc.
     @Embeddable
-    public class CreateQ implements Serializable {
+    public static class CreateQ implements Serializable {
 
         @ManyToOne
         @JoinColumn(name = "user_create_id")
-        private User userId;
+        private User user;
 
         @ManyToOne
         @JoinColumn(name = "quiz_id")
-        private Quiz quizId;
+        private Quiz quiz;
 
         // Constructors, getters, setters, etc.
     }

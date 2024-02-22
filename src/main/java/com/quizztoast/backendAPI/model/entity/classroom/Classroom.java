@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.entity.inClass;
+package com.quizztoast.backendAPI.model.entity.classroom;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "class")
-public class Class {
+public class Classroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_id", nullable = false)

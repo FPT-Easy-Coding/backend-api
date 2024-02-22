@@ -5,6 +5,7 @@ import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.payload.request.PasswordResetRequest;
 import com.quizztoast.backendAPI.model.payload.response.EmailForgottenResponse;
 import com.quizztoast.backendAPI.model.payload.response.MessageResponse;
+import com.quizztoast.backendAPI.model.payload.response.SimpleErrorResponse;
 import com.quizztoast.backendAPI.repository.VerificationTokenRepository;
 import com.quizztoast.backendAPI.security.auth.AuthenticationRequest;
 import com.quizztoast.backendAPI.security.auth.AuthenticationResponse;
@@ -328,6 +329,5 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(authenticationServiceImpl.verifyCode(verificationRequest));
     }
-
 
 }

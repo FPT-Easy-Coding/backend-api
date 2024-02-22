@@ -7,6 +7,7 @@ import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.UserMapper;
 
 import com.quizztoast.backendAPI.model.payload.request.CategoryRequest;
+import com.quizztoast.backendAPI.model.payload.response.SimpleErrorResponse;
 import com.quizztoast.backendAPI.service.category.CategoryServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;

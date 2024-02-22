@@ -2,6 +2,7 @@ package com.quizztoast.backendAPI.model.mapper;
 
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
+import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,5 +32,16 @@ public class QuizMapper {
             quizDTOList.add(mapQuizDTOToUser(quizSet));
         }
         return quizDTOList;
+    }
+
+    public static QuizSetResponse mapQuizToQuizSetResponse(Quiz quiz){
+        return QuizSetResponse.builder()
+                .quizId(quiz.getQuizId())
+                .quizName(quiz.getQuizName())
+                .authorFirstName(quiz.getUser().getFirstName())
+                .authorLastName(quiz.getUser().getLastName())
+                .author(quiz.getUser().getUserName())
+                .numberOfQuestion(quiz.getNumberOfQuizQuestion())
+                .build();
     }
 }

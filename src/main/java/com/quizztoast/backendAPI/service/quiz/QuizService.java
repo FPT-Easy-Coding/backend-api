@@ -1,7 +1,9 @@
 package com.quizztoast.backendAPI.service.quiz;
 
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.DoQuiz;
 import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
+import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
 import com.quizztoast.backendAPI.model.payload.response.QuizQuestionResponse;
 import org.springframework.http.ResponseEntity;
@@ -25,4 +27,6 @@ public interface QuizService {
 
     ResponseEntity<?> increaseView(int quizId);
     ResponseEntity<?> upDateTimeQuiz(int quizId);
+
+    public List<DoQuiz> getLearnedQuizzesByUser(User user);
 }

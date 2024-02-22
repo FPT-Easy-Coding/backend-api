@@ -2,9 +2,15 @@ package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.DoQuiz;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
+import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
 import com.quizztoast.backendAPI.model.payload.response.QuizQuestionResponse;
+import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.service.quiz.QuizServiceImpl;
+import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -16,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,6 +32,7 @@ import java.util.List;
 public class QuizController {
 
     private final QuizServiceImpl quizServiceImpl;
+    private final UserServiceImpl userServiceImpl;
 
     /**
      * Get All Quiz set using a Get request.
@@ -685,5 +693,33 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
     public ResponseEntity<?> updateTimeQuiz(@RequestParam(name = "id") int quizId){
         return quizServiceImpl.upDateTimeQuiz(quizId);
     }
+
+    @GetMapping("/learned/{userId}")
+    @RequestMapping(value = "learned/user-id={userId}", method = RequestMethod.GET)
+    public ResponseEntity<List<QuizSetResponse>> getLearnedQuizzesByUser(@PathVariable Long userId) {
+        // Assume you have a method to fetch the user by ID from the database
+        User user = userServiceImpl.getUserById(userId);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<DoQuiz> learnedQuizzes = quizServiceImpl.getLearnedQuizzesByUser(user);
+
+        if (learnedQuizzes == null || learnedQuizzes.isEmpty()) {
+            return ResponseEntity.notFound().build(); // Or ResponseEntity.ok(new ArrayList<>());
+        }
+
+        // Extract quizzes from the list of DoQuiz objects
+        List<QuizSetResponse> quizzes = new ArrayList<>();
+        for (DoQuiz doQuiz : learnedQuizzes) {
+            Quiz quiz = doQuiz.getId().getQuiz();
+            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz);
+            quizzes.add(response);
+        }
+
+        return ResponseEntity.ok(quizzes);
+    }
+
 
 }

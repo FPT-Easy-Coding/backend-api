@@ -12,7 +12,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public interface UserService {
     void changePassword(ChangePasswordRequest request, Principal connectedUser);
     User createUser(RegistrationRequest user);

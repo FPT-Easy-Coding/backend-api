@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.UserDTO;
+import com.quizztoast.backendAPI.model.payload.response.SimpleErrorResponse;
 import com.quizztoast.backendAPI.model.payload.response.UserProfileResponse;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.UserMapper;

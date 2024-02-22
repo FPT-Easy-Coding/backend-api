@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.controller;
+package com.quizztoast.backendAPI.model.payload.response;
 
 public class SimpleErrorResponse {
 

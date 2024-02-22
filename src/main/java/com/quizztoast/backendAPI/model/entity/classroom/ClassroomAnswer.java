@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.entity.inClass;
+package com.quizztoast.backendAPI.model.entity.classroom;
 
 import com.quizztoast.backendAPI.model.entity.user.User;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "class_answer")
-public class ClassAnswer {
+public class ClassroomAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_answer_id", nullable = false)
@@ -25,7 +25,7 @@ public class ClassAnswer {
 
     @OneToOne
     @JoinColumn(name = "class_question_id")
-    private ClassQuestion classQuestionId;
+    private ClassroomQuestion classroomQuestionId;
 
     @Column(name = "content", nullable = false, length = 1000)
     private String content;

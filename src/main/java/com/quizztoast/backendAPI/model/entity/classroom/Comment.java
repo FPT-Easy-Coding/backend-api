@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.entity.inClass;
+package com.quizztoast.backendAPI.model.entity.classroom;
 
 import com.quizztoast.backendAPI.model.entity.user.User;
 import jakarta.persistence.*;
@@ -27,7 +27,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "class_question_id")
-    private ClassQuestion classQuestionId;
+    private ClassroomQuestion classroomQuestionId;
 
     @Column(name = "content", nullable = false, length = 1000)
     private String content;

@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.model.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.quizztoast.backendAPI.model.entity.token.PasswordResetToken;
 import com.quizztoast.backendAPI.model.entity.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -123,5 +124,16 @@ public class User implements UserDetails {
 
     public String getUserName() {
         return userName;
+    }
+
+    @OneToOne(mappedBy = "user", optional = false)
+    private PasswordResetToken passwordResetToken;
+
+    public PasswordResetToken getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(PasswordResetToken passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
     }
 }
