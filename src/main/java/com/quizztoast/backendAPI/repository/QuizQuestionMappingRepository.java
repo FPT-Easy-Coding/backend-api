@@ -1,8 +1,10 @@
 package com.quizztoast.backendAPI.repository;
 
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
 import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestionMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,4 +16,10 @@ public interface QuizQuestionMappingRepository extends JpaRepository<QuizQuestio
 
     @Query("SELECT COUNT(q.id.quizQuestionId.quizQuestionId) FROM QuizQuestionMapping q WHERE q.id.quizId.quizId = :quizId")
     int countQuizQuestionByQuizID(int quizId);
+    @Query("SELECT COUNT(q) FROM QuizQuestionMapping q WHERE q.id.quizId= :quizId")
+    int countNumberofquiz(Quiz quizId);
+
+    @Modifying
+    @Query("delete from QuizQuestionMapping q where q.id.quizId.quizId = :quizId")
+    void deleteByQuizQuestionId(@Param("quizId") long quizId);
 }

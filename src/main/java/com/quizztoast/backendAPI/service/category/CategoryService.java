@@ -10,6 +10,8 @@ public interface CategoryService {
     ResponseEntity<String> findCategoryById(int categoryId);
 
     List<Category> getAllCategory();
+
     Category updateCategory(int id, CategoryRequest categoryRequest);
     ResponseEntity<?> deleteCategory(int id);
+    ResponseEntity<?> getCategoryBycategoryId(int categoryId);
 }

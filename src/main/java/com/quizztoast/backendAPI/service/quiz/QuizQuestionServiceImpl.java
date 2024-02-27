@@ -12,6 +12,7 @@ import com.quizztoast.backendAPI.model.payload.request.QuizAnswerRequest;
 import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.repository.CategoryRepository;
 import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
+import com.quizztoast.backendAPI.repository.QuizQuestionMappingRepository;
 import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
 import com.quizztoast.backendAPI.service.category.CategoryServiceImpl;
 import jakarta.validation.Valid;
@@ -35,10 +36,14 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     private final QuizQuestionRepository quizQuestionRepository;
  private final QuizAnswerRepository quizAnswerRepository;
 
-    public QuizQuestionServiceImpl(CategoryServiceImpl categoryServiceImpl, CategoryRepository categoryRepository, QuizQuestionRepository quizQuestionRepository, QuizAnswerRepository quizAnswerRepository) {
+    private final QuizQuestionMappingRepository quizQuestionMappingRepository;
+
+
+    public QuizQuestionServiceImpl(CategoryServiceImpl categoryServiceImpl, CategoryRepository categoryRepository, QuizQuestionRepository quizQuestionRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionMappingRepository quizQuestionMappingRepository) {
         this.categoryRepository = categoryRepository;
         this.quizQuestionRepository = quizQuestionRepository;
         this.quizAnswerRepository = quizAnswerRepository;
+        this.quizQuestionMappingRepository = quizQuestionMappingRepository;
     }
 
     @Override
@@ -88,11 +93,27 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         }
 
     }
-@Override
+    @Override
     public List<QuizQuestion> getAllQuiz() {
     return quizQuestionRepository.findAll();
     }
-@Override
+
+    @Override
+    public List<QuizQuestionDTO> getAllQuizDTO() {
+        List<QuizQuestionDTO> lstQuizDTO = new ArrayList<>();
+        List<QuizQuestion> lstQuizQuestions =  quizQuestionRepository.findAll();
+        lstQuizQuestions.forEach(quiz -> {
+            lstQuizDTO.add(QuizQuestionDTO.builder()
+                    .questionId(quiz.getQuizQuestionId())
+                    .categoryId(quiz.getCategoryId().getCategoryId())
+                    .categoryName(categoryRepository.findCategoryById(quiz.getCategoryId().getCategoryId()).getCategoryName())
+                    .questionContent(quiz.getContent())
+                    .answersEntity(quizAnswerRepository.findByQuizQuestion(quiz))
+                    .build());
+        });
+        return lstQuizDTO;
+    }
+    @Override
     public List<QuizQuestion> GetByContent(String content) {
         if(quizQuestionRepository.findByContentContaining(content).isEmpty())
         {
@@ -132,6 +153,16 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         }
 
     }
+
+    @Override
+    public QuizQuestion GetQuizQuestionById(Long quizquestionId) {
+        if(quizquestionId == null)
+        {
+            throw  new FormatException("quizquestionId","quizquestionId not exist");
+        }
+        return quizQuestionRepository.findById(quizquestionId).orElse(null);
+    }
+
 
     @Override
     public ResponseEntity<String> deleteQuizById(Long quizquestionId) {

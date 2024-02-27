@@ -1,14 +1,17 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.CategoryDTO;
+import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
 import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.UserMapper;
 
 import com.quizztoast.backendAPI.model.payload.request.CategoryRequest;
+import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.model.payload.response.SimpleErrorResponse;
 import com.quizztoast.backendAPI.service.category.CategoryServiceImpl;
+import com.quizztoast.backendAPI.service.quiz.QuizQuestionServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,6 +51,8 @@ public class AdminController {
     private UserServiceImpl userServiceImpl;
 
     private CategoryServiceImpl categoryServiceImpl;
+
+    private QuizQuestionServiceImpl quizQuestionServiceImpl;
     /**
      * Retrieves information for administrative tasks using a GET request.
      *
@@ -403,8 +408,10 @@ public class AdminController {
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                                "categoryName": "Success"
-                                            }"""
+                                                 "categoryName": "testCategorylan3",
+                                                 "createAt": "2024-02-19T13:31:12.0675008",
+                                                 "totalQuiz": 0
+                                             }"""
                             )
                     )
                     ),
@@ -443,7 +450,72 @@ public class AdminController {
     public CategoryDTO createCategory(@Valid @RequestBody CategoryRequest category){
         return categoryServiceImpl.saveCategory(category);
     }
+    /**
+     * get all category of quiz using a get request.
+     *
+     * @return list category.
+     */
+    @Operation(
+            summary = "get all Category",
+            //description = "Deletes a user identified by its ID. This operation is accessible to Admins.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CategoryDTO.class),
+                                    examples = @ExampleObject(
+                                            value = """
+                                                    [
+                                                         {
+                                                             "categoryId": 1,
+                                                             "categoryName": "string",
+                                                             "createAt": null,
+                                                             "totalQuiz": 2
+                                                         },
+                                                         {
+                                                             "categoryId": 2,
+                                                             "categoryName": "string",
+                                                             "createAt": null,
+                                                             "totalQuiz": 3
+                                                         },
+                                                         {
+                                                             "categoryId": 3,
+                                                             "categoryName": "Software Testing",
+                                                             "createAt": null,
+                                                             "totalQuiz": 0
+                                                         },
+                                                         {
+                                                             "categoryId": 4,
+                                                             "categoryName": "testCategory",
+                                                             "createAt": null,
+                                                             "totalQuiz": 0
+                                                         },
+                                                         {
+                                                             "categoryId": 5,
+                                                             "categoryName": "testCategorylan2",
+                                                             "createAt": "2024-02-19T13:06:15.754194",
+                                                             "totalQuiz": 0
+                                                         }
+                                                     ]"""
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "",
+                            responseCode = "404",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400",
+                            content = @Content
+                    )
 
+            }
+
+    )
     @GetMapping("get-all-category")
     public List<Category> GetAllCategory(){
         return categoryServiceImpl.getAllCategory();
@@ -599,5 +671,215 @@ public class AdminController {
     @RequestMapping(value = "delete-category", method = RequestMethod.DELETE)
     public ResponseEntity<?> DeleteCategory(@RequestParam(name = "id") int id){
         return categoryServiceImpl.deleteCategory(id);
+    }
+/**
+ * update category by id of quiz using a put request.
+ *
+ * @return category.
+ */
+@Operation(
+        summary = "update Category by id",
+        //description = "Deletes a user identified by its ID. This operation is accessible to Admins.",
+        responses = {
+                @ApiResponse(
+                        description = "Success.",
+                        responseCode = "200",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = CategoryDTO.class),
+                                examples = @ExampleObject(
+                                        value = """
+                                                {
+                                                    "categoryId": 7,
+                                                    "categoryName": "testUpdate",
+                                                    "createAt": "2024-02-19T13:31:12.067501",
+                                                    "totalQuiz": 0
+                                                }"""
+                                )
+                        )
+                ),
+                @ApiResponse(
+                        description = "CategoryId not found",
+                        responseCode = "404",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = CategoryDTO.class),
+                                examples = @ExampleObject(
+                                        value = """
+                                                {
+                                                    "data": [
+                                                        {
+                                                            "fieldName": "CategoryId",
+                                                            "errorMessage": "CategoryId is not exist"
+                                                        }
+                                                    ],
+                                                    "message": "Validation Failed",
+                                                    "error": true
+                                                }"""
+                                )
+                        )
+                ),
+                @ApiResponse(
+                        description = "Bad Request",
+                        responseCode = "400",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = CategoryDTO.class),
+                                examples = @ExampleObject(
+                                        value = """
+                                                {
+                                                     "data": [
+                                                         {
+                                                             "fieldName": "categoryName",
+                                                             "errorMessage": "categoryName cannot be null"
+                                                         },
+                                                         {
+                                                             "fieldName": "categoryName",
+                                                             "errorMessage": "categoryName cannot be Blank"
+                                                         }
+                                                     ],
+                                                     "message": "Validation Failed",
+                                                     "error": true
+                                                 }"""
+                                )
+                        )
+                )
+
+        }
+)
+@RequestMapping(value = "update-category", method = RequestMethod.PUT)
+public Category updateCategory(@RequestParam(name = "id") int id,@Valid @RequestBody CategoryRequest categoryRequest){
+    return categoryServiceImpl.updateCategory(id,categoryRequest);
+}
+
+    /**
+     * delete category by id of quiz using a put request.
+     *
+     * @return String Delete succesfull.
+     */
+    @Operation(
+            summary = "delete Category by id",
+            //description = "Deletes a user identified by its ID. This operation is accessible to Admins.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CategoryDTO.class),
+                                    examples = @ExampleObject(
+                                            value = """
+                                                {
+                                                   delete successfull
+                                                }"""
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "CategoryId not found",
+                            responseCode = "404",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CategoryDTO.class),
+                                    examples = @ExampleObject(
+                                            value = """
+                                                {
+                                                    "data": [
+                                                        {
+                                                            "fieldName": "CategoryId",
+                                                            "errorMessage": "CategoryId is not exist"
+                                                        }
+                                                    ],
+                                                    "message": "Validation Failed",
+                                                    "error": true
+                                                }"""
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CategoryDTO.class),
+                                    examples = @ExampleObject(
+                                            value = """
+                                                {
+                                                    "data": [
+                                                        {
+                                                            "fieldName": "CategoryId",
+                                                            "errorMessage": "exist quiz have categoryId"
+                                                        }
+                                                    ],
+                                                    "message": "Validation Failed",
+                                                    "error": true
+                                                }"""
+                                    )
+                            )
+                    )
+
+            }
+    )
+    @RequestMapping(value = "delete-category", method = RequestMethod.DELETE)
+    public ResponseEntity<?> DeleteCategory(@RequestParam(name = "id") int id){
+        return categoryServiceImpl.deleteCategory(id);
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative list quiz question using a GET request."
+    )
+    @GetMapping("/quiz-question")
+    public ResponseEntity<?> getAllQuizQuestion() {
+        try {
+            List<QuizQuestionDTO> quizQuestions = quizQuestionServiceImpl.getAllQuizDTO();
+            return ResponseEntity.ok(quizQuestions);
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative quiz question using a GET request."
+    )
+    @GetMapping("/quiz-question/{id}")
+    public ResponseEntity<?> getQuizQuestion(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(quizQuestionServiceImpl.GetQuizQuestionById(id));
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative quiz question using a GET request."
+    )
+    @PutMapping("/update-quiz-question")
+    public ResponseEntity<?> updateQuizQuestion(
+            @RequestParam(name = "id") int id,
+            @Valid @RequestBody QuizQuestionRequest quizQuestionRequest
+    ) {
+        try {
+            return ResponseEntity.ok(quizQuestionServiceImpl.UpdateQuizQuestion(id, quizQuestionRequest));
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative quiz question using a GET request."
+    )
+    @DeleteMapping("/delete-quiz-question")
+    public ResponseEntity<?> deleteQuizQuestion(
+            @RequestParam(name = "id") Long id
+    ) {
+        try {
+            return ResponseEntity.ok(quizQuestionServiceImpl.deleteQuizById(id));
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
     }
 }
