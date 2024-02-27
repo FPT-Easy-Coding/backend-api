@@ -47,7 +47,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public List<QuizDTO> getAllQuiz() {
         List<Quiz> listQuiz = quizRepository.findAll();
-        return quizToQuizDTO(listQuiz);
+        return quizToQuizDTO(listQuiz,quizQuestionMappingRepository);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class QuizServiceImpl implements QuizService {
         quiz.setQuizName(quizRequest.getQuizName());
         quiz.setViewOfQuiz(0L);
         quiz.setRate(quizRequest.getRate());
-        quiz.setNumberOfQuizQuestion(quizRequest.getListQuestion().size());
+//        quiz.setNumberOfQuizQuestion(quizRequest.getListQuestion().size());
         quiz.setCreatedAt(LocalDateTime.now());
         quiz.setTimeRecentViewQuiz(null);
         // Save the Quiz object to the Quiz table
@@ -117,7 +117,7 @@ public class QuizServiceImpl implements QuizService {
         }
 
         // Mapper QuizDTO
-        QuizDTO quizDTO = mapQuizDTOToUser(quiz);
+        QuizDTO quizDTO = mapQuizDTOToUser(quiz,quizQuestionMappingRepository);
         // Returns the QuizDTO object after creation
         return ResponseEntity.ok(quizDTO);
     }
@@ -159,7 +159,7 @@ public class QuizServiceImpl implements QuizService {
         //save quiz
         quizRepository.save(quiz);
         //mapper QuizDTO
-        QuizDTO quizDTo = mapQuizDTOToUser(quiz);
+        QuizDTO quizDTo = mapQuizDTOToUser(quiz,quizQuestionMappingRepository);
         // Returns the QuizDTO object after creation
         return ResponseEntity.ok(quizDTo);
     }
@@ -200,7 +200,7 @@ public class QuizServiceImpl implements QuizService {
         return ResponseEntity.ok(response);
     }
 
-    private static QuizQuestionResponse getQuizQuestionResponse(int quizId, Quiz quiz) {
+    private QuizQuestionResponse getQuizQuestionResponse(int quizId, Quiz quiz) {
         QuizQuestionResponse response = new QuizQuestionResponse();
         response.setUserId(quiz.getUser().getUserId());
         response.setQuizId(quizId);
@@ -211,7 +211,7 @@ public class QuizServiceImpl implements QuizService {
         response.setCategoryName(quiz.getCategory().getCategoryName());
         response.setQuizName(quiz.getQuizName());
         response.setRate(quiz.getRate());
-        response.setNumberOfQuestions(quiz.getNumberOfQuizQuestion());
+        response.setNumberOfQuestions(quizQuestionMappingRepository.findQuizByQuizID(quizId));
         response.setCreateAt(quiz.getCreatedAt());
         response.setView(quiz.getViewOfQuiz());
         response.setTimeRecentViewQuiz(quiz.getTimeRecentViewQuiz());
@@ -227,7 +227,7 @@ public class QuizServiceImpl implements QuizService {
         }
         List<QuizDTO> quizDTOList = new ArrayList<>();
         for (Quiz quiz : quizRepository.findByQuizNameContaining(QuizName)) {
-            QuizDTO quizDTO = mapQuizDTOToUser(quiz);
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz,quizQuestionMappingRepository);
             quizDTOList.add(quizDTO);
         }
         return quizDTOList;
@@ -273,7 +273,7 @@ public class QuizServiceImpl implements QuizService {
         List<QuizDTO> listQuizDTO = new ArrayList<>();
         for (Integer quizId : quizRepository.findQuizId(userId)) {
             Quiz quiz = quizRepository.getQuizById(quizId);
-            QuizDTO quizDTO = mapQuizDTOToUser(quiz);
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz,quizQuestionMappingRepository);
             listQuizDTO.add(quizDTO);
         }
         return ResponseEntity.ok(listQuizDTO);

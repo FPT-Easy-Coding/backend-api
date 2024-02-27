@@ -12,5 +12,6 @@ public interface QuizQuestionMappingRepository extends JpaRepository<QuizQuestio
     @Query("SELECT q.id.quizQuestionId FROM QuizQuestionMapping q WHERE q.id.quizId.quizId = :quizId")
     List<QuizQuestion> findQuizQuestionIdsByQuizId(@Param("quizId") int quizId);
 
-
+    @Query("SELECT COUNT(q.id.quizQuestionId.quizQuestionId) FROM QuizQuestionMapping q WHERE q.id.quizId.quizId = :quizId")
+    int findQuizByQuizID(int quizId);
 }

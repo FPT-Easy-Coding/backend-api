@@ -8,6 +8,7 @@ import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
 import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
+import com.quizztoast.backendAPI.repository.QuizQuestionMappingRepository;
 import com.quizztoast.backendAPI.service.quiz.QuizServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +33,7 @@ public class QuizController {
 
     private final QuizServiceImpl quizServiceImpl;
     private final UserServiceImpl userServiceImpl;
-
+private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
     /**
      * Get All Quiz set using a Get request.
      *
@@ -804,8 +805,8 @@ public class QuizController {
         List<QuizSetResponse> quizSets = new ArrayList<>();
         for (DoQuiz doQuiz : learnedQuizzes) {
             Quiz quiz = doQuiz.getId().getQuiz();
-            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz);
-            quizSets.add(response);
+            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz,quizQuestionMappingRepository);
+            quizzes.add(response);
         }
 
         return ResponseEntity.ok(quizSets);
