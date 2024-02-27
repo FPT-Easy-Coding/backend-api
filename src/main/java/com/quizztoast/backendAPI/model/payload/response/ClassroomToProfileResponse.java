@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClassroomResponse {
-    private String classroomName;
+public class ClassroomToProfileResponse {
+    private String className;
     private Long numberOfStudent;
     private Long numberOfQuizSet;
-    private String slugCode;
+    private String teacherName;
 }

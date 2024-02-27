@@ -1,5 +1,6 @@
 package com.quizztoast.backendAPI.model.entity.classroom;
 
+import com.quizztoast.backendAPI.model.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,13 +19,14 @@ public class Classroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_id", nullable = false)
-    private int classId;
+    private int classroomId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "class_name", nullable = false, length = 255)
-    private String className;
+    private String classroomName;
 
     @Column(name = "slug_code", nullable = false, unique = true, length = 255)
     private String slugCode;

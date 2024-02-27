@@ -1,14 +1,18 @@
 package com.quizztoast.backendAPI.service.classroom;
 
+import com.quizztoast.backendAPI.model.dto.ClassroomDTO;
 import com.quizztoast.backendAPI.model.entity.classroom.Classroom;
 import com.quizztoast.backendAPI.model.entity.classroom.QuizBelongClassroom;
 import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.ClassroomMapper;
+import com.quizztoast.backendAPI.model.payload.request.ClassroomRequest;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomResponse;
+import com.quizztoast.backendAPI.model.payload.response.ClassroomToProfileResponse;
 import com.quizztoast.backendAPI.repository.ClassroomRepository;
 import com.quizztoast.backendAPI.repository.QuizBelongClassroomRepository;
 import com.quizztoast.backendAPI.repository.UserBelongClassroomRepository;
+import com.quizztoast.backendAPI.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClassroomServiceImpl implements ClassroomService {
     private final ClassroomRepository classroomRepository;
+    private final UserRepository userRepository;
     private final UserBelongClassroomRepository userBelongClassroomRepository;
     private final QuizBelongClassroomRepository quizBelongClassroomRepository;
     @Override
@@ -29,7 +34,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Classroom findClassroomById(int classroomId) {
-        return null;
+        return classroomRepository.findByClassroomId(classroomId);
     }
 
     @Override
@@ -63,10 +68,24 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Classroom createClassroom(Classroom classroom) {
-        return null;
+    public Classroom createClassroom(ClassroomRequest classroomRequest) {
+        User user = userRepository.findByUserId(classroomRequest.getUserId());
+        Classroom classroom  = ClassroomMapper.mapClassroomRequestToClassroom(classroomRequest,user);
+        return classroomRepository.save(classroom);
     }
     @Override
+    public ClassroomToProfileResponse getClassroomCardDetails(Classroom classroom) {
+        if (classroom == null) {
+            // Handle not found scenario
+            return null;
+        }
+        // Fetch the number of students and quiz sets associated with the classroom
+        Long numberOfStudents = userBelongClassroomRepository.countByIdClassroom(classroom);
+        Long numberOfQuizSets = quizBelongClassroomRepository.countByIdClassroom(classroom);
+        // Map the classroom and additional data to response DTO
+        return ClassroomMapper.mapClassroomToClassroomCardResponse(classroom, numberOfStudents, numberOfQuizSets);
+    }
+
     public ClassroomResponse getClassroomDetails(Classroom classroom) {
         if (classroom == null) {
             // Handle not found scenario
@@ -77,5 +96,66 @@ public class ClassroomServiceImpl implements ClassroomService {
         Long numberOfQuizSets = quizBelongClassroomRepository.countByIdClassroom(classroom);
         // Map the classroom and additional data to response DTO
         return ClassroomMapper.mapClassroomToClassroomResponse(classroom, numberOfStudents, numberOfQuizSets);
+    }
+
+    @Override
+    public void deleteClassroom(Classroom classroom) {
+        userBelongClassroomRepository.deleteUsersByClassroom(classroom);
+        quizBelongClassroomRepository.deleteQuizSetsByClassroom(classroom);
+        classroomRepository.deleteById(classroom.getClassroomId());
+    }
+
+    @Override
+    public void deleteQuizFromClassroom(int classroomId, int quizId) {
+        quizBelongClassroomRepository.deleteQuizFromClassroom(classroomId,quizId);
+    }
+
+
+    @Override
+    public ClassroomDTO updateClassroom(int classroomId, ClassroomRequest classroomRequest) {
+        Classroom classroom = classroomRepository.findByClassroomId(classroomId);
+        classroom.setClassroomName(classroomRequest.getClassroomName());
+        classroomRepository.save(classroom);
+        return ClassroomMapper.mapClassroomToClassroomDto(classroom);
+    }
+
+    @Override
+    public void addQuestionToClassroom(int classroomId, int questionId) {
+
+    }
+
+    @Override
+    public void removeQuestionFromClassroom(int classroomId, int questionId) {
+
+    }
+
+    @Override
+    public void updateQuestionInClassroom(int classroomId, int questionId, Classroom classroom) {
+
+    }
+
+    @Override
+    public void addUserToClassroom(int classroomId, Long userId) {
+        Classroom classroom = classroomRepository.findByClassroomId(classroomId);
+        User user = userRepository.findByUserId(userId);
+        UserBelongClassroom userBelongClassroom = new UserBelongClassroom();
+        userBelongClassroom.getId().setClassroom(classroom);
+        userBelongClassroom.getId().setUser(user);
+         userBelongClassroomRepository.save(userBelongClassroom);
+    }
+
+    @Override
+    public void removeUserFromClassroom(int classroomId, int userId) {
+        userBelongClassroomRepository.deleteUserFromClassroom(classroomId,userId);
+    }
+
+    @Override
+    public void updateClassroomUser(int classroomId, int userId, Classroom classroom) {
+
+    }
+
+    @Override
+    public List<Classroom> findClassroomByTeacherId(int teacherId) {
+        return null;
     }
 }

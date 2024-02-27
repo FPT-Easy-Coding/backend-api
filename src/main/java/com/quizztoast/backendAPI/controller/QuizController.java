@@ -121,9 +121,10 @@ public class QuizController {
             }
     )
     @GetMapping("/get-all-quiz")
-    public List<QuizDTO> getAllQuiz(){
+    public List<QuizDTO> getAllQuiz() {
         return quizServiceImpl.getAllQuiz();
     }
+
     /**
      * create Quiz set using a Post request.
      *
@@ -219,8 +220,7 @@ public class QuizController {
             }
     )
     @PostMapping("/create-quiz")
-    public ResponseEntity<QuizDTO> createQuiz(@Valid @RequestBody QuizRequest quizRequest)
-    {
+    public ResponseEntity<QuizDTO> createQuiz(@Valid @RequestBody QuizRequest quizRequest) {
         return quizServiceImpl.createQuiz(quizRequest);
     }
 
@@ -241,7 +241,7 @@ public class QuizController {
                                     examples = {
                                             @ExampleObject(
                                                     value = """
-                                                        Quiz deleted successfully"""
+                                                            Quiz deleted successfully"""
                                             )
                                     }
                             )
@@ -280,10 +280,9 @@ public class QuizController {
             }
     )
     @RequestMapping(value = "delete-quiz", method = RequestMethod.DELETE)
-public ResponseEntity<String> deleteQuiz(@RequestParam(name = "id") int quiz_id)
-{
-    return quizServiceImpl.deleteQuizById(quiz_id);
-}
+    public ResponseEntity<String> deleteQuiz(@RequestParam(name = "id") int quiz_id) {
+        return quizServiceImpl.deleteQuizById(quiz_id);
+    }
 
     /**
      * Update Quiz set using a Put request.
@@ -376,15 +375,14 @@ public ResponseEntity<String> deleteQuiz(@RequestParam(name = "id") int quiz_id)
             }
     )
     @RequestMapping(value = "update-quiz", method = RequestMethod.PUT)
-public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id,@Valid @RequestBody QuizRequest quizRequest)
-{
-    return quizServiceImpl.UpdateQuiz(quiz_id,quizRequest);
-}
+    public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id, @Valid @RequestBody QuizRequest quizRequest) {
+        return quizServiceImpl.UpdateQuiz(quiz_id, quizRequest);
+    }
 
     /**
      * get Quiz and answer by name  QuizId a Get request.
      *
-     * @return  QuizQuestionResponse .
+     * @return QuizQuestionResponse .
      */
     @Operation(
             description = "Get QuizQuestion And QuizAnswer by QuizId",
@@ -446,7 +444,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
                             )
                     ),
                     @ApiResponse(
-                            description = "Bad Request" ,
+                            description = "Bad Request",
 
                             responseCode = "400",
                             content = @Content
@@ -486,14 +484,14 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
             }
     )
     @RequestMapping(value = "get-quiz", method = RequestMethod.GET)
-    public ResponseEntity<?> getQuizQuestionByQuizId (@RequestParam(name = "id") int quizId) {
+    public ResponseEntity<?> getQuizQuestionByQuizId(@RequestParam(name = "id") int quizId) {
         return quizServiceImpl.getQuizQuestionsAndAnswersByQuizId(quizId);
     }
 
     /**
      * get Quiz by name  using a Get request.
      *
-     * @return  Quiz .
+     * @return Quiz .
      */
     @Operation(
             description = "Get Quiz by QuizName",
@@ -555,7 +553,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
                             )
                     ),
                     @ApiResponse(
-                            description = "Bad Request" ,
+                            description = "Bad Request",
 
                             responseCode = "400",
                             content = @Content
@@ -602,7 +600,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
     /**
      * Increase view of quiz by quizid using a PUT request.
      *
-     * @return  message succesfull .
+     * @return message succesfull .
      */
     @Operation(
             description = "Get Quiz by QuizName",
@@ -621,7 +619,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
                             )
                     ),
                     @ApiResponse(
-                            description = "Bad Request" ,
+                            description = "Bad Request",
 
                             responseCode = "400",
                             content = @Content
@@ -642,14 +640,14 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
             }
     )
     @RequestMapping(value = "/increase-view", method = RequestMethod.PUT)
-    public ResponseEntity<?> increaseView(@RequestParam(name = "quiz-id") int quizId){
-       return quizServiceImpl.increaseView(quizId);
+    public ResponseEntity<?> increaseView(@RequestParam(name = "quiz-id") int quizId) {
+        return quizServiceImpl.increaseView(quizId);
     }
 
     /**
      * Update TimeRecent  of quiz by quizid using a PUT request.
      *
-     * @return  TimeRecent .
+     * @return TimeRecent .
      */
     @Operation(
             description = "Get Quiz by QuizName",
@@ -668,7 +666,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
                             )
                     ),
                     @ApiResponse(
-                            description = "Bad Request" ,
+                            description = "Bad Request",
 
                             responseCode = "400",
                             content = @Content
@@ -689,13 +687,14 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
             }
     )
     @RequestMapping(value = "/update-time-quiz", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateTimeQuiz(@RequestParam(name = "id") int quizId){
+    public ResponseEntity<?> updateTimeQuiz(@RequestParam(name = "id") int quizId) {
         return quizServiceImpl.upDateTimeQuiz(quizId);
     }
+
     /**
      * get Quiz and answer by name  QuizId a Get request.
      *
-     * @return  QuizQuestionResponse .
+     * @return QuizQuestionResponse .
      */
     @Operation(
             description = "Get All Quiz create by UserID",
@@ -743,7 +742,7 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
                             )
                     ),
                     @ApiResponse(
-                            description = "Bad Request" ,
+                            description = "Bad Request",
 
                             responseCode = "400",
                             content = @Content
@@ -783,9 +782,10 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
             }
     )
     @RequestMapping(value = "get-quiz-create-by-user", method = RequestMethod.GET)
-    public ResponseEntity<?> GetQuizCreateByUser (@RequestParam(name = "user-id") Long userId) {
+    public ResponseEntity<?> GetQuizCreateByUser(@RequestParam(name = "user-id") Long userId) {
         return quizServiceImpl.GetQuizCreateByUser(userId);
     }
+
     @GetMapping("/learned/{userId}")
     @RequestMapping(value = "learned/user-id={userId}", method = RequestMethod.GET)
     public ResponseEntity<List<QuizSetResponse>> getLearnedQuizzesByUser(@PathVariable Long userId) {
@@ -801,16 +801,14 @@ public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id
         if (learnedQuizzes == null || learnedQuizzes.isEmpty()) {
             return ResponseEntity.notFound().build(); // Or ResponseEntity.ok(new ArrayList<>());
         }
-
-        // Extract quizzes from the list of DoQuiz objects
-        List<QuizSetResponse> quizzes = new ArrayList<>();
+        List<QuizSetResponse> quizSets = new ArrayList<>();
         for (DoQuiz doQuiz : learnedQuizzes) {
             Quiz quiz = doQuiz.getId().getQuiz();
             QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz);
-            quizzes.add(response);
+            quizSets.add(response);
         }
 
-        return ResponseEntity.ok(quizzes);
+        return ResponseEntity.ok(quizSets);
     }
 
 

@@ -2,11 +2,14 @@ package com.quizztoast.backendAPI.service.user;
 
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.UserDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.token.PasswordResetToken;
 import com.quizztoast.backendAPI.model.entity.token.VerificationToken;
 import com.quizztoast.backendAPI.model.entity.user.Provider;
 import com.quizztoast.backendAPI.model.entity.user.User;
 
+import com.quizztoast.backendAPI.model.mapper.QuizMapper;
+import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.repository.*;
 import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
 import com.quizztoast.backendAPI.security.auth.RegistrationRequest;
@@ -22,6 +25,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import java.security.Principal;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -226,5 +230,19 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUserId(createQuizCategoryRepository.findUserId(quizId));
         UserDTO userDTO = mapUserDtoToAdmin(user);
         return ResponseEntity.ok(userDTO);
+    }
+
+    public List<QuizSetResponse> getCreatedQuizByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        List<Quiz> quizSets = quizRepository.findQuizByUserId(userId);
+        List<QuizSetResponse> quizSetResponses = new ArrayList<>();
+        for (Quiz quiz : quizSets) {
+            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz);
+            quizSetResponses.add(response);
+        }
+        return quizSetResponses;
     }
 }

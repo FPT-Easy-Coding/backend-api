@@ -1,17 +1,18 @@
-package com.quizztoast.backendAPI.model.payload.response;
+package com.quizztoast.backendAPI.model.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Data
+@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ClassroomResponse {
+public class ClassroomRequest {
     private String classroomName;
-    private Long numberOfStudent;
-    private Long numberOfQuizSet;
-    private String slugCode;
+    private Long userId;
 }

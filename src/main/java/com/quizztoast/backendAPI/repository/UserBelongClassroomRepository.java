@@ -5,6 +5,9 @@ import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
 import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom.UserBelongClassroomId;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,4 +20,14 @@ public interface UserBelongClassroomRepository extends JpaRepository<UserBelongC
 
     List<UserBelongClassroom> findByIdUser(User user);
     List<UserBelongClassroom> findByIdClassroom(Classroom classroom);
+    @Modifying
+    @Query("DELETE FROM UserBelongClassroom u WHERE u.id.classroom = :classroom")
+    void deleteUsersByClassroom(@Param("classroom") Classroom classroom);
+
+    @Modifying
+    @Query("DELETE FROM UserBelongClassroom uc WHERE uc.id.classroom.classroomId = :classroomId AND uc.id.user.userId = :userId")
+    void deleteUserFromClassroom(int classroomId, int userId);
+
+    @Query("SELECT u FROM UserBelongClassroom u WHERE u.id.classroom.classroomId = :classroomId AND u.id.user.userId = :userId")
+    UserBelongClassroom findByIdClassroomAndUser(int classroomId, int userId);
 }

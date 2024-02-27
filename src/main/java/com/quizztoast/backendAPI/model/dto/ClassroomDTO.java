@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.payload.response;
+package com.quizztoast.backendAPI.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClassroomResponse {
+public class ClassroomDTO {
     private String classroomName;
-    private Long numberOfStudent;
-    private Long numberOfQuizSet;
-    private String slugCode;
 }

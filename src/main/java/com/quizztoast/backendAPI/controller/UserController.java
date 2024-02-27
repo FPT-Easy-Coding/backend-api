@@ -3,6 +3,7 @@ package com.quizztoast.backendAPI.controller;
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.dto.UserDTO;
+import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.model.payload.response.SimpleErrorResponse;
 import com.quizztoast.backendAPI.model.payload.response.UserProfileResponse;
 import com.quizztoast.backendAPI.model.entity.user.User;
@@ -176,24 +177,6 @@ public class UserController {
         return ResponseEntity.ok(userProfile);
     }
 
-//    private String passwordResetEmailLink(User user, String applicationUrl, String token) {
-//        String url = applicationUrl + "/reset-password?token=" + token;
-//
-//    }
-//    public String resetPasswordRequest(
-//            @RequestBody PasswordResetRequest passwordResetRequest,
-//            final HttpServletRequest request
-//            ) {
-//        Optional<User> user = userServiceImpl.getUserByEmail(passwordResetRequest.getEmail());
-//        String passwordResetUrl = "";
-//        if (user.isPresent()) {
-//            String passwordResetToken = UUID.randomUUID().toString();
-//            userServiceImpl.createPasswordResetTokenForUser(user.get(), passwordResetToken);
-//            passwordResetUrl = passwordResetEmailLink(user.get(), applicationUrl(request), passwordResetToken);
-//        }
-//        return passwordResetUrl;
-//    }
-
     /**
      * Get User create quizset by quiz-id using a Get request.
      *
@@ -262,6 +245,24 @@ public class UserController {
     public ResponseEntity<?> deleteQuiz(@RequestParam(name = "quiz-id") int quiz_id)
     {
         return userServiceImpl.getProfileUserCreateQuiz(quiz_id);
+    }
+
+    @RequestMapping(value="/created-quiz-set/user-id={userId}", method = RequestMethod.GET)
+    public ResponseEntity<List<QuizSetResponse>> getCreatedQuiz(
+            @PathVariable Long userId)
+    {
+        try {
+            List<QuizSetResponse> quizSetResponses = userServiceImpl.getCreatedQuizByUserId(userId);
+            if (quizSetResponses.isEmpty())
+            {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(quizSetResponses);
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
