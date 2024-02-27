@@ -4,19 +4,19 @@ import com.quizztoast.backendAPI.model.dto.ClassroomDTO;
 import com.quizztoast.backendAPI.model.entity.classroom.Classroom;
 import com.quizztoast.backendAPI.model.entity.classroom.QuizBelongClassroom;
 import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
+import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.ClassroomMapper;
 import com.quizztoast.backendAPI.model.payload.request.ClassroomRequest;
+import com.quizztoast.backendAPI.model.payload.response.ClassMemberResponse;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomResponse;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomToProfileResponse;
-import com.quizztoast.backendAPI.repository.ClassroomRepository;
-import com.quizztoast.backendAPI.repository.QuizBelongClassroomRepository;
-import com.quizztoast.backendAPI.repository.UserBelongClassroomRepository;
-import com.quizztoast.backendAPI.repository.UserRepository;
+import com.quizztoast.backendAPI.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,6 +25,7 @@ import java.util.List;
 public class ClassroomServiceImpl implements ClassroomService {
     private final ClassroomRepository classroomRepository;
     private final UserRepository userRepository;
+    private final QuizRepository quizRepository;
     private final UserBelongClassroomRepository userBelongClassroomRepository;
     private final QuizBelongClassroomRepository quizBelongClassroomRepository;
     @Override
@@ -157,5 +158,25 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public List<Classroom> findClassroomByTeacherId(int teacherId) {
         return null;
+    }
+
+    @Override
+    public List<ClassMemberResponse> getClassMembers(int classroomId) {
+        List<UserBelongClassroom> userBelongClassrooms = userBelongClassroomRepository.findByClassroomId(classroomId);
+        List<ClassMemberResponse> classMemberResponses = new ArrayList<>();
+        for (UserBelongClassroom userBelongClassroom : userBelongClassrooms) {
+            classMemberResponses.add(ClassroomMapper.mapUserBelongClassroomToClassMemberResponse(userBelongClassroom));
+        }
+        return classMemberResponses;
+    }
+
+    @Override
+    public void addQuizToClassroom(int classroomId, int quizId) {
+        Classroom classroom = classroomRepository.findByClassroomId(classroomId);
+        Quiz quiz = quizRepository.getQuizById(quizId);
+        QuizBelongClassroom quizBelongClassroom = QuizBelongClassroom.builder()
+                .id(new QuizBelongClassroom.QuizBeLongClassroomId(quiz,classroom))
+                .build();
+        quizBelongClassroomRepository.save(quizBelongClassroom);
     }
 }

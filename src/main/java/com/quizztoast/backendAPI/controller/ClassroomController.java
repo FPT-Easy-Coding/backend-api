@@ -10,11 +10,8 @@ import com.quizztoast.backendAPI.model.entity.user.User;
 
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.ClassroomRequest;
-import com.quizztoast.backendAPI.model.payload.response.ClassroomResponse;
-import com.quizztoast.backendAPI.model.payload.response.ClassroomToProfileResponse;
+import com.quizztoast.backendAPI.model.payload.response.*;
 
-import com.quizztoast.backendAPI.model.payload.response.MessageResponse;
-import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.repository.QuizBelongClassroomRepository;
 import com.quizztoast.backendAPI.repository.UserBelongClassroomRepository;
 import com.quizztoast.backendAPI.service.classroom.ClassroomServiceImpl;
@@ -40,6 +37,12 @@ public class ClassroomController {
     private final QuizServiceImpl quizServiceImpl;
     private final QuizBelongClassroomRepository quizBelongClassroomRepository;
     private final UserBelongClassroomRepository userBelongClassroomRepository;
+
+    @RequestMapping(value = "/class-member/class-id={classId}", method = RequestMethod.GET)
+    public ResponseEntity<List<ClassMemberResponse>> getMembersOfClassroom(@PathVariable int classId) {
+        return ResponseEntity.ok(classroomServiceImpl.getClassMembers(classId));
+
+    }
 
     @GetMapping("/learned/{userId}")
     @RequestMapping(value = "learned/user-id={userId}", method = RequestMethod.GET)
@@ -82,7 +85,7 @@ public class ClassroomController {
         for (QuizBelongClassroom quizBelongClassroom : quizSetsInClassroom) {
             Quiz quiz = quizBelongClassroom.getId().getQuiz();
             int numberOfQuestions = quizServiceImpl.getNumberOfQuestionsByQuizId(quiz.getQuizId());
-            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz,numberOfQuestions);
+            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz, numberOfQuestions);
             quizSetResponses.add(response);
         }
 
@@ -194,8 +197,7 @@ public class ClassroomController {
             (
                     @PathVariable int classroomId,
                     @PathVariable Long userId
-            )
-    {
+            ) {
         try {
             classroomServiceImpl.addUserToClassroom(classroomId, userId);
             return ResponseEntity.ok(
@@ -208,6 +210,29 @@ public class ClassroomController {
                     MessageResponse.builder()
                             .success(false)
                             .msg("Error adding user: " + e.getMessage())
+                            .build());
+        }
+
+
+    }
+
+    @PostMapping("/add-quiz/{classroomId}/quiz/{quizId}")
+    public ResponseEntity<MessageResponse> addQuizToClassroom(
+            @PathVariable int classroomId,
+            @PathVariable int quizId
+    ) {
+        try {
+            classroomServiceImpl.addQuizToClassroom(classroomId, quizId);
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .success(true)
+                            .msg("Add quiz successfully")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error adding quiz: " + e.getMessage())
                             .build());
         }
     }

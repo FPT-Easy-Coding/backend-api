@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ClassroomToProfileResponse {
+    private int classId;
     private String className;
     private Long numberOfStudent;
     private Long numberOfQuizSet;

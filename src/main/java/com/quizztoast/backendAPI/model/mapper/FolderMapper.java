@@ -10,7 +10,9 @@ public class FolderMapper {
     public static FolderResponse mapFolderToFolderResponse(Folder folder, Long numberOfQuizSets) {
         String folderName = folder.getFolderName();
         return FolderResponse.builder()
+                .folderId(folder.getFolderId())
                 .folderName(folderName)
+                .authorName(folder.getUser().getUserName())
                 .numberOfQuizSet(numberOfQuizSets)
                 .createdAt(folder.getCreatedAt())
                 .build();

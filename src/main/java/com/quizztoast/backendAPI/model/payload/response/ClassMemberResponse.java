@@ -5,16 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Date;
-
 @Data
-@Builder
-@RequiredArgsConstructor
 @AllArgsConstructor
-public class FolderResponse {
-    Long folderId;
-    String folderName;
-    Long numberOfQuizSet;
-    String authorName;
-    Date createdAt;
+@RequiredArgsConstructor
+@Builder
+public class ClassMemberResponse {
+    String userName;
+    String userFirstName;
+    String userLastName;
 }

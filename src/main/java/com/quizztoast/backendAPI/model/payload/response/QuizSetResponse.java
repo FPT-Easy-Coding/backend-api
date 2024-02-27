@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class QuizSetResponse {
     private int quizId;
     private String quizName;
-
     private String author;
     private String authorFirstName;
     private String authorLastName;

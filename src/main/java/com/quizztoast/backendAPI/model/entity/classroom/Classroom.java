@@ -25,10 +25,10 @@ public class Classroom {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "class_name", nullable = false, length = 255)
+    @Column(name = "class_name", nullable = false)
     private String classroomName;
 
-    @Column(name = "slug_code", nullable = false, unique = true, length = 255)
+    @Column(name = "slug_code", nullable = false, unique = true)
     private String slugCode;
 
     @Column(name = "created_at", nullable = false)

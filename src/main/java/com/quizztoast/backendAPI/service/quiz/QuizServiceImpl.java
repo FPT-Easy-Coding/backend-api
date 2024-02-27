@@ -142,7 +142,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public ResponseEntity<QuizDTO> UpdateQuiz(int quizId, @Valid @RequestBody QuizRequest quizRequest) {
+    public ResponseEntity<QuizDTO> updateQuiz(int quizId, @Valid @RequestBody QuizRequest quizRequest) {
         // Check user_id must be in User table
         if (!userRepository.existsById(quizRequest.getUserId())) {
             throw new FormatException("userId", "userId not found");
@@ -269,7 +269,7 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-    public List<QuizDTO> GetQuizByContent(String QuizName) {
+    public List<QuizDTO> getQuizByContent(String QuizName) {
         if (quizRepository.findByQuizNameContaining(QuizName).isEmpty()) {
             throw new FormatException("quiz_name", "Quiz not exist");
         }
@@ -314,11 +314,11 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public ResponseEntity<?> GetQuizCreateByUser(Long userId) {
+    public ResponseEntity<?> getQuizCreatedByUser(Long userId) {
         if (userRepository.findByUserId(userId) == null) {
             throw new FormatException("userId", "userId not found");
         }
-//get list quizId from CreateQuiz
+        //get list quizId from CreateQuiz
         List<QuizDTO> listQuizDTO = new ArrayList<>();
         for (Integer quizId : quizRepository.findQuizId(userId)) {
             Quiz quiz = quizRepository.getQuizById(quizId);

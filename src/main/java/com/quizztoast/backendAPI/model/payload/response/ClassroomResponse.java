@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ClassroomResponse {
-    private String classroomName;
+    private int classId;
+    private String className;
+    private String teacherName;
     private Long numberOfStudent;
     private Long numberOfQuizSet;
     private String slugCode;

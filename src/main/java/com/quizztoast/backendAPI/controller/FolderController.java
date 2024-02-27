@@ -34,6 +34,15 @@ public class FolderController {
     private final FolderServiceImpl folderServiceImpl;
     private final QuizServiceImpl quizServiceImpl;
 
+    @RequestMapping(value = "/folder-id={folderId}", method = RequestMethod.GET)
+    public ResponseEntity<FolderResponse> getFolderById(@PathVariable Long folderId) {
+        Folder folder = folderServiceImpl.getFolderById(folderId);
+        if (folder == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(folderServiceImpl.getFolderDetails(folder), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "created/user-id={userId}", method = RequestMethod.GET)
     public ResponseEntity<ListResponseDTO> getFolderByUser(@PathVariable Long userId) {
         try {
@@ -83,7 +92,6 @@ public class FolderController {
     }
 
 
-
     @RequestMapping(value = "/quiz-belong-folder/folder-id={folderId}", method = RequestMethod.GET)
     public ResponseEntity<ListResponseDTO> getQuizBelongFolder(@PathVariable Long folderId) {
         try {
@@ -107,7 +115,7 @@ public class FolderController {
                     for (QuizBelongFolder quizBelongFolder : quizSetsBelongFolder) {
                         Quiz quiz = quizBelongFolder.getId().getQuiz();
                         int numberOfQuestions = quizServiceImpl.getNumberOfQuestionsByQuizId(quiz.getQuizId());
-                        quizSetResponses.add(QuizMapper.mapQuizToQuizSetResponse(quiz,numberOfQuestions));
+                        quizSetResponses.add(QuizMapper.mapQuizToQuizSetResponse(quiz, numberOfQuestions));
                     }
                     messageResponse = MessageResponse.builder()
                             .success(true)
@@ -227,8 +235,7 @@ public class FolderController {
                             .success(true)
                             .msg("Remove quiz from folder successfully")
                             .build());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     MessageResponse.builder()
                             .success(false)

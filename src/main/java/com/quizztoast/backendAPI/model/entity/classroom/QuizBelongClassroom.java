@@ -20,6 +20,8 @@ public class QuizBelongClassroom {
     @Setter
     @Getter
     @Embeddable
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class QuizBeLongClassroomId implements Serializable {
 
         @ManyToOne

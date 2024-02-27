@@ -377,7 +377,7 @@ private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
     )
     @RequestMapping(value = "update-quiz", method = RequestMethod.PUT)
     public ResponseEntity<QuizDTO> UpdateQuiz(@RequestParam(name = "id") int quiz_id, @Valid @RequestBody QuizRequest quizRequest) {
-        return quizServiceImpl.UpdateQuiz(quiz_id, quizRequest);
+        return quizServiceImpl.updateQuiz(quiz_id, quizRequest);
     }
 
     /**
@@ -595,7 +595,7 @@ private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
     )
     @RequestMapping(value = "get-quiz-by-name", method = RequestMethod.GET)
     public List<QuizDTO> getQuizsByContent(@RequestParam(name = "name") String QuizName) {
-        return quizServiceImpl.GetQuizByContent(QuizName);
+        return quizServiceImpl.getQuizByContent(QuizName);
     }
 
     /**
@@ -697,9 +697,9 @@ private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
      * @return  List quiz .
      */
 
-    @RequestMapping(value = "get-quiz-create-by-user", method = RequestMethod.GET)
-    public ResponseEntity<?> GetQuizCreateByUser(@RequestParam(name = "user-id") Long userId) {
-        return quizServiceImpl.GetQuizCreateByUser(userId);
+    @RequestMapping(value = "/get-quiz-create-by-user/user-id={userId}", method = RequestMethod.GET)
+    public ResponseEntity<?> GetQuizCreateByUser(@PathVariable Long userId) {
+        return quizServiceImpl.getQuizCreatedByUser(userId);
     }
 
     @GetMapping("/learned/{userId}")
@@ -733,4 +733,5 @@ private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
     public ResponseEntity<?> getQuizbyCategory (@RequestParam(name = "id") int categoryId) {
         return quizServiceImpl.getQuizByCategory(categoryId);
     }
+
 }

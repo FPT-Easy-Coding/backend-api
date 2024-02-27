@@ -19,7 +19,8 @@ public interface UserBelongClassroomRepository extends JpaRepository<UserBelongC
     Long countByIdUser(User user);
 
     List<UserBelongClassroom> findByIdUser(User user);
-    List<UserBelongClassroom> findByIdClassroom(Classroom classroom);
+    @Query("SELECT u FROM UserBelongClassroom u WHERE u.id.classroom.classroomId = :classroomId")
+    List<UserBelongClassroom> findByClassroomId(int classroomId);
     @Modifying
     @Query("DELETE FROM UserBelongClassroom u WHERE u.id.classroom = :classroom")
     void deleteUsersByClassroom(@Param("classroom") Classroom classroom);
