@@ -25,12 +25,6 @@ public class QuizMapper {
                 .timeRecentViewQuiz(quiz.getTimeRecentViewQuiz())
                 .build();
     }
-    public static QuizDTO mapQuizToQuizDTO(Quiz quiz, int numberOfQuestion) {
-        QuizDTO quizDTO = new QuizDTO();
-        quizDTO.setQuizId(quiz.getQuizId());
-        quizDTO.setNumberOfQuestions(numberOfQuestion);
-        return quizDTO;
-    }
 
     public static QuizSetResponse mapQuizToQuizSetResponse(Quiz quiz,int numberOfQuestion){
         return QuizSetResponse.builder()

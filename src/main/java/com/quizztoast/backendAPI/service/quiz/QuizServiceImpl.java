@@ -50,7 +50,7 @@ public class QuizServiceImpl implements QuizService {
         List<QuizDTO> quizDTOs = new ArrayList<>();
         for (Quiz quiz : quizzes) {
             int questionCount = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
-            QuizDTO quizDTO = QuizMapper.mapQuizToQuizDTO(quiz, questionCount);
+            QuizDTO quizDTO = QuizMapper.mapQuizDTOToUser(quiz, questionCount);
             quizDTOs.add(quizDTO);
         }
         return quizDTOs;
