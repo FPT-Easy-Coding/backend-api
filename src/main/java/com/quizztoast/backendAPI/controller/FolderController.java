@@ -14,6 +14,7 @@ import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 
 import com.quizztoast.backendAPI.service.folder.FolderServiceImpl;
 
+import com.quizztoast.backendAPI.service.quiz.QuizServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ import java.util.List;
 public class FolderController {
     private final UserServiceImpl userServiceImpl;
     private final FolderServiceImpl folderServiceImpl;
-
+    private final QuizServiceImpl quizServiceImpl;
 
     @RequestMapping(value = "created/user-id={userId}", method = RequestMethod.GET)
     public ResponseEntity<ListResponseDTO> getFolderByUser(@PathVariable Long userId) {
@@ -105,7 +106,8 @@ public class FolderController {
                 } else {
                     for (QuizBelongFolder quizBelongFolder : quizSetsBelongFolder) {
                         Quiz quiz = quizBelongFolder.getId().getQuiz();
-                        quizSetResponses.add(QuizMapper.mapQuizToQuizSetResponse(quiz));
+                        int numberOfQuestions = quizServiceImpl.getNumberOfQuestionsByQuizId(quiz.getQuizId());
+                        quizSetResponses.add(QuizMapper.mapQuizToQuizSetResponse(quiz,numberOfQuestions));
                     }
                     messageResponse = MessageResponse.builder()
                             .success(true)

@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final QuizRepository quizRepository;
     private final CreateQuizCategoryRepository createQuizCategoryRepository;
+    private final QuizQuestionMappingRepository quizQuestionMappingRepository;
     @Override
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
         var user = ((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
@@ -240,7 +241,8 @@ public class UserServiceImpl implements UserService {
         List<Quiz> quizSets = quizRepository.findQuizByUserId(userId);
         List<QuizSetResponse> quizSetResponses = new ArrayList<>();
         for (Quiz quiz : quizSets) {
-            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz);
+            int numberOfQuestions = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
+            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz,numberOfQuestions);
             quizSetResponses.add(response);
         }
         return quizSetResponses;

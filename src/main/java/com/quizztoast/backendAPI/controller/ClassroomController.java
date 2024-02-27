@@ -18,6 +18,7 @@ import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.repository.QuizBelongClassroomRepository;
 import com.quizztoast.backendAPI.repository.UserBelongClassroomRepository;
 import com.quizztoast.backendAPI.service.classroom.ClassroomServiceImpl;
+import com.quizztoast.backendAPI.service.quiz.QuizServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -36,6 +37,7 @@ import java.util.List;
 public class ClassroomController {
     private final UserServiceImpl userServiceImpl;
     private final ClassroomServiceImpl classroomServiceImpl;
+    private final QuizServiceImpl quizServiceImpl;
     private final QuizBelongClassroomRepository quizBelongClassroomRepository;
     private final UserBelongClassroomRepository userBelongClassroomRepository;
 
@@ -79,7 +81,8 @@ public class ClassroomController {
         List<QuizSetResponse> quizSetResponses = new ArrayList<>();
         for (QuizBelongClassroom quizBelongClassroom : quizSetsInClassroom) {
             Quiz quiz = quizBelongClassroom.getId().getQuiz();
-            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz);
+            int numberOfQuestions = quizServiceImpl.getNumberOfQuestionsByQuizId(quiz.getQuizId());
+            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz,numberOfQuestions);
             quizSetResponses.add(response);
         }
 

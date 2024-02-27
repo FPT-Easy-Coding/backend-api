@@ -800,13 +800,14 @@ private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
         List<DoQuiz> learnedQuizzes = quizServiceImpl.getLearnedQuizzesByUser(user);
 
         if (learnedQuizzes == null || learnedQuizzes.isEmpty()) {
-            return ResponseEntity.notFound().build(); // Or ResponseEntity.ok(new ArrayList<>());
+            return ResponseEntity.notFound().build();
         }
         List<QuizSetResponse> quizSets = new ArrayList<>();
         for (DoQuiz doQuiz : learnedQuizzes) {
             Quiz quiz = doQuiz.getId().getQuiz();
-            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz,quizQuestionMappingRepository);
-            quizzes.add(response);
+            int numberOfQuestions = quizServiceImpl.getNumberOfQuestionsByQuizId(quiz.getQuizId());
+            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz,numberOfQuestions);
+            quizSets.add(response);
         }
 
         return ResponseEntity.ok(quizSets);

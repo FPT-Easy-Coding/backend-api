@@ -31,21 +31,20 @@ public class Quiz {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category; // Change the property name to match your entity
+    private Category category;
 
     @Column(name = "quiz_name", nullable = false)
     private String quizName;
 
-    @Column(name= "rate" ,nullable = false,length = 255)
+    @Column(name= "rate" ,nullable = false)
     private double rate;
 
     @Column(name= "created_at" ,nullable = false)
     private LocalDateTime createdAt;
 
-//    @Column(name= "number_of_quiz_question",nullable = false)
-//    private int numberOfQuizQuestion;
     @Column(name = "view")
     private Long viewOfQuiz;
     @Column(name = "time_recent_view_quiz")
     private LocalDateTime timeRecentViewQuiz ;
+
 }

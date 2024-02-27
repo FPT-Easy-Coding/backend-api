@@ -29,4 +29,6 @@ public interface QuizService {
 
     public List<DoQuiz> getLearnedQuizzesByUser(User user);
     ResponseEntity<?> GetQuizCreateByUser(Long userId);
+
+    public int getNumberOfQuestionsByQuizId(int quizId);
 }

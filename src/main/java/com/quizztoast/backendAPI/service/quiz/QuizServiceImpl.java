@@ -6,6 +6,7 @@ import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.*;
 
 import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.QuizAnswerRequest;
 import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
@@ -26,7 +27,7 @@ import java.util.List;
 
 
 import static com.quizztoast.backendAPI.model.mapper.QuizMapper.mapQuizDTOToUser;
-import static com.quizztoast.backendAPI.model.mapper.QuizMapper.quizToQuizDTO;
+
 
 @Service
 @Transactional
@@ -46,8 +47,14 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public List<QuizDTO> getAllQuiz() {
-        List<Quiz> listQuiz = quizRepository.findAll();
-        return quizToQuizDTO(listQuiz,quizQuestionMappingRepository);
+        List<Quiz> quizzes = quizRepository.findAll();
+        List<QuizDTO> quizDTOs = new ArrayList<>();
+        for (Quiz quiz : quizzes) {
+            int questionCount = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
+            QuizDTO quizDTO = QuizMapper.mapQuizToQuizDTO(quiz, questionCount);
+            quizDTOs.add(quizDTO);
+        }
+        return quizDTOs;
     }
 
     @Override
@@ -115,9 +122,9 @@ public class QuizServiceImpl implements QuizService {
             // Save QuizQuestionMapping
             quizQuestionMappingRepository.save(quizQuestionMapping);
         }
-
+        int numberOfQuestion = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
         // Mapper QuizDTO
-        QuizDTO quizDTO = mapQuizDTOToUser(quiz,quizQuestionMappingRepository);
+        QuizDTO quizDTO = mapQuizDTOToUser(quiz,numberOfQuestion);
         // Returns the QuizDTO object after creation
         return ResponseEntity.ok(quizDTO);
     }
@@ -159,7 +166,8 @@ public class QuizServiceImpl implements QuizService {
         //save quiz
         quizRepository.save(quiz);
         //mapper QuizDTO
-        QuizDTO quizDTo = mapQuizDTOToUser(quiz,quizQuestionMappingRepository);
+        int numberOfQuestion = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
+        QuizDTO quizDTo = mapQuizDTOToUser(quiz,numberOfQuestion);
         // Returns the QuizDTO object after creation
         return ResponseEntity.ok(quizDTo);
     }
@@ -201,23 +209,25 @@ public class QuizServiceImpl implements QuizService {
     }
 
     private QuizQuestionResponse getQuizQuestionResponse(int quizId, Quiz quiz) {
-        QuizQuestionResponse response = new QuizQuestionResponse();
-        response.setUserId(quiz.getUser().getUserId());
-        response.setQuizId(quizId);
-        response.setUserName(quiz.getUser().getUserName());
-        response.setUserFirstName(quiz.getUser().getFirstName());
-        response.setUserLastName(quiz.getUser().getLastName());
-        response.setCategoryId(quiz.getCategory().getCategoryId());
-        response.setCategoryName(quiz.getCategory().getCategoryName());
-        response.setQuizName(quiz.getQuizName());
-        response.setRate(quiz.getRate());
-        response.setNumberOfQuestions(quizQuestionMappingRepository.findQuizByQuizID(quizId));
-        response.setCreateAt(quiz.getCreatedAt());
-        response.setView(quiz.getViewOfQuiz());
-        response.setTimeRecentViewQuiz(quiz.getTimeRecentViewQuiz());
-        response.setQuestions(new ArrayList<>());
-        return response;
+        int numberOfQuestions = quizQuestionMappingRepository.countQuizQuestionByQuizID(quizId);
+        return QuizQuestionResponse.builder()
+                .userId(quiz.getUser().getUserId())
+                .quizId(quizId)
+                .userName(quiz.getUser().getUserName())
+                .userFirstName(quiz.getUser().getFirstName())
+                .userLastName(quiz.getUser().getLastName())
+                .categoryId(quiz.getCategory().getCategoryId())
+                .categoryName(quiz.getCategory().getCategoryName())
+                .quizName(quiz.getQuizName())
+                .rate(quiz.getRate())
+                .numberOfQuestions(numberOfQuestions)
+                .createAt(quiz.getCreatedAt())
+                .view(quiz.getViewOfQuiz())
+                .timeRecentViewQuiz(quiz.getTimeRecentViewQuiz())
+                .questions(new ArrayList<>())
+                .build();
     }
+
 
 
     @Override
@@ -227,7 +237,8 @@ public class QuizServiceImpl implements QuizService {
         }
         List<QuizDTO> quizDTOList = new ArrayList<>();
         for (Quiz quiz : quizRepository.findByQuizNameContaining(QuizName)) {
-            QuizDTO quizDTO = mapQuizDTOToUser(quiz,quizQuestionMappingRepository);
+            int numberOfQuestion = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz,numberOfQuestion);
             quizDTOList.add(quizDTO);
         }
         return quizDTOList;
@@ -273,10 +284,17 @@ public class QuizServiceImpl implements QuizService {
         List<QuizDTO> listQuizDTO = new ArrayList<>();
         for (Integer quizId : quizRepository.findQuizId(userId)) {
             Quiz quiz = quizRepository.getQuizById(quizId);
-            QuizDTO quizDTO = mapQuizDTOToUser(quiz,quizQuestionMappingRepository);
+            int numberOfQuestions = getNumberOfQuestionsByQuizId(quizId);
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz,numberOfQuestions);
             listQuizDTO.add(quizDTO);
         }
         return ResponseEntity.ok(listQuizDTO);
+    }
+
+    @Override
+    public int getNumberOfQuestionsByQuizId(int quizId) {
+        // Your logic to compute the number of questions
+        return quizQuestionMappingRepository.countQuizQuestionByQuizID(quizId);
     }
 }
 
