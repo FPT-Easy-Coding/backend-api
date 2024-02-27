@@ -10,8 +10,13 @@ import java.util.List;
 public interface QuizQuestionService {
     ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers( QuizQuestionRequest Quizrequest);
      List<QuizQuestion> getAllQuiz();
+
+    List<QuizQuestionDTO> getAllQuizDTO();
+
     List<QuizQuestion> GetByContent(String content);
     ResponseEntity<QuizQuestion> UpdateQuizQuestion(int quizquestionId, QuizQuestionRequest quizRequest);
 
     ResponseEntity<String> deleteQuizById(Long quizquestionId);
+
+    QuizQuestion GetQuizQuestionById(Long quizquestionId);
 }

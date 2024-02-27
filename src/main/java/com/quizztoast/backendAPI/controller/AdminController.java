@@ -1,13 +1,16 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.CategoryDTO;
+import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
 import com.quizztoast.backendAPI.model.dto.UserDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.Category;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.UserMapper;
 
 import com.quizztoast.backendAPI.model.payload.request.CategoryRequest;
+import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
 import com.quizztoast.backendAPI.service.category.CategoryServiceImpl;
+import com.quizztoast.backendAPI.service.quiz.QuizQuestionServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,6 +50,8 @@ public class AdminController {
     private UserServiceImpl userServiceImpl;
 
     private CategoryServiceImpl categoryServiceImpl;
+
+    private QuizQuestionServiceImpl quizQuestionServiceImpl;
     /**
      * Retrieves information for administrative tasks using a GET request.
      *
@@ -666,5 +671,63 @@ public Category updateCategory(@RequestParam(name = "id") int id,@Valid @Request
     @RequestMapping(value = "delete-category", method = RequestMethod.DELETE)
     public ResponseEntity<?> DeleteCategory(@RequestParam(name = "id") int id){
         return categoryServiceImpl.deleteCategory(id);
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative list quiz question using a GET request."
+    )
+    @GetMapping("/quiz-question")
+    public ResponseEntity<?> getAllQuizQuestion() {
+        try {
+            List<QuizQuestionDTO> quizQuestions = quizQuestionServiceImpl.getAllQuizDTO();
+            return ResponseEntity.ok(quizQuestions);
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative quiz question using a GET request."
+    )
+    @GetMapping("/quiz-question/{id}")
+    public ResponseEntity<?> getQuizQuestion(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(quizQuestionServiceImpl.GetQuizQuestionById(id));
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative quiz question using a GET request."
+    )
+    @PutMapping("/update-quiz-question")
+    public ResponseEntity<?> updateQuizQuestion(
+            @RequestParam(name = "id") int id,
+            @Valid @RequestBody QuizQuestionRequest quizQuestionRequest
+    ) {
+        try {
+            return ResponseEntity.ok(quizQuestionServiceImpl.UpdateQuizQuestion(id, quizQuestionRequest));
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative quiz question using a GET request."
+    )
+    @DeleteMapping("/delete-quiz-question")
+    public ResponseEntity<?> deleteQuizQuestion(
+            @RequestParam(name = "id") Long id
+    ) {
+        try {
+            return ResponseEntity.ok(quizQuestionServiceImpl.deleteQuizById(id));
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
     }
 }
