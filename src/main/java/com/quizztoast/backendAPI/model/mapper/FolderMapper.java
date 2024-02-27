@@ -12,6 +12,7 @@ public class FolderMapper {
         return FolderResponse.builder()
                 .folderName(folderName)
                 .numberOfQuizSet(numberOfQuizSets)
+                .createdAt(folder.getCreatedAt())
                 .build();
     }
 

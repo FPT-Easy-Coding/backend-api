@@ -42,6 +42,7 @@ public class QuizMapper {
                 .authorFirstName(quiz.getUser().getFirstName())
                 .authorLastName(quiz.getUser().getLastName())
                 .author(quiz.getUser().getUserName())
+                .createdAt(quiz.getCreatedAt())
                 .numberOfQuestion(quizQuestionMappingRepository.findQuizByQuizID(quiz.getQuizId()))
                 .build();
     }
