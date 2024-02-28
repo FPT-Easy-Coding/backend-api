@@ -373,7 +373,6 @@ public class AdminController {
     )
 
     @DeleteMapping("/users-dashboard/{userId}")
-
 //    @PreAuthorize("hasAuthority('admin:delete')")
     public ResponseEntity<?> delete(@PathVariable("userId") Long userId) {
         try {

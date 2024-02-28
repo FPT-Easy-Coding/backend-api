@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final QuizRepository quizRepository;
     private final CreateQuizCategoryRepository createQuizCategoryRepository;
     private final QuizQuestionMappingRepository quizQuestionMappingRepository;
+    private final UserBelongClassroomRepository userBelongClassroomRepository;
     @Override
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
         var user = ((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
@@ -115,6 +116,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         tokenRepository.deleteTokensByUserId(userId);
+        verificationTokenRepository.deleteTokensByUserId(userId);
+        userBelongClassroomRepository.deleteByUserId(userId);
         userRepository.deleteById(userId);
     }
 

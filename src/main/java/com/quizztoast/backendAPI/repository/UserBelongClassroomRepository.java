@@ -31,4 +31,8 @@ public interface UserBelongClassroomRepository extends JpaRepository<UserBelongC
 
     @Query("SELECT u FROM UserBelongClassroom u WHERE u.id.classroom.classroomId = :classroomId AND u.id.user.userId = :userId")
     UserBelongClassroom findByIdClassroomAndUser(int classroomId, int userId);
+
+    @Modifying
+    @Query("DELETE FROM UserBelongClassroom u WHERE u.id.user.userId = :userId")
+    void deleteByUserId(Long userId);
 }
