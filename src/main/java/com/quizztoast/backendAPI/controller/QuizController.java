@@ -7,6 +7,8 @@ import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
+import com.quizztoast.backendAPI.model.payload.request.RateQuizRequest;
+import com.quizztoast.backendAPI.model.payload.request.UserRateQuizRequest;
 import com.quizztoast.backendAPI.model.payload.response.MessageResponse;
 import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.model.payload.response.RateQuizResponse;
@@ -738,28 +740,30 @@ public class QuizController {
         return quizServiceImpl.getQuizByCategory(categoryId);
     }
 
-    @RequestMapping(value = "get-rate-quiz", method = RequestMethod.GET)
+    @RequestMapping(value = "get-average-rate-quiz", method = RequestMethod.GET)
     public Float getRateQuiz(@RequestParam(name = "id") int quizId) {
         return quizServiceImpl.getRateByQuiz(quizId);
     }
 
-    @PostMapping("/create-rating/{quizId}/user/{userId}/rate-quiz/{rate}")
-    public ResponseEntity<RateQuizResponse> createRatingQuiz
-            (
-                    @PathVariable int quizId,
-                    @PathVariable long userId,
-                    @PathVariable float rate
-            ) {
-        return quizServiceImpl.createRateQuiz(quizId, userId, rate);
+    @PostMapping("/create-rating")
+    public ResponseEntity<RateQuizResponse> createRatingQuiz(@RequestBody RateQuizRequest request) {
+        return quizServiceImpl.createRateQuiz(request.getQuizId(), request.getUserId(), request.getRate());
     }
 
-    @PutMapping("/update-rating/{quizId}/user/{userId}/rate-quiz/{rate}")
+
+    @PutMapping("/update-rating")
     public ResponseEntity<RateQuizResponse> UpdateRatingQuiz
             (
-                    @PathVariable int quizId,
-                    @PathVariable long userId,
-                    @PathVariable float rate
+                    @RequestBody RateQuizRequest request
             ) {
-        return quizServiceImpl.UpdateRateQuiz(quizId, userId, rate);
+        return quizServiceImpl.UpdateRateQuiz(request.getQuizId(), request.getUserId(), request.getRate());
     }
+    @GetMapping("/user-rate-quiz")
+    public ResponseEntity<?> getUserRateQuiz(
+            @RequestParam("user-id") long userId,
+            @RequestParam("quiz-id") int quizId) {
+        return quizServiceImpl.getUserRateQuiz(userId, quizId);
+    }
+
+
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -31,18 +32,22 @@ public class RateQuiz {
         @JoinColumn(name = "user_id")
         private User userId;
 
+        private LocalDateTime createAt;
+        @Column(name = "is_rated", columnDefinition = "BOOLEAN")
+        private boolean isRated;
+
         private float rate;
 
-        public Quiz getQuizId() {
-            return quizId;
+        public int getQuizId() {
+            return quizId.getQuizId();
         }
 
         public void setQuizId(Quiz quizId) {
             this.quizId = quizId;
         }
 
-        public User getUserId() {
-            return userId;
+        public long getUserId() {
+            return userId.getUserId();
         }
 
         public void setUserId(User userId) {
@@ -57,6 +62,20 @@ public class RateQuiz {
             this.rate = rate;
         }
 
+        public LocalDateTime getCreateAt() {
+            return createAt;
+        }
+
+        public void setCreateAt() {
+            this.createAt = LocalDateTime.now();
+        }
+        public Boolean getIsRated() {
+            return isRated;
+        }
+
+        public void setIsRated(Boolean isRated) {
+            this.isRated = isRated;
+        }
     }
 
 }

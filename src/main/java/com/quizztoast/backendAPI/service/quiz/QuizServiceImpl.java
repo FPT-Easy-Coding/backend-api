@@ -358,7 +358,7 @@ public class QuizServiceImpl implements QuizService {
         return rateQuizRepository.averageRateOfQuiz(quizId);
     }
     @Override
-    public ResponseEntity<RateQuizResponse> createRateQuiz(int quizId, long userId, float rate) {
+    public ResponseEntity<RateQuizResponse> createRateQuiz(@RequestBody int quizId,@RequestBody long userId,@RequestBody float rate) {
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
@@ -378,6 +378,8 @@ public class QuizServiceImpl implements QuizService {
         rateQuizId.setUserId(userRepository.findByUserId(userId));
         rateQuizId.setQuizId(quizRepository.getQuizById(quizId));
 rateQuizId.setRate(rate);
+rateQuizId.setCreateAt();
+rateQuizId.setIsRated(true);
 RateQuiz rateQuiz = new RateQuiz();
 rateQuiz.setId(rateQuizId);
         rateQuizRepository.save(rateQuiz);
@@ -386,6 +388,8 @@ rateQuiz.setId(rateQuizId);
         rateQuizResponse.setQuizId(quizId);
         rateQuizResponse.setUserId(userId);
         rateQuizResponse.setRate(rate);
+        rateQuizResponse.setCreateAt(rateQuizId.getCreateAt());
+        rateQuizResponse.setIsRated(rateQuizId.getIsRated());
 return ResponseEntity.ok(rateQuizResponse);
     }
 @Override
@@ -418,6 +422,8 @@ return ResponseEntity.ok(rateQuizResponse);
     rateQuizId.setUserId(userRepository.findByUserId(userId));
     rateQuizId.setQuizId(quizRepository.getQuizById(quizId));
     rateQuizId.setRate(rate);
+    rateQuizId.setCreateAt();
+    rateQuizId.setIsRated(true);
     RateQuiz rateQuiz = new RateQuiz();
     rateQuiz.setId(rateQuizId);
     rateQuizRepository.save(rateQuiz);
@@ -426,7 +432,24 @@ return ResponseEntity.ok(rateQuizResponse);
     rateQuizResponse.setQuizId(quizId);
     rateQuizResponse.setUserId(userId);
     rateQuizResponse.setRate(rate);
+    rateQuizResponse.setCreateAt(rateQuizId.getCreateAt());
+    rateQuizResponse.setIsRated(rateQuizId.getIsRated());
     return ResponseEntity.ok(rateQuizResponse);
+    }
+@Override
+    public ResponseEntity<?> getUserRateQuiz(@RequestBody Long userId,@RequestBody int quizId) {
+        //check userId and quizId in rate_quiz
+    RateQuizResponse rateQuizResponse = new RateQuizResponse();
+    if(rateQuizRepository.findByQuizIdAndUserId(quizId,userId)!=null)
+        {
+            RateQuiz rateQuiz = rateQuizRepository.findByQuizIdAndUserId(quizId,userId);
+            return ResponseEntity.ok(rateQuiz);
+        }else {
+        rateQuizResponse.setUserId(userId);
+        rateQuizResponse.setQuizId(quizId);
+        rateQuizResponse.setIsRated(false);
+        return ResponseEntity.ok(rateQuizResponse);
+    }
     }
 }
 

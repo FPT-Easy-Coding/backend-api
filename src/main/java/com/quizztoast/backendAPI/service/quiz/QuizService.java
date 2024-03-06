@@ -38,4 +38,6 @@ public interface QuizService {
 
     ResponseEntity<RateQuizResponse> UpdateRateQuiz(int quizId, long userId, float rate);
 
+
+    ResponseEntity<?> getUserRateQuiz(Long userId, int quizId);
 }

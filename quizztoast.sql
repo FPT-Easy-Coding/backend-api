@@ -533,6 +533,8 @@ CREATE TABLE `rate_quiz` (
   `user_id` bigint NOT NULL,
   `quiz_id` int NOT NULL,
    `rate` float ,
+   `create_at` datetime NOT NULL,
+   `is_rated` bit(1) NOT NULL,
   PRIMARY KEY (`quiz_id`,`user_id`),
   CONSTRAINT FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`quiz_id`)

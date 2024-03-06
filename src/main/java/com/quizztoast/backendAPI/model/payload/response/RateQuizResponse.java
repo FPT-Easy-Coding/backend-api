@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -13,4 +15,6 @@ public class RateQuizResponse {
     long userId;
     int quizId;
     float rate;
+    LocalDateTime createAt;
+    boolean IsRated;
 }
