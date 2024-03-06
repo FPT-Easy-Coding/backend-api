@@ -1,3 +1,4 @@
+
 CREATE DATABASE  IF NOT EXISTS `quizztoast4` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `quizztoast4`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
@@ -469,6 +470,8 @@ CREATE TABLE `quiz_belong_class` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+
 --
 -- Dumping data for table `quiz_belong_class`
 --
@@ -520,6 +523,19 @@ CREATE TABLE `quiz_question_mapping` (
   KEY `FKark44wojr8tj4rjskq52badr9` (`quiz_question_id`),
   CONSTRAINT `FKark44wojr8tj4rjskq52badr9` FOREIGN KEY (`quiz_question_id`) REFERENCES `quiz_question` (`quiz_question_id`),
   CONSTRAINT `FKqk18eljnxagh5bkvcoonr2wp3` FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`quiz_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `rate_quiz`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rate_quiz` (
+  `user_id` bigint NOT NULL,
+  `quiz_id` int NOT NULL,
+   `rate` float ,
+  PRIMARY KEY (`quiz_id`,`user_id`),
+  CONSTRAINT FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  CONSTRAINT FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`quiz_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
