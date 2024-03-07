@@ -15,7 +15,7 @@ spring:
             clientSecret: "755309efec0cb16ef31e646b288d8cd1ea4776f2"
 #            redirectUri: {baseUrl}/oauth2/callback/{registrationId}"
   datasource:
-    url: jdbc:mysql://localhost:3306/quizztoast4
+    url: jdbc:mysql://localhost:3306/quizztoast
     username: root
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -1,6 +1,6 @@
 
-CREATE DATABASE  IF NOT EXISTS `quizztoast4` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `quizztoast4`;
+CREATE DATABASE  IF NOT EXISTS `quizztoast` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `quizztoast`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: quizztoast
@@ -534,7 +534,7 @@ CREATE TABLE `rate_quiz` (
   `quiz_id` int NOT NULL,
    `rate` float ,
    `create_at` datetime NOT NULL,
-   `is_rated` bit(1) NOT NULL,
+  
   PRIMARY KEY (`quiz_id`,`user_id`),
   CONSTRAINT FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`quiz_id`)

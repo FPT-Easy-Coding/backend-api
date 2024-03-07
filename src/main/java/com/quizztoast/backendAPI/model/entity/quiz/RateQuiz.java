@@ -33,8 +33,7 @@ public class RateQuiz {
         private User userId;
 
         private LocalDateTime createAt;
-        @Column(name = "is_rated", columnDefinition = "BOOLEAN")
-        private boolean isRated;
+
 
         private float rate;
 
@@ -69,13 +68,7 @@ public class RateQuiz {
         public void setCreateAt() {
             this.createAt = LocalDateTime.now();
         }
-        public Boolean getIsRated() {
-            return isRated;
-        }
 
-        public void setIsRated(Boolean isRated) {
-            this.isRated = isRated;
-        }
     }
 
 }

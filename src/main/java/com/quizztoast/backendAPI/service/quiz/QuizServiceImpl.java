@@ -384,7 +384,6 @@ public class QuizServiceImpl implements QuizService {
         rateQuizId.setQuizId(quizRepository.getQuizById(quizId));
 rateQuizId.setRate(rate);
 rateQuizId.setCreateAt();
-rateQuizId.setIsRated(true);
 RateQuiz rateQuiz = new RateQuiz();
 rateQuiz.setId(rateQuizId);
         rateQuizRepository.save(rateQuiz);
@@ -394,7 +393,7 @@ rateQuiz.setId(rateQuizId);
         rateQuizResponse.setUserId(userId);
         rateQuizResponse.setRate(rate);
         rateQuizResponse.setCreateAt(rateQuizId.getCreateAt());
-        rateQuizResponse.setIsRated(rateQuizId.getIsRated());
+        rateQuizResponse.setIsRated(true);
 return ResponseEntity.ok(rateQuizResponse);
     }
 @Override
@@ -428,7 +427,6 @@ return ResponseEntity.ok(rateQuizResponse);
     rateQuizId.setQuizId(quizRepository.getQuizById(quizId));
     rateQuizId.setRate(rate);
     rateQuizId.setCreateAt();
-    rateQuizId.setIsRated(true);
     RateQuiz rateQuiz = new RateQuiz();
     rateQuiz.setId(rateQuizId);
     rateQuizRepository.save(rateQuiz);
@@ -438,7 +436,7 @@ return ResponseEntity.ok(rateQuizResponse);
     rateQuizResponse.setUserId(userId);
     rateQuizResponse.setRate(rate);
     rateQuizResponse.setCreateAt(rateQuizId.getCreateAt());
-    rateQuizResponse.setIsRated(rateQuizId.getIsRated());
+    rateQuizResponse.setIsRated(true);
     return ResponseEntity.ok(rateQuizResponse);
     }
 @Override
@@ -448,7 +446,12 @@ return ResponseEntity.ok(rateQuizResponse);
     if(rateQuizRepository.findByQuizIdAndUserId(quizId,userId)!=null)
         {
             RateQuiz rateQuiz = rateQuizRepository.findByQuizIdAndUserId(quizId,userId);
-            return ResponseEntity.ok(rateQuiz);
+            rateQuizResponse.setUserId(rateQuiz.getId().getUserId());
+            rateQuizResponse.setQuizId(rateQuiz.getId().getQuizId());
+            rateQuizResponse.setRate(rateQuiz.getId().getRate());
+            rateQuizResponse.setIsRated(true);
+            rateQuizResponse.setCreateAt(rateQuiz.getId().getCreateAt());
+            return ResponseEntity.ok(rateQuizResponse);
         }else {
         rateQuizResponse.setUserId(userId);
         rateQuizResponse.setQuizId(quizId);
