@@ -47,4 +47,5 @@ public class Quiz {
     @Column(name = "time_recent_view_quiz")
     private LocalDateTime timeRecentViewQuiz ;
 
+
 }

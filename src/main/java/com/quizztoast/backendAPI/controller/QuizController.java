@@ -7,7 +7,11 @@ import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
+import com.quizztoast.backendAPI.model.payload.request.RateQuizRequest;
+import com.quizztoast.backendAPI.model.payload.request.UserRateQuizRequest;
+import com.quizztoast.backendAPI.model.payload.response.MessageResponse;
 import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
+import com.quizztoast.backendAPI.model.payload.response.RateQuizResponse;
 import com.quizztoast.backendAPI.repository.QuizQuestionMappingRepository;
 import com.quizztoast.backendAPI.service.quiz.QuizServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
@@ -20,6 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -33,7 +38,8 @@ public class QuizController {
 
     private final QuizServiceImpl quizServiceImpl;
     private final UserServiceImpl userServiceImpl;
-private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
+    private final QuizQuestionMappingRepository quizQuestionMappingRepository;
+
     /**
      * Get All Quiz set using a Get request.
      *
@@ -691,10 +697,11 @@ private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
     public ResponseEntity<?> updateTimeQuiz(@RequestParam(name = "id") int quizId) {
         return quizServiceImpl.upDateTimeQuiz(quizId);
     }
+
     /**
      * get quiz by categoryId a Get request.
      *
-     * @return  List quiz .
+     * @return List quiz .
      */
 
     @RequestMapping(value = "/get-quiz-create-by-user/user-id={userId}", method = RequestMethod.GET)
@@ -721,7 +728,7 @@ private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
         for (DoQuiz doQuiz : learnedQuizzes) {
             Quiz quiz = doQuiz.getId().getQuiz();
             int numberOfQuestions = quizServiceImpl.getNumberOfQuestionsByQuizId(quiz.getQuizId());
-            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz,numberOfQuestions);
+            QuizSetResponse response = QuizMapper.mapQuizToQuizSetResponse(quiz, numberOfQuestions);
             quizSets.add(response);
         }
 
@@ -730,8 +737,36 @@ private  final QuizQuestionMappingRepository quizQuestionMappingRepository;
 
 
     @RequestMapping(value = "get-quiz-by-category", method = RequestMethod.GET)
-    public ResponseEntity<?> getQuizbyCategory (@RequestParam(name = "id") int categoryId) {
+    public ResponseEntity<?> getQuizbyCategory(@RequestParam(name = "id") int categoryId) {
         return quizServiceImpl.getQuizByCategory(categoryId);
+    }
+
+    @RequestMapping(value = "get-average-rate-quiz", method = RequestMethod.GET)
+    public Float getRateQuiz(@RequestParam(name = "id") int quizId) {
+        return quizServiceImpl.getRateByQuiz(quizId);
+    }
+
+    @PostMapping("/create-rating")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<RateQuizResponse> createRatingQuiz(@RequestBody RateQuizRequest request
+    ) {
+        return quizServiceImpl.createRateQuiz(request.getQuizId(), request.getUserId(), request.getRate());
+    }
+
+    @PutMapping("/update-rating")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<RateQuizResponse> UpdateRatingQuiz
+            (
+                    @RequestBody RateQuizRequest request
+            ) {
+        return quizServiceImpl.UpdateRateQuiz(request.getQuizId(), request.getUserId(), request.getRate());
+    }
+    @GetMapping("/get-rating")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<?> getUserRateQuiz(
+            @RequestParam("user-id") long userId,
+            @RequestParam("quiz-id") int quizId) {
+        return quizServiceImpl.getUserRateQuiz(userId, quizId);
     }
 
 }

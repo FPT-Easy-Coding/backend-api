@@ -18,5 +18,7 @@ where  u.userId = :userId and  (t.expired = false or t.revoked = false )
     @Modifying
     @Query("DELETE FROM Token t WHERE t.user.userId = :userId")
     void deleteTokensByUserId(long userId);
-
+//    @Modifying
+//    @Query("SELECT t.token FROM Token t WHERE t.user.userId = :userId")
+//    String findTokenByUserId(long userId);
 }

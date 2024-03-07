@@ -4,6 +4,7 @@ import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.entity.quiz.DoQuiz;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.payload.request.QuizRequest;
+import com.quizztoast.backendAPI.model.payload.response.RateQuizResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -31,4 +32,12 @@ public interface QuizService {
 
     public int getNumberOfQuestionsByQuizId(int quizId);
 
+    Float getRateByQuiz(int quizId);
+
+    ResponseEntity<RateQuizResponse> createRateQuiz(int quizId, long userId, float rate);
+
+    ResponseEntity<RateQuizResponse> UpdateRateQuiz(int quizId, long userId, float rate);
+
+
+    ResponseEntity<?> getUserRateQuiz(Long userId, int quizId);
 }
