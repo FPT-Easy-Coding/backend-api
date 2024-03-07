@@ -8,6 +8,7 @@ import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.payload.request.ClassroomRequest;
 import com.quizztoast.backendAPI.model.payload.response.ClassMemberResponse;
+import com.quizztoast.backendAPI.model.payload.response.ClassroomQuestionResponse;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomToProfileResponse;
 
 import java.util.List;
@@ -37,4 +38,6 @@ public interface ClassroomService {
     public List<ClassMemberResponse> getClassMembers(int classroomId);
 
     void addQuizToClassroom(int classroomId, int quizId);
+
+    List <ClassroomQuestionResponse> getClassroomQuestions(int classroomId);
 }

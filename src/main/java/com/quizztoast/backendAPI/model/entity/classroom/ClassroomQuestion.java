@@ -21,14 +21,16 @@ public class ClassroomQuestion {
     @Column(name = "class_question_id", nullable = false)
     private int classQuestionId;
 
+    @JoinColumn(name = "title", nullable = false)
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "class_id")
-    private Classroom classroomId;
+    private Classroom classroom;
 
     @Column(name = "content", nullable = false)
     private String content;

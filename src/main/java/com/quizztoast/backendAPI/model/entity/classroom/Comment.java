@@ -23,11 +23,11 @@ public class Comment {
 //    private int user_id;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "class_question_id")
-    private ClassroomQuestion classroomQuestionId;
+    private ClassroomQuestion classroomQuestion;
 
     @Column(name = "content", nullable = false, length = 1000)
     private String content;

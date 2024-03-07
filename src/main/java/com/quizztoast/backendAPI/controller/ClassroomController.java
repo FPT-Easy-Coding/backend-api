@@ -1,6 +1,7 @@
 package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.ClassroomDTO;
+import com.quizztoast.backendAPI.model.dto.ListResponseDTO;
 import com.quizztoast.backendAPI.model.entity.classroom.Classroom;
 import com.quizztoast.backendAPI.model.entity.classroom.QuizBelongClassroom;
 import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -235,5 +237,50 @@ public class ClassroomController {
                             .msg("Error adding quiz: " + e.getMessage())
                             .build());
         }
+    }
+
+    @RequestMapping(value = "/get-classroom-questions/class-id={classroomId}", method = RequestMethod.GET)
+    public ResponseEntity<ListResponseDTO> getClassroomQuestions(@PathVariable int classroomId) {
+
+        try {
+            Classroom classroom = classroomServiceImpl.findClassroomById(classroomId);
+            List<ClassroomQuestionResponse> classroomQuestions = classroomServiceImpl.getClassroomQuestions(classroomId);
+            MessageResponse messageResponse;
+            if (classroom == null) {
+                messageResponse = MessageResponse.builder()
+                        .success(false)
+                        .msg("Class not found")
+                        .build();
+            } else {
+
+                if (classroomQuestions == null || classroomQuestions.isEmpty()) {
+                    messageResponse = MessageResponse.builder()
+                            .success(false)
+                            .msg("No questions found")
+                            .build();
+                } else {
+                    messageResponse = MessageResponse.builder()
+                            .success(true)
+                            .msg("Success")
+                            .build();
+
+                }
+            }
+            return ResponseEntity.status(getHttpStatus(messageResponse)).body(
+                    new ListResponseDTO(messageResponse, classroomQuestions)
+            );
+        } catch (Exception e) {
+            MessageResponse messageResponse = MessageResponse.builder()
+                    .success(false)
+                    .msg("Internal server error")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ListResponseDTO(messageResponse, null)
+            );
+        }
+    }
+
+    private HttpStatus getHttpStatus(MessageResponse messageResponse) {
+        return messageResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
     }
 }

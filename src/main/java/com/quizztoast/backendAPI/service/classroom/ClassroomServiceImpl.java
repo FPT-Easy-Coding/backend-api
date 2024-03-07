@@ -2,13 +2,16 @@ package com.quizztoast.backendAPI.service.classroom;
 
 import com.quizztoast.backendAPI.model.dto.ClassroomDTO;
 import com.quizztoast.backendAPI.model.entity.classroom.Classroom;
+import com.quizztoast.backendAPI.model.entity.classroom.ClassroomQuestion;
 import com.quizztoast.backendAPI.model.entity.classroom.QuizBelongClassroom;
 import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
 import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.ClassroomMapper;
+import com.quizztoast.backendAPI.model.mapper.ClassroomQuestionMapper;
 import com.quizztoast.backendAPI.model.payload.request.ClassroomRequest;
 import com.quizztoast.backendAPI.model.payload.response.ClassMemberResponse;
+import com.quizztoast.backendAPI.model.payload.response.ClassroomQuestionResponse;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomResponse;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomToProfileResponse;
 import com.quizztoast.backendAPI.repository.*;
@@ -28,6 +31,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final QuizRepository quizRepository;
     private final UserBelongClassroomRepository userBelongClassroomRepository;
     private final QuizBelongClassroomRepository quizBelongClassroomRepository;
+    private final ClassroomQuestionRepository classroomQuestionRepository;
+
     @Override
     public List<Classroom> getAllClassroom() {
         return null;
@@ -71,9 +76,10 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public Classroom createClassroom(ClassroomRequest classroomRequest) {
         User user = userRepository.findByUserId(classroomRequest.getUserId());
-        Classroom classroom  = ClassroomMapper.mapClassroomRequestToClassroom(classroomRequest,user);
+        Classroom classroom = ClassroomMapper.mapClassroomRequestToClassroom(classroomRequest, user);
         return classroomRepository.save(classroom);
     }
+
     @Override
     public ClassroomToProfileResponse getClassroomCardDetails(Classroom classroom) {
         if (classroom == null) {
@@ -108,7 +114,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void deleteQuizFromClassroom(int classroomId, int quizId) {
-        quizBelongClassroomRepository.deleteQuizFromClassroom(classroomId,quizId);
+        quizBelongClassroomRepository.deleteQuizFromClassroom(classroomId, quizId);
     }
 
 
@@ -142,12 +148,12 @@ public class ClassroomServiceImpl implements ClassroomService {
         UserBelongClassroom userBelongClassroom = new UserBelongClassroom();
         userBelongClassroom.getId().setClassroom(classroom);
         userBelongClassroom.getId().setUser(user);
-         userBelongClassroomRepository.save(userBelongClassroom);
+        userBelongClassroomRepository.save(userBelongClassroom);
     }
 
     @Override
     public void removeUserFromClassroom(int classroomId, int userId) {
-        userBelongClassroomRepository.deleteUserFromClassroom(classroomId,userId);
+        userBelongClassroomRepository.deleteUserFromClassroom(classroomId, userId);
     }
 
     @Override
@@ -175,8 +181,23 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom classroom = classroomRepository.findByClassroomId(classroomId);
         Quiz quiz = quizRepository.getQuizById(quizId);
         QuizBelongClassroom quizBelongClassroom = QuizBelongClassroom.builder()
-                .id(new QuizBelongClassroom.QuizBeLongClassroomId(quiz,classroom))
+                .id(new QuizBelongClassroom.QuizBeLongClassroomId(quiz, classroom))
                 .build();
         quizBelongClassroomRepository.save(quizBelongClassroom);
+    }
+
+    @Override
+    public List<ClassroomQuestionResponse> getClassroomQuestions(int classroomId) {
+        List<ClassroomQuestion> classroomQuestions = classroomQuestionRepository.findByClassroomId(classroomId);
+        List<ClassroomQuestionResponse> classroomQuestionResponses = new ArrayList<>();
+        for (ClassroomQuestion classroomQuestion : classroomQuestions) {
+            User user = classroomQuestion.getUser();
+            System.out.println("user: " + user.getEmail());
+            classroomQuestionResponses.add(
+                    ClassroomQuestionMapper
+                            .mapClassroomQuestionToClassroomQuestionResponse(classroomQuestion, user)
+            );
+        }
+        return classroomQuestionResponses;
     }
 }

@@ -6,6 +6,8 @@ import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.payload.request.FolderRequest;
 import com.quizztoast.backendAPI.model.payload.response.FolderResponse;
 
+import java.util.Date;
+
 public class FolderMapper {
     public static FolderResponse mapFolderToFolderResponse(Folder folder, Long numberOfQuizSets) {
         String folderName = folder.getFolderName();
@@ -21,6 +23,7 @@ public class FolderMapper {
     public static Folder mapFolderRequestToFolder(FolderRequest folderRequest, User user) {
         return Folder.builder()
                 .folderName(folderRequest.getFolderName())
+                .createdAt(new Date())
                 .user(user)
                 .build();
     }
