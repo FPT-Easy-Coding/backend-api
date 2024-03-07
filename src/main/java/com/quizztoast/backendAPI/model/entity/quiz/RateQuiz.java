@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "rate_quiz")
+@Table(name = "quiz_rating")
 public class RateQuiz {
 
     @EmbeddedId
