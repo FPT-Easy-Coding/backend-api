@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -746,24 +747,26 @@ public class QuizController {
     }
 
     @PostMapping("/create-rating")
-    public ResponseEntity<RateQuizResponse> createRatingQuiz(@RequestBody RateQuizRequest request) {
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<RateQuizResponse> createRatingQuiz(@RequestBody RateQuizRequest request
+    ) {
         return quizServiceImpl.createRateQuiz(request.getQuizId(), request.getUserId(), request.getRate());
     }
 
-
     @PutMapping("/update-rating")
+    @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<RateQuizResponse> UpdateRatingQuiz
             (
                     @RequestBody RateQuizRequest request
             ) {
         return quizServiceImpl.UpdateRateQuiz(request.getQuizId(), request.getUserId(), request.getRate());
     }
-    @GetMapping("/user-rate-quiz")
+    @GetMapping("/get-rating")
+    @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<?> getUserRateQuiz(
             @RequestParam("user-id") long userId,
             @RequestParam("quiz-id") int quizId) {
         return quizServiceImpl.getUserRateQuiz(userId, quizId);
     }
-
 
 }

@@ -44,7 +44,7 @@ public class QuizServiceImpl implements QuizService {
     private final DoQuizRepository doQuizRepository;
     private final CreateQuizCategoryRepository createQuizCategoryRepository;
     private final RateQuizRepository rateQuizRepository;
-
+    private final TokenRepository tokenRepository;
     @Override
     public List<QuizDTO> getAllQuiz() {
         List<Quiz> quizzes = quizRepository.findAll();
@@ -358,7 +358,12 @@ public class QuizServiceImpl implements QuizService {
         return rateQuizRepository.averageRateOfQuiz(quizId);
     }
     @Override
-    public ResponseEntity<RateQuizResponse> createRateQuiz(@RequestBody int quizId,@RequestBody long userId,@RequestBody float rate) {
+    public ResponseEntity<RateQuizResponse> createRateQuiz( int quizId, long userId, float rate) {
+//        //check token
+//        if(tokenRepository.findTokenByUserId(userId) != token)
+//        {
+//
+//        }
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
