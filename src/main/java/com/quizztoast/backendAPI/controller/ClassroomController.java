@@ -2,19 +2,19 @@ package com.quizztoast.backendAPI.controller;
 
 import com.quizztoast.backendAPI.model.dto.ClassroomDTO;
 import com.quizztoast.backendAPI.model.dto.ListResponseDTO;
-import com.quizztoast.backendAPI.model.entity.classroom.Classroom;
-import com.quizztoast.backendAPI.model.entity.classroom.QuizBelongClassroom;
-import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
+import com.quizztoast.backendAPI.model.entity.classroom.*;
 
 import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.user.User;
 
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
 import com.quizztoast.backendAPI.model.payload.request.ClassroomRequest;
+import com.quizztoast.backendAPI.model.payload.request.CommentRequest;
 import com.quizztoast.backendAPI.model.payload.response.*;
 
 import com.quizztoast.backendAPI.repository.QuizBelongClassroomRepository;
 import com.quizztoast.backendAPI.repository.UserBelongClassroomRepository;
+import com.quizztoast.backendAPI.service.classroom.AnswerRequest;
 import com.quizztoast.backendAPI.service.classroom.ClassroomServiceImpl;
 import com.quizztoast.backendAPI.service.quiz.QuizServiceImpl;
 import com.quizztoast.backendAPI.service.user.UserServiceImpl;
@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -283,4 +282,92 @@ public class ClassroomController {
     private HttpStatus getHttpStatus(MessageResponse messageResponse) {
         return messageResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
     }
+
+    @RequestMapping(value = "/add-comment", method = RequestMethod.POST)
+    public ResponseEntity<MessageResponse> addComment(@RequestBody CommentRequest commentRequest) {
+
+        try {
+            Comment comment = classroomServiceImpl.addComment(commentRequest);
+            if (comment == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        MessageResponse.builder()
+                                .success(false)
+                                .msg("User or Question not found")
+                                .build());
+            }
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .success(true)
+                            .msg("Add comment successfully")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error adding comment: " + e.getMessage())
+                            .build());
+        }
+    }
+
+    @RequestMapping(value = "/get-comments/question-id={questionId}", method = RequestMethod.GET)
+    public ResponseEntity<ListResponseDTO> getCommentsForQuestion(@PathVariable int questionId) {
+
+        try {
+            List<CommentResponse> comments = classroomServiceImpl.getCommentsByQuestion(questionId);
+            MessageResponse messageResponse;
+            if (comments == null || comments.isEmpty()) {
+                messageResponse = MessageResponse.builder()
+                        .success(false)
+                        .msg("No comments found")
+                        .build();
+            } else {
+                messageResponse = MessageResponse.builder()
+                        .success(true)
+                        .msg("Success")
+                        .build();
+            }
+            return ResponseEntity.status(getHttpStatus(messageResponse)).body(
+                    new ListResponseDTO(messageResponse, comments)
+            );
+        } catch (Exception e) {
+            MessageResponse messageResponse = MessageResponse.builder()
+                    .success(false)
+                    .msg("Internal server error")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ListResponseDTO(messageResponse, null)
+            );
+        }
+    }
+
+    @RequestMapping(value = "/add-answer", method = RequestMethod.POST)
+    public ResponseEntity<MessageResponse> addAnswer(@RequestBody AnswerRequest answerRequest) {
+
+        try {
+            ClassroomAnswer classroomAnswer = classroomServiceImpl.addAnswer(answerRequest);
+            if (classroomAnswer == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        MessageResponse.builder()
+                                .success(false)
+                                .msg("User or Question not found")
+                                .build());
+            }
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .success(true)
+                            .msg("Add answer successfully")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error adding answer: " + e.getMessage())
+                            .build());
+        }
+    }
+
+//    @RequestMapping(value = "/get-answer/question-id={questionId}", method = RequestMethod.GET)
+//    public ResponseEntity<> getAnswersForQuestion(@PathVariable int questionId) {
+//
+//    }
 }

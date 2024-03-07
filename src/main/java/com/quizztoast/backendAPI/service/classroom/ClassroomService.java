@@ -2,14 +2,14 @@ package com.quizztoast.backendAPI.service.classroom;
 
 
 import com.quizztoast.backendAPI.model.dto.ClassroomDTO;
-import com.quizztoast.backendAPI.model.entity.classroom.Classroom;
-import com.quizztoast.backendAPI.model.entity.classroom.QuizBelongClassroom;
-import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
+import com.quizztoast.backendAPI.model.entity.classroom.*;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.payload.request.ClassroomRequest;
+import com.quizztoast.backendAPI.model.payload.request.CommentRequest;
 import com.quizztoast.backendAPI.model.payload.response.ClassMemberResponse;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomQuestionResponse;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomToProfileResponse;
+import com.quizztoast.backendAPI.model.payload.response.CommentResponse;
 
 import java.util.List;
 
@@ -40,4 +40,11 @@ public interface ClassroomService {
     void addQuizToClassroom(int classroomId, int quizId);
 
     List <ClassroomQuestionResponse> getClassroomQuestions(int classroomId);
+
+    public List<CommentResponse> getCommentsByQuestion(int questionId);
+
+    public Comment addComment(CommentRequest commentRequest);
+
+    public ClassroomAnswer addAnswer(AnswerRequest answerRequest);
+    public ClassroomAnswer getAnswerByQuestionId(int questionId);
 }

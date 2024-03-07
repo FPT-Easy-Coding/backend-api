@@ -13,4 +13,7 @@ public interface ClassroomQuestionRepository extends JpaRepository<ClassroomQues
     @Modifying
     @Query(value = "SELECT cq FROM ClassroomQuestion cq WHERE cq.classroom.classroomId = :classroomId")
     List<ClassroomQuestion> findByClassroomId(int classroomId);
+
+    @Query(value = "SELECT cq FROM ClassroomQuestion cq WHERE cq.classQuestionId = :questionId")
+    ClassroomQuestion findByQuestionId(int questionId);
 }

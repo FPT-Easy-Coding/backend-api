@@ -1,19 +1,15 @@
 package com.quizztoast.backendAPI.service.classroom;
 
 import com.quizztoast.backendAPI.model.dto.ClassroomDTO;
-import com.quizztoast.backendAPI.model.entity.classroom.Classroom;
-import com.quizztoast.backendAPI.model.entity.classroom.ClassroomQuestion;
-import com.quizztoast.backendAPI.model.entity.classroom.QuizBelongClassroom;
-import com.quizztoast.backendAPI.model.entity.classroom.UserBelongClassroom;
+import com.quizztoast.backendAPI.model.entity.classroom.*;
 import com.quizztoast.backendAPI.model.entity.quiz.Quiz;
 import com.quizztoast.backendAPI.model.entity.user.User;
 import com.quizztoast.backendAPI.model.mapper.ClassroomMapper;
 import com.quizztoast.backendAPI.model.mapper.ClassroomQuestionMapper;
+import com.quizztoast.backendAPI.model.mapper.CommentMapper;
 import com.quizztoast.backendAPI.model.payload.request.ClassroomRequest;
-import com.quizztoast.backendAPI.model.payload.response.ClassMemberResponse;
-import com.quizztoast.backendAPI.model.payload.response.ClassroomQuestionResponse;
-import com.quizztoast.backendAPI.model.payload.response.ClassroomResponse;
-import com.quizztoast.backendAPI.model.payload.response.ClassroomToProfileResponse;
+import com.quizztoast.backendAPI.model.payload.request.CommentRequest;
+import com.quizztoast.backendAPI.model.payload.response.*;
 import com.quizztoast.backendAPI.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +28,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final UserBelongClassroomRepository userBelongClassroomRepository;
     private final QuizBelongClassroomRepository quizBelongClassroomRepository;
     private final ClassroomQuestionRepository classroomQuestionRepository;
+    private final CommentRepository commentRepository;
+    private final ReplyCommentRepository replyCommentRepository;
+    private final ClassroomAnswerRepository classroomAnswerRepository;
 
     @Override
     public List<Classroom> getAllClassroom() {
@@ -192,12 +191,72 @@ public class ClassroomServiceImpl implements ClassroomService {
         List<ClassroomQuestionResponse> classroomQuestionResponses = new ArrayList<>();
         for (ClassroomQuestion classroomQuestion : classroomQuestions) {
             User user = classroomQuestion.getUser();
-            System.out.println("user: " + user.getEmail());
+            ClassroomAnswer classroomAnswer = classroomAnswerRepository.findAnswerByQuestionId(classroomQuestion.getClassQuestionId());
+            System.out.println("classroomQuestion: " + classroomQuestion.getContent());
             classroomQuestionResponses.add(
                     ClassroomQuestionMapper
-                            .mapClassroomQuestionToClassroomQuestionResponse(classroomQuestion, user)
+                            .mapClassroomQuestionToClassroomQuestionResponse(classroomQuestion, user, classroomAnswer)
             );
         }
         return classroomQuestionResponses;
+    }
+
+    @Override
+    public List<CommentResponse> getCommentsByQuestion(int questionId) {
+        List<Comment> comments = commentRepository.findAllCommentsByQuestion(questionId);
+        List<CommentResponse> commentResponses = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            List<ReplyComment> replyComments = replyCommentRepository.findAllByComment(comment);
+            CommentResponse commentResponse = CommentMapper.mapCommentToCommentResponse(comment, replyComments);
+            commentResponses.add(commentResponse);
+        }
+
+        return commentResponses;
+    }
+
+
+    @Override
+    public Comment addComment(CommentRequest commentRequest) {
+        User user = userRepository.findByUserId(commentRequest.getUserId());
+        if (user == null) {
+            return null;
+        }
+        ClassroomQuestion classroomQuestion = classroomQuestionRepository.findByQuestionId(commentRequest.getQuestionId());
+        if (classroomQuestion == null) {
+            return null;
+        }
+        return commentRepository.save(
+                Comment.builder()
+                        .content(commentRequest.getContent())
+                        .user(user)
+                        .classroomQuestion(classroomQuestion)
+                        .build()
+        );
+    }
+
+    @Override
+    public ClassroomAnswer addAnswer(AnswerRequest answerRequest) {
+        ClassroomQuestion classroomQuestion = classroomQuestionRepository.findByQuestionId(answerRequest.getQuestionId());
+        if (classroomQuestion == null) {
+            return null;
+        }
+        User user = userRepository.findByUserId(answerRequest.getUserId());
+        if (user == null) {
+            return null;
+        }
+        classroomQuestion.setAnswered(true);
+        return classroomAnswerRepository.save(
+                ClassroomAnswer.builder()
+                        .classroomQuestion(classroomQuestion)
+                        .content(answerRequest.getContent())
+                        .user(user)
+                        .build()
+        );
+    }
+
+    @Override
+    public ClassroomAnswer getAnswerByQuestionId(int questionId) {
+        return classroomAnswerRepository.findAnswerByQuestionId(questionId);
     }
 }

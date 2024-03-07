@@ -20,6 +20,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -139,8 +141,16 @@ public class FolderController {
     }
 
     @RequestMapping(value = "delete/folder-id={folderId}", method = RequestMethod.DELETE)
-    public ResponseEntity<MessageResponse> deleteFolder(@PathVariable Long folderId) {
+    public ResponseEntity<MessageResponse> deleteFolder(@PathVariable Long folderId, Authentication authentication) {
         try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        MessageResponse.builder()
+                                .success(false)
+                                .msg("Unauthorized access")
+                                .build()
+                );
+            }
             Folder folder = folderServiceImpl.getFolderById(folderId);
             if (folder == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -166,6 +176,7 @@ public class FolderController {
     }
 
     @PostMapping("/create-folder")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MessageResponse> createFolder(@RequestBody FolderRequest folderRequest) {
         try {
             Folder folder = folderServiceImpl.createFolder(folderRequest);
