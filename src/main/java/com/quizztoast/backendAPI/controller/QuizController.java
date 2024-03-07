@@ -747,14 +747,14 @@ public class QuizController {
     }
 
     @PostMapping("/create-rating")
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<RateQuizResponse> createRatingQuiz(@RequestBody RateQuizRequest request
     ) {
         return quizServiceImpl.createRateQuiz(request.getQuizId(), request.getUserId(), request.getRate());
     }
 
     @PutMapping("/update-rating")
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<RateQuizResponse> UpdateRatingQuiz
             (
                     @RequestBody RateQuizRequest request
@@ -762,7 +762,7 @@ public class QuizController {
         return quizServiceImpl.UpdateRateQuiz(request.getQuizId(), request.getUserId(), request.getRate());
     }
     @GetMapping("/get-rating")
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getUserRateQuiz(
             @RequestParam("user-id") long userId,
             @RequestParam("quiz-id") int quizId) {
