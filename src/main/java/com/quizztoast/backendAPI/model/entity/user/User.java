@@ -71,6 +71,12 @@ public class User implements UserDetails {
     @Column(name = "secret")
     private String secret;
 
+    @Column(name = "account_type")
+    private String accountType;
+
+    @Column(name = "avatar")
+    private String avatar;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;

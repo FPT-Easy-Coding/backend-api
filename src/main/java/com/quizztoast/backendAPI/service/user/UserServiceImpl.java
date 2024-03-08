@@ -9,6 +9,7 @@ import com.quizztoast.backendAPI.model.entity.user.Provider;
 import com.quizztoast.backendAPI.model.entity.user.User;
 
 import com.quizztoast.backendAPI.model.mapper.QuizMapper;
+import com.quizztoast.backendAPI.model.payload.request.UserUpdateRequest;
 import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.repository.*;
 import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
@@ -249,5 +250,30 @@ public class UserServiceImpl implements UserService {
             quizSetResponses.add(response);
         }
         return quizSetResponses;
+    }
+
+    @Override
+    public ResponseEntity<UserUpdateRequest> updateProfileUser(long userId, UserUpdateRequest request) {
+        User existingUser = userRepository.findByUserId(userId);
+        if (existingUser == null) {
+            throw new FormatException("userId", "userId not found");
+        }
+        existingUser.setFirstName(request.getFirstName());
+        existingUser.setLastName(request.getLastName());
+        existingUser.setEmail(request.getEmail());
+        existingUser.setTelephone(request.getTelephone());
+        existingUser.setAccountType(request.getAccountType());
+        userRepository.save(existingUser);
+        return ResponseEntity.ok(request);
+    }
+@Override
+    public ResponseEntity<?> updateAvaatarUser(long userId, String avatar) {
+    User existingUser = userRepository.findByUserId(userId);
+    if (existingUser == null) {
+        throw new FormatException("userId", "userId not found");
+    }
+    existingUser.setAvatar(avatar);
+    userRepository.save(existingUser);
+        return ResponseEntity.ok(avatar);
     }
 }

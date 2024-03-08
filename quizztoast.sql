@@ -820,6 +820,8 @@ CREATE TABLE `user` (
   `provider` enum('LOCAL','GOOGLE','GITHUB','FACEBOOK') DEFAULT NULL,
   `is_verified` bit(1) DEFAULT NULL,
   `view` bigint DEFAULT NULL,
+  `avatar` BLOB DEFAULT NULL,
+  `account_type` enum('STUDENT','TEACHER','MARKETER') DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `UK_t8tbwelrnviudxdaggwr1kd9b` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1003 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -831,7 +833,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (652,NULL,NULL,'vitbrian','$2a$10$nqPOkdQ0GBSh0HwpRnVNYOKArOFq2ntB6hgWe.PTaUmoRRTzz82w.','briannnnn','lmaoo','test@gmail.comm','0373392840','USER',1,0,NULL,_binary '\0',NULL,NULL,NULL,_binary '\0',NULL),(752,NULL,NULL,'vitbrian90012','$2a$10$lWr34N/yyEii35hNJg6gX.N3Q26C6pOc9idCgQ48qvynFOarhRWTy','brian','vit','vit@gmail.com','01284184112','ADMIN',1,1,NULL,_binary '\0',NULL,NULL,'LOCAL',_binary '\0',NULL),(802,NULL,NULL,'ggm','$2a$10$tIxWt663PYApKG60mCpjY.EeHgCnYt4YwB4PkhoOGRDQdauyBB356','Duc','Lai Dinh Cao','ggmm@gmail.com','0399112003','ADMIN',0,0,'2024-02-01 00:25:47',_binary '\0',NULL,NULL,'LOCAL',_binary '\0',NULL),(853,NULL,NULL,'hehehihi','$2a$10$/mfyCKN/H6sgkYTF/dLh1evzbgO2zIHyjGkisvrP4DZv3U8/l4NRS','Đức','Lại Đình Cao','brianduc9112003@gmail.com','0373392840','ADMIN',0,1,'2024-02-06 01:58:46',_binary '\0',NULL,NULL,'LOCAL',_binary '\0',NULL),(902,NULL,NULL,'QuyND','$2a$10$0FUVVs6PH4fwipAQMZz0Oe1vK4XkxWOHx6RjmJ08d3/QaAagBd3Fm','Nguyen','Quy','quynd@gmail.com','0366775115','USER',0,0,'2024-02-06 17:38:54',_binary '\0',NULL,NULL,'LOCAL',_binary '\0',NULL);
+INSERT INTO `user` VALUES (652,NULL,NULL,'vitbrian','$2a$10$nqPOkdQ0GBSh0HwpRnVNYOKArOFq2ntB6hgWe.PTaUmoRRTzz82w.','briannnnn','lmaoo','test@gmail.comm','0373392840','USER',1,0,NULL,_binary '\0',NULL,NULL,NULL,_binary '\0',NULL,NULL,NULL),(752,NULL,NULL,'vitbrian90012','$2a$10$lWr34N/yyEii35hNJg6gX.N3Q26C6pOc9idCgQ48qvynFOarhRWTy','brian','vit','vit@gmail.com','01284184112','ADMIN',1,1,NULL,_binary '\0',NULL,NULL,'LOCAL',_binary '\0',NULL,NULL,NULL),(802,NULL,NULL,'ggm','$2a$10$tIxWt663PYApKG60mCpjY.EeHgCnYt4YwB4PkhoOGRDQdauyBB356','Duc','Lai Dinh Cao','ggmm@gmail.com','0399112003','ADMIN',0,0,'2024-02-01 00:25:47',_binary '\0',NULL,NULL,'LOCAL',_binary '\0',NULL,NULL,NULL),(853,NULL,NULL,'hehehihi','$2a$10$/mfyCKN/H6sgkYTF/dLh1evzbgO2zIHyjGkisvrP4DZv3U8/l4NRS','Đức','Lại Đình Cao','brianduc9112003@gmail.com','0373392840','ADMIN',0,1,'2024-02-06 01:58:46',_binary '\0',NULL,NULL,'LOCAL',_binary '\0',NULL,NULL,NULL),(902,NULL,NULL,'QuyND','$2a$10$0FUVVs6PH4fwipAQMZz0Oe1vK4XkxWOHx6RjmJ08d3/QaAagBd3Fm','Nguyen','Quy','quynd@gmail.com','0366775115','USER',0,0,'2024-02-06 17:38:54',_binary '\0',NULL,NULL,'LOCAL',_binary '\0',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 

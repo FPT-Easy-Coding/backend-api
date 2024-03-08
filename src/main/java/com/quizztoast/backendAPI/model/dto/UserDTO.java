@@ -24,4 +24,6 @@ public class UserDTO {
     private boolean isPremium;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Date createdAt;
+    private String avatar;
+    private String accountType;
 }

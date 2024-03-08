@@ -18,6 +18,8 @@ public class QuizDTO {
     private String userFirstName;
     private String userLastName;
     private int categoryId;
+    private String avatar;
+    private String accountTpye;
     private String quizName;
     private double rate;
     private int numberOfQuestions;

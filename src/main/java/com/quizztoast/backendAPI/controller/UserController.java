@@ -3,6 +3,7 @@ package com.quizztoast.backendAPI.controller;
 import com.quizztoast.backendAPI.exception.FormatException;
 import com.quizztoast.backendAPI.model.dto.QuizDTO;
 import com.quizztoast.backendAPI.model.dto.UserDTO;
+import com.quizztoast.backendAPI.model.payload.request.UserUpdateRequest;
 import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
 import com.quizztoast.backendAPI.model.payload.response.SimpleErrorResponse;
 import com.quizztoast.backendAPI.model.payload.response.UserProfileResponse;
@@ -263,6 +264,21 @@ public class UserController {
         {
             return ResponseEntity.notFound().build();
         }
+    }
+    @RequestMapping(value="/update-profile-user", method = RequestMethod.PUT)
+    public ResponseEntity<UserUpdateRequest> updateProfileUser(
+            @RequestParam(name = "id") long userId,
+            @RequestBody UserUpdateRequest request)
+    {
+        return userServiceImpl.updateProfileUser(userId,request);
+    }
+
+    @RequestMapping(value="/update-avatar-user", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateAvaatarUser(
+            @RequestParam(name = "id") long userId,
+            @RequestBody String avatar)
+    {
+        return userServiceImpl.updateAvaatarUser(userId,avatar);
     }
 
 }

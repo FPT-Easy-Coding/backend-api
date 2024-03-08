@@ -20,6 +20,8 @@ public class UserMapper {
                 .isBanned(user.isBanned())
                 .isPremium(user.isPremium())
                 .Role(user.getRole())
+                .avatar(user.getAvatar())
+                .accountType(user.getAccountType())
                 .build();
     }
 
@@ -34,6 +36,8 @@ public class UserMapper {
                 .telephone(user.getTelephone())
                 .Role(user.getRole())
                 .isBanned(user.isBanned())
+                .avatar(user.getAvatar())
+                .accountType(user.getAccountType())
                 .isPremium(user.isPremium())
                 .createdAt(user.getCreatedAt())
                 .build();

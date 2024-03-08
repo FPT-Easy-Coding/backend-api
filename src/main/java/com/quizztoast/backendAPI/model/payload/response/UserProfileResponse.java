@@ -20,4 +20,6 @@ public class UserProfileResponse {
     private com.quizztoast.backendAPI.model.entity.user.Role Role;
     private boolean isBanned;
     private boolean isPremium;
+    private String avatar;
+    private String accountType;
 }
