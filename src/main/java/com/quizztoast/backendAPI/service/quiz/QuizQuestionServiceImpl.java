@@ -108,6 +108,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                     .categoryId(quiz.getCategoryId().getCategoryId())
                     .categoryName(categoryRepository.findCategoryById(quiz.getCategoryId().getCategoryId()).getCategoryName())
                     .questionContent(quiz.getContent())
+                    .createdAt(quiz.getCreatedAt())
                     .answersEntity(quizAnswerRepository.findByQuizQuestion(quiz))
                     .build());
         });

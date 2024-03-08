@@ -1,5 +1,6 @@
 package com.quizztoast.backendAPI.model.entity.quiz;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class QuizAnswer {
 
     @ManyToOne
     @JoinColumn(name = "quiz_question_id")
+    @JsonIgnore
     private QuizQuestion quizQuestion;  // Thay đổi tên trường này
 
     @Column(name= "content" ,nullable = false, length = 255)

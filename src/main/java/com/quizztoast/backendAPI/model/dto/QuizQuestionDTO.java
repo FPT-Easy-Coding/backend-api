@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -17,7 +18,8 @@ public class QuizQuestionDTO {
     private int categoryId;
     private String categoryName;
     private String questionContent;
-    private List<QuizAnswerDTO> answers;
+    private LocalDateTime createdAt;
+//    private List<QuizAnswerDTO> answers;
     private List<QuizAnswer> answersEntity;
     private Boolean isCorrect;
 }
