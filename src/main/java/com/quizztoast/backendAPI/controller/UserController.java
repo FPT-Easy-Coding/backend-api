@@ -77,6 +77,12 @@ public class UserController {
             @RequestBody ChangePasswordRequest changePasswordRequest,
             Principal connectedUser
     ){
+        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+            return ResponseEntity.badRequest().body("Passwords do not match");
+        }
+        if(connectedUser == null){
+            return ResponseEntity.badRequest().build();
+        }
         userServiceImpl.changePassword(changePasswordRequest,connectedUser);
         return ResponseEntity.ok().build();
     }

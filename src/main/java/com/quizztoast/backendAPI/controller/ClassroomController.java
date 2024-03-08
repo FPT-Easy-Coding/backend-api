@@ -96,7 +96,6 @@ public class ClassroomController {
     @PostMapping("/create-classroom")
     public ResponseEntity<String> createClassroom(@RequestBody ClassroomRequest classroomRequest) {
         try {
-            System.out.println("ClassroomRequest: " + classroomRequest);
             Classroom classroom = classroomServiceImpl.createClassroom(classroomRequest);
             return ResponseEntity.ok("Classroom created with ID: " + classroom.getClassroomId());
         } catch (Exception e) {
@@ -366,8 +365,4 @@ public class ClassroomController {
         }
     }
 
-//    @RequestMapping(value = "/get-answer/question-id={questionId}", method = RequestMethod.GET)
-//    public ResponseEntity<> getAnswersForQuestion(@PathVariable int questionId) {
-//
-//    }
 }

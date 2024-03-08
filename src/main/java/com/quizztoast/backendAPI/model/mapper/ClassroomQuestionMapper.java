@@ -3,7 +3,6 @@ package com.quizztoast.backendAPI.model.mapper;
 import com.quizztoast.backendAPI.model.entity.classroom.ClassroomAnswer;
 import com.quizztoast.backendAPI.model.entity.classroom.ClassroomQuestion;
 import com.quizztoast.backendAPI.model.entity.user.User;
-import com.quizztoast.backendAPI.model.payload.response.ClassroomAnswerResponse;
 import com.quizztoast.backendAPI.model.payload.response.ClassroomQuestionResponse;
 
 public class ClassroomQuestionMapper {
