@@ -641,6 +641,21 @@ public class AdminController {
     @Operation(
             description = "Retrieves essential information for administrative quiz question using a GET request."
     )
+    @PostMapping("/create-quiz-question")
+    public ResponseEntity<?> createQuizQuestion(
+            @RequestBody QuizQuestionDTO quizQuestionDTO
+    ) {
+        try {
+            return quizQuestionServiceImpl.createQuizQuestionAndAnswers(quizQuestionDTO);
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+    }
+
+    @Operation(
+            description = "Retrieves essential information for administrative quiz question using a GET request."
+    )
     @DeleteMapping("/delete-quiz-question")
     public ResponseEntity<?> deleteQuizQuestion(
             @RequestParam(name = "id") Long id
