@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class QuizAnswerDTO {
-
+    private long answerId;
     private String content;
     private boolean isIsCorrect;
 

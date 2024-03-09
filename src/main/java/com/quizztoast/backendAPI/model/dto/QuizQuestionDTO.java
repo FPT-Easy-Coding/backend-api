@@ -20,6 +20,6 @@ public class QuizQuestionDTO {
     private String questionContent;
     private LocalDateTime createdAt;
 //    private List<QuizAnswerDTO> answers;
-    private List<QuizAnswer> answersEntity;
+    private List<QuizAnswerDTO> answersEntity;
     private Boolean isCorrect;
 }

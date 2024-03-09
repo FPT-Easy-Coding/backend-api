@@ -1,5 +1,6 @@
 package com.quizztoast.backendAPI.model.payload.request;
 
+import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +26,7 @@ public class QuizQuestionRequest {
 //    @NotNull(message = "answers cannot be null")
 //    @NotEmpty(message = "answers cannot be blank")
     private List<QuizAnswerRequest> answers;
+    private List<QuizAnswerDTO> answersEntity;
 //    @NotNull(message = "isCorrect cannot be null")
     private Boolean isCorrect;
 }
