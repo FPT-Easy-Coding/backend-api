@@ -145,11 +145,11 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             quizQuestionRepository.save(quizQuestion);
 
             // update quiz answer
+            quizAnswerRepository.deleteByQuizQuestionId((long) quizquestionId); // delete all quiz answer
             if(quizRequest.getAnswersEntity() != null && !quizRequest.getAnswersEntity().isEmpty()) {
                 List<QuizAnswer> quizAnswers = new ArrayList<>();
                 for (QuizAnswerDTO answerRequest : quizRequest.getAnswersEntity()) {
                     QuizAnswer quizAnswer = QuizAnswer.builder()
-                            .quizAnswerId(answerRequest.getAnswerId())
                             .content(answerRequest.getContent())
                             .isCorrect(answerRequest.isIsCorrect())
                             .createdAt(LocalDateTime.now())
