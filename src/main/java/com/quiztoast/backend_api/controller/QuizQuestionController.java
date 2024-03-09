@@ -1,10 +1,11 @@
 package com.quiztoast.backend_api.controller;
 
-import com.quiztoast.backend_api.exception.FormatException;
-import com.quiztoast.backend_api.model.dto.QuizDTO;
-import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
-import com.quiztoast.backend_api.model.payload.request.QuizQuestionRequest;
-import com.quiztoast.backend_api.service.quiz.QuizQuestionServiceImpl;
+import com.quizztoast.backendAPI.exception.FormatException;
+import com.quizztoast.backendAPI.model.dto.QuizDTO;
+import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
+import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
+import com.quizztoast.backendAPI.service.quiz.QuizQuestionServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -177,8 +178,8 @@ public class QuizQuestionController {
             }
     )
     @GetMapping("/get-all-quiz-question")
-    public List<QuizQuestion> getAllQuizQues(){
-        return quizQuestionServiceImpl.getAllQuiz();
+    public List<QuizQuestionDTO> getAllQuizQues(){
+        return quizQuestionServiceImpl.getAllQuizDTO();
     }
     /**
      * get QuizQuestion and answer by name  using a Post request.

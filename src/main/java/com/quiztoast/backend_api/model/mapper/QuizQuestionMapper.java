@@ -23,7 +23,7 @@ public class QuizQuestionMapper {
         return QuizQuestionDTO.builder()
                 .categoryId(quiz.getCategoryId())
                 .questionContent(quiz.getQuestionContent())
-                .answers(listAnswer)
+//                .answers(listAnswer)
                 .build();
     }
 

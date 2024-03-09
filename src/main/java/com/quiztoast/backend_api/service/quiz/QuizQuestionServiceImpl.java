@@ -3,18 +3,20 @@ package com.quiztoast.backend_api.service.quiz;
 
 import com.quiztoast.backend_api.exception.FormatException;
 
-import com.quiztoast.backend_api.model.dto.QuizQuestionDTO;
-import com.quiztoast.backend_api.model.entity.quiz.Category;
-import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
-import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
-import com.quiztoast.backend_api.model.mapper.QuizQuestionMapper;
-import com.quiztoast.backend_api.model.payload.request.QuizAnswerRequest;
-import com.quiztoast.backend_api.model.payload.request.QuizQuestionRequest;
-import com.quiztoast.backend_api.repository.CategoryRepository;
-import com.quiztoast.backend_api.repository.QuizAnswerRepository;
-import com.quiztoast.backend_api.repository.QuizQuestionMappingRepository;
-import com.quiztoast.backend_api.repository.QuizQuestionRepository;
-import com.quiztoast.backend_api.service.category.CategoryServiceImpl;
+import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
+import com.quizztoast.backendAPI.model.dto.QuizQuestionDTO;
+import com.quizztoast.backendAPI.model.entity.quiz.Category;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
+import com.quizztoast.backendAPI.model.entity.quiz.QuizQuestion;
+import com.quizztoast.backendAPI.model.mapper.QuizAnswerMapper;
+import com.quizztoast.backendAPI.model.mapper.QuizQuestionMapper;
+import com.quizztoast.backendAPI.model.payload.request.QuizAnswerRequest;
+import com.quizztoast.backendAPI.model.payload.request.QuizQuestionRequest;
+import com.quizztoast.backendAPI.repository.CategoryRepository;
+import com.quizztoast.backendAPI.repository.QuizAnswerRepository;
+import com.quizztoast.backendAPI.repository.QuizQuestionMappingRepository;
+import com.quizztoast.backendAPI.repository.QuizQuestionRepository;
+import com.quizztoast.backendAPI.service.category.CategoryServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -108,7 +110,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                     .categoryId(quiz.getCategoryId().getCategoryId())
                     .categoryName(categoryRepository.findCategoryById(quiz.getCategoryId().getCategoryId()).getCategoryName())
                     .questionContent(quiz.getContent())
-                    .answersEntity(quizAnswerRepository.findByQuizQuestion(quiz))
+                    .answersEntity(QuizAnswerMapper.MapQuizAnswerEntityToDTO(quizAnswerRepository.findByQuizQuestion(quiz)) )
                     .build());
         });
         return lstQuizDTO;
@@ -124,8 +126,6 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     @Override
     public ResponseEntity<QuizQuestion> UpdateQuizQuestion(int quizquestionId,@Valid @RequestBody QuizQuestionRequest quizRequest) {
-
-
         // Find the quiz question by ID
         Optional<QuizQuestion> optionalQuizQuestion = quizQuestionRepository.findById((long) quizquestionId);
 
@@ -138,17 +138,33 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             }
             Category category = categoryRepository.findCategoryById(quizRequest.getCategoryId());
 
-               // Update quiz question fields
-               quizQuestion.setContent(quizRequest.getQuestionContent());
-               quizQuestion.setCategoryId(category);
-               // Save the updated quiz question
-               quizQuestionRepository.save(quizQuestion);
+            // Update quiz question fields
+            quizQuestion.setContent(quizRequest.getQuestionContent());
+            quizQuestion.setCategoryId(category);
+            // Save the updated quiz question
+            quizQuestionRepository.save(quizQuestion);
 
+            // update quiz answer
+            if(quizRequest.getAnswersEntity() != null && !quizRequest.getAnswersEntity().isEmpty()) {
+                List<QuizAnswer> quizAnswers = new ArrayList<>();
+                for (QuizAnswerDTO answerRequest : quizRequest.getAnswersEntity()) {
+                    QuizAnswer quizAnswer = QuizAnswer.builder()
+                            .quizAnswerId(answerRequest.getAnswerId())
+                            .content(answerRequest.getContent())
+                            .isCorrect(answerRequest.isIsCorrect())
+                            .createdAt(LocalDateTime.now())
+                            .quizQuestion(quizQuestion)
+                            .build();
+
+                    quizAnswers.add(quizAnswer);
+                }
+                quizAnswerRepository.saveAll(quizAnswers);
+            }
             // Return the updated quiz question
             return ResponseEntity.ok(quizQuestion);
         } else {
             // If quiz question with the given ID is not found, return not found status
-                throw  new FormatException("quizquestionId","quizquestionId not exist");
+            throw  new FormatException("quizquestionId","quizquestionId not exist");
 
         }
 
