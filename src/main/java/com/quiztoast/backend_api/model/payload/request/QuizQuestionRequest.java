@@ -1,6 +1,6 @@
 package com.quiztoast.backend_api.model.payload.request;
 
-import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
+import com.quiztoast.backend_api.model.dto.QuizAnswerDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

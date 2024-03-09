@@ -1,8 +1,8 @@
 package com.quiztoast.backend_api.model.mapper;
 
-import com.quizztoast.backendAPI.model.dto.QuizAnswerDTO;
-import com.quizztoast.backendAPI.model.entity.quiz.QuizAnswer;
-import com.quizztoast.backendAPI.model.payload.request.QuizAnswerRequest;
+import com.quiztoast.backend_api.model.dto.QuizAnswerDTO;
+import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
+import com.quiztoast.backend_api.model.payload.request.QuizAnswerRequest;
 
 import java.util.ArrayList;
 import java.util.List;
