@@ -1,7 +1,10 @@
 package com.quiztoast.backend_api.service.quiz;
 
-import org.springframework.stereotype.Service;
+import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
+import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
+import com.quiztoast.backend_api.model.payload.request.CreateQuizAnswerRequest;
 
-@Service
-public class QuizAnswerService {
+
+public interface QuizAnswerService {
+    void createQuizAnswer(CreateQuizAnswerRequest quizAnswer, QuizQuestion quizQuestion);
 }

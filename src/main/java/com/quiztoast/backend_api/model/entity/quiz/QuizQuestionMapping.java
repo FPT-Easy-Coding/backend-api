@@ -21,25 +21,19 @@ public class QuizQuestionMapping {
 
     // Constructors, getters, setters, etc.
     @Embeddable
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class QuizQuestionMappingId implements Serializable {
 
         @ManyToOne
         @JoinColumn(name = "quiz_id")
-        private Quiz quizId;
+        private Quiz quiz;
 
         @ManyToOne
         @JoinColumn(name = "quiz_question_id")
-        private QuizQuestion quizQuestionId;
+        private QuizQuestion quizQuestion;
 
-        public void setQuizId(Quiz quiz) {
-            this.quizId = quiz;
-        }
-
-        public void setQuizQuestionId(QuizQuestion quizQuestion) {
-            this.quizQuestionId = quizQuestion;
-        }
-
-        // Constructors, getters, setters, etc.
     }
 
 }

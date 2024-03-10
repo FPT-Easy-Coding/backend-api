@@ -6,18 +6,21 @@ import com.quiztoast.backend_api.exception.FormatException;
 import com.quiztoast.backend_api.model.dto.QuizAnswerDTO;
 import com.quiztoast.backend_api.model.dto.QuizQuestionDTO;
 import com.quiztoast.backend_api.model.entity.quiz.Category;
+import com.quiztoast.backend_api.model.entity.quiz.Quiz;
 import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
 import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
 import com.quiztoast.backend_api.model.mapper.QuizAnswerMapper;
 import com.quiztoast.backend_api.model.mapper.QuizQuestionMapper;
+import com.quiztoast.backend_api.model.payload.request.CreateQuizAnswerRequest;
+import com.quiztoast.backend_api.model.payload.request.CreateQuizQuestionRequest;
 import com.quiztoast.backend_api.model.payload.request.QuizAnswerRequest;
 import com.quiztoast.backend_api.model.payload.request.QuizQuestionRequest;
 import com.quiztoast.backend_api.repository.CategoryRepository;
 import com.quiztoast.backend_api.repository.QuizAnswerRepository;
 import com.quiztoast.backend_api.repository.QuizQuestionMappingRepository;
 import com.quiztoast.backend_api.repository.QuizQuestionRepository;
-import com.quiztoast.backend_api.service.category.CategoryServiceImpl;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,76 +35,27 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     private final CategoryRepository categoryRepository;
     private final QuizQuestionRepository quizQuestionRepository;
- private final QuizAnswerRepository quizAnswerRepository;
-
+    private final QuizAnswerRepository quizAnswerRepository;
+    private final QuizAnswerServiceImpl quizAnswerService;
     private final QuizQuestionMappingRepository quizQuestionMappingRepository;
 
 
-    public QuizQuestionServiceImpl(CategoryServiceImpl categoryServiceImpl, CategoryRepository categoryRepository, QuizQuestionRepository quizQuestionRepository, QuizAnswerRepository quizAnswerRepository, QuizQuestionMappingRepository quizQuestionMappingRepository) {
-        this.categoryRepository = categoryRepository;
-        this.quizQuestionRepository = quizQuestionRepository;
-        this.quizAnswerRepository = quizAnswerRepository;
-        this.quizQuestionMappingRepository = quizQuestionMappingRepository;
-    }
-
-    public ResponseEntity<QuizQuestion> createQuizQuestionAndAnswers(QuizQuestionDTO quizQuestionDTO) {
-        if(quizQuestionDTO == null || quizQuestionDTO.getAnswersEntity() == null)
-        {
-            throw  new FormatException("quizQuestionDTO","quizQuestionDTO not exist");
-        }
-        try {
-            // Find the category by ID
-            Category category = categoryRepository.findById(quizQuestionDTO.getCategoryId())
-                    .orElseThrow(() -> new FormatException("category_id","Category not found"));
-
-            // Create QuizQuestion
-            QuizQuestion quizQuestion = QuizQuestion.builder()
-                    .content(quizQuestionDTO.getQuestionContent())
-                    .categoryId(category)
-                    .createdAt(LocalDateTime.now())
-                    .build();
-
-            quizQuestionRepository.save(quizQuestion);
-
-            // Create QuizAnswer list
-            List<QuizAnswer> quizAnswers = new ArrayList<>();
-            for (QuizAnswerDTO answerRequest : quizQuestionDTO.getAnswersEntity()) {
-                QuizAnswer quizAnswer = QuizAnswer.builder()
-                        .quizAnswerId(answerRequest.getAnswerId())
-                        .content(answerRequest.getContent())
-                        .isCorrect(answerRequest.isIsCorrect())
-                        .createdAt(LocalDateTime.now())
-                        .quizQuestion(quizQuestion)
-                        .build();
-
-                quizAnswers.add(quizAnswer);
-            }
-
-            // Save QuizAnswer list
-            quizAnswerRepository.saveAll(quizAnswers);
-
-            return ResponseEntity.ok(quizQuestion);
-        }
-        catch (Exception e) {
-            // Handle other exceptions
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
     @Override
-    public ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers(@Valid @RequestBody QuizQuestionRequest Quizrequest) {
-
+    public ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers(
+            @Valid
+            @RequestBody QuizQuestionRequest quizQuestionRequest
+    ) {
         try {
-            // Find the category by ID
-            Category category = categoryRepository.findById(Quizrequest.getCategoryId())
-                    .orElseThrow(() -> new FormatException("category_id","Category not found"));
+            Category category = categoryRepository.findById(quizQuestionRequest.getCategoryId())
+                    .orElseThrow(() -> new FormatException("category_id", "Category not found"));
 
-            // Create QuizQuestion
             QuizQuestion quizQuestion = QuizQuestion.builder()
-                    .content(Quizrequest.getQuestionContent())
+                    .content(quizQuestionRequest.getQuestionContent())
                     .categoryId(category)
                     .createdAt(LocalDateTime.now())
                     .build();
@@ -110,10 +64,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
             // Create QuizAnswer list
             List<QuizAnswer> quizAnswers = new ArrayList<>();
-            for (QuizAnswerRequest answerRequest : Quizrequest.getAnswers()) {
-//                if (StringUtils.isBlank(answerRequest.getContent())) {
-//                    throw new FormatException("QuizAnswer", "QuizAnswer content cannot be blank");
-//                }
+            for (QuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
                 QuizAnswer quizAnswer = QuizAnswer.builder()
                         .content(answerRequest.getContent())
                         .isCorrect(answerRequest.isCorrect())
@@ -124,61 +75,65 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                 quizAnswers.add(quizAnswer);
             }
 
-            // Save QuizAnswer list
             quizAnswerRepository.saveAll(quizAnswers);
 
-            // Map QuizQuestionRequest to QuizQuestionDTO
-            QuizQuestionDTO quizQuestionDTO = QuizQuestionMapper.mapQuizQuesRequestToDTO(Quizrequest);
+            QuizQuestionDTO quizQuestionDTO = QuizQuestionMapper.mapQuizQuesRequestToDTO(quizQuestionRequest);
 
             return ResponseEntity.ok(quizQuestionDTO);
-        }
-         catch (Exception e) {
-            // Handle other exceptions
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
     }
+
     @Override
-    public List<QuizQuestion> getAllQuiz() {
-    return quizQuestionRepository.findAll();
+    public List<QuizQuestion> getAllQuizQuestions() {
+        return quizQuestionRepository.findAll();
     }
 
     @Override
     public List<QuizQuestionDTO> getAllQuizDTO() {
-        List<QuizQuestionDTO> lstQuizDTO = new ArrayList<>();
-        List<QuizQuestion> lstQuizQuestions =  quizQuestionRepository.findAll();
-        lstQuizQuestions.forEach(quiz -> {
-            lstQuizDTO.add(QuizQuestionDTO.builder()
-                    .questionId(quiz.getQuizQuestionId())
-                    .categoryId(quiz.getCategoryId().getCategoryId())
-                    .categoryName(categoryRepository.findCategoryById(quiz.getCategoryId().getCategoryId()).getCategoryName())
-                    .questionContent(quiz.getContent())
-                    .createdAt(quiz.getCreatedAt())
-                    .answersEntity(QuizAnswerMapper.MapQuizAnswerEntityToDTO(quizAnswerRepository.findByQuizQuestion(quiz)) )
-                    .build());
-        });
-        return lstQuizDTO;
-    }
-    @Override
-    public List<QuizQuestion> GetByContent(String content) {
-        if(quizQuestionRepository.findByContentContaining(content).isEmpty())
-        {
-           throw  new FormatException("content","QuizQuestion_Content not exist");
-        }
-    return quizQuestionRepository.findByContentContaining(content);
+        List<QuizQuestionDTO> questionDTOList = new ArrayList<>();
+        List<QuizQuestion> lstQuizQuestions = quizQuestionRepository.findAll();
+        lstQuizQuestions.forEach(quiz -> questionDTOList.add(
+                QuizQuestionDTO.builder()
+                        .questionId(quiz.getQuizQuestionId())
+                        .categoryId(quiz.getCategoryId().getCategoryId())
+                        .categoryName(categoryRepository.findCategoryById(quiz.getCategoryId().getCategoryId()).getCategoryName())
+                        .questionContent(quiz.getContent())
+                        .answersEntity(QuizAnswerMapper.mapQuizAnswerEntityToDTO(quizAnswerRepository.findByQuizQuestion(quiz)))
+                        .build()));
+        return questionDTOList;
     }
 
     @Override
-    public ResponseEntity<QuizQuestion> UpdateQuizQuestion(int quizquestionId,@Valid @RequestBody QuizQuestionRequest quizRequest) {
+    public List<QuizQuestion> getByContent(String content) {
+        if (quizQuestionRepository.findByContentContaining(content).isEmpty()) {
+            throw new FormatException("content", "QuizQuestion_Content not exist");
+        }
+        return quizQuestionRepository.findByContentContaining(content);
+    }
+
+    @Override
+    public QuizQuestion createQuizQuestion(CreateQuizQuestionRequest quizQuestionRequest) {
+        QuizQuestion quizQuestion = QuizQuestionMapper.mapCreateRequestToQuizQuestion(quizQuestionRequest);
+        quizQuestionRepository.save(quizQuestion);
+        for (CreateQuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
+            quizAnswerService.createQuizAnswer(answerRequest, quizQuestion);
+        }
+        return quizQuestion;
+    }
+
+    @Override
+    public ResponseEntity<QuizQuestion> updateQuizQuestion(int quizQuestionId, @Valid @RequestBody QuizQuestionRequest quizRequest) {
         // Find the quiz question by ID
-        Optional<QuizQuestion> optionalQuizQuestion = quizQuestionRepository.findById((long) quizquestionId);
+        Optional<QuizQuestion> optionalQuizQuestion = quizQuestionRepository.findById((long) quizQuestionId);
 
         if (optionalQuizQuestion.isPresent()) {
             QuizQuestion quizQuestion = optionalQuizQuestion.get();
             //check category_id
-            if(categoryRepository.findById(quizRequest.getCategoryId()).isEmpty())
-            {
-                throw  new FormatException("CategoryId","CategoryId not exist");
+            if (categoryRepository.findById(quizRequest.getCategoryId()).isEmpty()) {
+                throw new FormatException("CategoryId", "CategoryId not exist");
             }
             Category category = categoryRepository.findCategoryById(quizRequest.getCategoryId());
 
@@ -189,8 +144,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             quizQuestionRepository.save(quizQuestion);
 
             // update quiz answer
-            quizAnswerRepository.deleteByQuizQuestionId((long) quizquestionId); // delete all quiz answer
-            if(quizRequest.getAnswersEntity() != null && !quizRequest.getAnswersEntity().isEmpty()) {
+            if (quizRequest.getAnswersEntity() != null && !quizRequest.getAnswersEntity().isEmpty()) {
                 List<QuizAnswer> quizAnswers = new ArrayList<>();
                 for (QuizAnswerDTO answerRequest : quizRequest.getAnswersEntity()) {
                     QuizAnswer quizAnswer = QuizAnswer.builder()
@@ -208,42 +162,35 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             return ResponseEntity.ok(quizQuestion);
         } else {
             // If quiz question with the given ID is not found, return not found status
-            throw  new FormatException("quizquestionId","quizquestionId not exist");
+            throw new FormatException("quizQuestionId", "quizQuestionId not exist");
 
         }
 
     }
 
     @Override
-    public QuizQuestion GetQuizQuestionById(Long quizquestionId) {
-        if(quizquestionId == null)
-        {
-            throw  new FormatException("quizquestionId","quizquestionId not exist");
+    public QuizQuestion getQuizQuestionById(Long quizQuestionId) {
+        if (quizQuestionId == null) {
+            throw new FormatException("quizQuestionId", "quizQuestionId not exist");
         }
-        return quizQuestionRepository.findById(quizquestionId).orElse(null);
+        return quizQuestionRepository.findById(quizQuestionId).orElse(null);
     }
 
 
     @Override
-    public ResponseEntity<String> deleteQuizById(Long quizquestionId) {
+    public ResponseEntity<String> deleteQuizById(Long quizQuestionId) {
 
-        // Find the quiz question by ID
-        Optional<QuizQuestion> optionalQuizQuestion = quizQuestionRepository.findById((long) quizquestionId);
+        Optional<QuizQuestion> optionalQuizQuestion = quizQuestionRepository.findById((long) quizQuestionId);
         if (optionalQuizQuestion.isPresent()) {
-            try{
-                //delete quizanswer
-                quizAnswerRepository.deleteByQuizQuestionId(quizquestionId);
-                //delete quizquestion
-                quizQuestionRepository.deleteQuestionById(quizquestionId);
-
-                return ResponseEntity.ok().body("Delete Succesfull QuizQuestion ");
-            }catch (Exception e)
-            {
+            try {
+                quizAnswerRepository.deleteByQuizQuestionId(quizQuestionId);
+                quizQuestionRepository.deleteQuestionById(quizQuestionId);
+                return ResponseEntity.ok().body("Delete successfully quizQuestion ");
+            } catch (Exception e) {
                 return null;
             }
-
-        }else {
-            throw  new FormatException("quizquestionId","quizquestionId not exist");
+        } else {
+            throw new FormatException("quizQuestionId", "quizQuestionId not exist");
         }
     }
 }

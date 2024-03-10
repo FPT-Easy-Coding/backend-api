@@ -11,15 +11,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface QuizQuestionMappingRepository extends JpaRepository<QuizQuestionMapping, QuizQuestionMapping.QuizQuestionMappingId> {
-    @Query("SELECT q.id.quizQuestionId FROM QuizQuestionMapping q WHERE q.id.quizId.quizId = :quizId")
+    @Query("SELECT q.id.quizQuestion FROM QuizQuestionMapping q WHERE q.id.quiz.quizId = :quizId")
     List<QuizQuestion> findQuizQuestionIdsByQuizId(@Param("quizId") int quizId);
 
-    @Query("SELECT COUNT(q.id.quizQuestionId.quizQuestionId) FROM QuizQuestionMapping q WHERE q.id.quizId.quizId = :quizId")
+    @Query("SELECT COUNT(q.id.quizQuestion.quizQuestionId) FROM QuizQuestionMapping q WHERE q.id.quiz.quizId = :quizId")
     int countQuizQuestionByQuizID(int quizId);
-    @Query("SELECT COUNT(q) FROM QuizQuestionMapping q WHERE q.id.quizId= :quizId")
-    int countNumberofquiz(Quiz quizId);
+    @Query("SELECT COUNT(q) FROM QuizQuestionMapping q WHERE q.id.quiz= :quizId")
+    int countNumberOfQuiz(Quiz quizId);
 
     @Modifying
-    @Query("delete from QuizQuestionMapping q where q.id.quizId.quizId = :quizId")
+    @Query("delete from QuizQuestionMapping q where q.id.quiz.quizId = :quizId")
     void deleteByQuizQuestionId(@Param("quizId") long quizId);
 }

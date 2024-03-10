@@ -2,21 +2,24 @@ package com.quiztoast.backend_api.service.quiz;
 
 import com.quiztoast.backend_api.model.dto.QuizQuestionDTO;
 import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
+import com.quiztoast.backend_api.model.payload.request.CreateQuizQuestionRequest;
 import com.quiztoast.backend_api.model.payload.request.QuizQuestionRequest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface QuizQuestionService {
-    ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers( QuizQuestionRequest Quizrequest);
-     List<QuizQuestion> getAllQuiz();
+    ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers( QuizQuestionRequest quizQuestionRequest);
+     List<QuizQuestion> getAllQuizQuestions();
 
     List<QuizQuestionDTO> getAllQuizDTO();
 
-    List<QuizQuestion> GetByContent(String content);
-    ResponseEntity<QuizQuestion> UpdateQuizQuestion(int quizquestionId, QuizQuestionRequest quizRequest);
+    List<QuizQuestion> getByContent(String content);
 
-    ResponseEntity<String> deleteQuizById(Long quizquestionId);
+    QuizQuestion createQuizQuestion(CreateQuizQuestionRequest quizQuestionRequest);
+    ResponseEntity<QuizQuestion> updateQuizQuestion(int quizQuestionId, QuizQuestionRequest quizRequest);
 
-    QuizQuestion GetQuizQuestionById(Long quizquestionId);
+    ResponseEntity<String> deleteQuizById(Long quizQuestionId);
+
+    QuizQuestion getQuizQuestionById(Long quizQuestionId);
 }

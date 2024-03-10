@@ -1,9 +1,14 @@
 package com.quiztoast.backend_api.model.mapper;
 
 import com.quiztoast.backend_api.model.dto.QuizDTO;
+import com.quiztoast.backend_api.model.entity.quiz.Category;
 import com.quiztoast.backend_api.model.entity.quiz.Quiz;
+import com.quiztoast.backend_api.model.entity.user.User;
+import com.quiztoast.backend_api.model.payload.request.CreateQuizRequest;
 import com.quiztoast.backend_api.model.payload.response.QuizSetResponse;
 import com.quiztoast.backend_api.repository.RateQuizRepository;
+
+import java.time.LocalDateTime;
 
 public class QuizMapper {
 
@@ -33,6 +38,18 @@ public class QuizMapper {
                 .author(quiz.getUser().getUserName())
                 .createdAt(quiz.getCreatedAt())
                 .numberOfQuestion(numberOfQuestion)
+                .build();
+    }
+
+    public static Quiz mapCreateRequestToQuiz(CreateQuizRequest createQuizRequest, User user, Category category) {
+        return Quiz.builder()
+                .user(user)
+                .quizName(createQuizRequest.getTitle())
+                .category(category)
+                .rate(0)
+                .viewOfQuiz(0L)
+                .createdAt(LocalDateTime.now())
+                .timeRecentViewQuiz(LocalDateTime.now())
                 .build();
     }
 }

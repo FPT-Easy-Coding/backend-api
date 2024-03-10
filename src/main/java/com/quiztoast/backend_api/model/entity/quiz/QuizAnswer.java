@@ -24,9 +24,9 @@ public class QuizAnswer {
     @ManyToOne
     @JoinColumn(name = "quiz_question_id")
     @JsonIgnore
-    private QuizQuestion quizQuestion;  // Thay đổi tên trường này
+    private QuizQuestion quizQuestion;
 
-    @Column(name= "content" ,nullable = false, length = 255)
+    @Column(name= "content" ,nullable = false)
     private String content;
 
     @Column(name = "is_correct", nullable = false)

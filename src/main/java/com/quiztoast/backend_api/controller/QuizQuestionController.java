@@ -300,7 +300,7 @@ public class QuizQuestionController {
     @GetMapping("/get-quiz-question")
     public List<QuizQuestion> findByContent(@RequestParam(name = "content") String content)
     {
-        return quizQuestionServiceImpl.GetByContent(content);
+        return quizQuestionServiceImpl.getByContent(content);
     }
     /**
      * UPdate QuizQuestion and answer using a Post request.
@@ -379,7 +379,7 @@ public class QuizQuestionController {
             @Valid
             @RequestBody QuizQuestionRequest quizRequest)
     {
-        return quizQuestionServiceImpl.UpdateQuizQuestion(quizQuestionId,quizRequest);
+        return quizQuestionServiceImpl.updateQuizQuestion(quizQuestionId,quizRequest);
     }
 
     /**

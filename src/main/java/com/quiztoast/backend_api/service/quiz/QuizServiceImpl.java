@@ -4,18 +4,10 @@ import com.quiztoast.backend_api.exception.FormatException;
 import com.quiztoast.backend_api.model.dto.QuizAnswerDTO;
 import com.quiztoast.backend_api.model.dto.QuizDTO;
 
-import com.quiztoast.backend_api.model.entity.quiz.CreateQuiz;
-import com.quiztoast.backend_api.model.entity.quiz.DoQuiz;
-import com.quiztoast.backend_api.model.entity.quiz.Quiz;
-import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
-import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
-import com.quiztoast.backend_api.model.entity.quiz.QuizQuestionMapping;
-import com.quiztoast.backend_api.model.entity.quiz.RateQuiz;
+import com.quiztoast.backend_api.model.entity.quiz.*;
 import com.quiztoast.backend_api.model.entity.user.User;
 import com.quiztoast.backend_api.model.mapper.QuizMapper;
-import com.quiztoast.backend_api.model.payload.request.QuizAnswerRequest;
-import com.quiztoast.backend_api.model.payload.request.QuizQuestionRequest;
-import com.quiztoast.backend_api.model.payload.request.QuizRequest;
+import com.quiztoast.backend_api.model.payload.request.*;
 import com.quiztoast.backend_api.model.payload.response.QuizQuestionResponse;
 import com.quiztoast.backend_api.model.payload.response.QuestionData;
 import com.quiztoast.backend_api.model.payload.response.RateQuizResponse;
@@ -48,7 +40,7 @@ import static com.quiztoast.backend_api.model.mapper.QuizMapper.mapQuizDTOToUser
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class QuizServiceImpl implements com.quiztoast.backend_api.service.quiz.QuizService {
+public class QuizServiceImpl implements QuizService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final QuizRepository quizRepository;
@@ -60,6 +52,7 @@ public class QuizServiceImpl implements com.quiztoast.backend_api.service.quiz.Q
     private final CreateQuizCategoryRepository createQuizCategoryRepository;
     private final RateQuizRepository rateQuizRepository;
     private final TokenRepository tokenRepository;
+    private final QuizQuestionServiceImpl quizQuestionServiceImpl;
     @Override
     public List<QuizDTO> getAllQuiz() {
         List<Quiz> quizzes = quizRepository.findAll();
@@ -91,7 +84,6 @@ public class QuizServiceImpl implements com.quiztoast.backend_api.service.quiz.Q
         quiz.setQuizName(quizRequest.getQuizName());
         quiz.setViewOfQuiz(0L);
         quiz.setRate(quizRequest.getRate());
-//        quiz.setNumberOfQuizQuestion(quizRequest.getListQuestion().size());
         quiz.setCreatedAt(LocalDateTime.now());
         quiz.setTimeRecentViewQuiz(null);
         // Save the Quiz object to the Quiz table
@@ -130,8 +122,8 @@ public class QuizServiceImpl implements com.quiztoast.backend_api.service.quiz.Q
             // Create QuizQuestionMapping
             QuizQuestionMapping quizQuestionMapping = new QuizQuestionMapping();
             QuizQuestionMapping.QuizQuestionMappingId id = new QuizQuestionMapping.QuizQuestionMappingId();
-            id.setQuizId(quiz);
-            id.setQuizQuestionId(quizQuestion);
+            id.setQuiz(quiz);
+            id.setQuizQuestion(quizQuestion);
             quizQuestionMapping.setId(id);
 
             // Save QuizQuestionMapping
@@ -142,6 +134,21 @@ public class QuizServiceImpl implements com.quiztoast.backend_api.service.quiz.Q
         QuizDTO quizDTO = mapQuizDTOToUser(quiz, numberOfQuestion,rateQuizRepository);
         // Returns the QuizDTO object after creation
         return ResponseEntity.ok(quizDTO);
+    }
+
+    @Override
+    public Quiz createQuizSet(CreateQuizRequest createQuizRequest) {
+        User user = userRepository.findById(createQuizRequest.getUserId()).orElse(null);
+        Category category = categoryRepository.findById(createQuizRequest.getCategoryId()).orElse(null);
+        Quiz quiz = QuizMapper.mapCreateRequestToQuiz(createQuizRequest,user,category);
+        quizRepository.save(quiz);
+        for(CreateQuizQuestionRequest createQuizQuestionRequest : createQuizRequest.getQuestions()){
+            QuizQuestion quizQuestion= quizQuestionServiceImpl.createQuizQuestion(createQuizQuestionRequest);
+            QuizQuestionMapping.QuizQuestionMappingId id = new QuizQuestionMapping.QuizQuestionMappingId(quiz, quizQuestion);
+            QuizQuestionMapping quizQuestionMapping = new QuizQuestionMapping(id);
+            quizQuestionMappingRepository.save(quizQuestionMapping);
+        }
+        return quiz;
     }
 
 
@@ -197,8 +204,8 @@ public class QuizServiceImpl implements com.quiztoast.backend_api.service.quiz.Q
 
                 // Map question and answer
                 QuizQuestionMapping.QuizQuestionMappingId mappingId = new QuizQuestionMapping.QuizQuestionMappingId();
-                mappingId.setQuizId(quizRepository.getQuizById(quizId));
-                mappingId.setQuizQuestionId(quizQuestion);
+                mappingId.setQuiz(quizRepository.getQuizById(quizId));
+                mappingId.setQuizQuestion(quizQuestion);
 
                 QuizQuestionMapping mapping = new QuizQuestionMapping();
                 mapping.setId(mappingId);

@@ -176,7 +176,7 @@ public class FolderController {
     }
 
     @PostMapping("/create-folder")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<MessageResponse> createFolder(@RequestBody FolderRequest folderRequest) {
         try {
             Folder folder = folderServiceImpl.createFolder(folderRequest);

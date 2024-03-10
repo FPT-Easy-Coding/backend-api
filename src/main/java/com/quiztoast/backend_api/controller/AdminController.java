@@ -615,7 +615,7 @@ public class AdminController {
     @GetMapping("/quiz-question/{id}")
     public ResponseEntity<?> getQuizQuestion(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(quizQuestionServiceImpl.GetQuizQuestionById(id));
+            return ResponseEntity.ok(quizQuestionServiceImpl.getQuizQuestionById(id));
         } catch (Exception e) {
             // Handle other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
@@ -631,7 +631,7 @@ public class AdminController {
             @Valid @RequestBody QuizQuestionRequest quizQuestionRequest
     ) {
         try {
-            return ResponseEntity.ok(quizQuestionServiceImpl.UpdateQuizQuestion(id, quizQuestionRequest));
+            return ResponseEntity.ok(quizQuestionServiceImpl.updateQuizQuestion(id, quizQuestionRequest));
         } catch (Exception e) {
             // Handle other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
