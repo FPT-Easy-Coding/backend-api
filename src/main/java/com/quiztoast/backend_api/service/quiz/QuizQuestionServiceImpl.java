@@ -45,6 +45,49 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     private final QuizQuestionMappingRepository quizQuestionMappingRepository;
 
 
+    public ResponseEntity<QuizQuestion> createQuizQuestionAndAnswers(QuizQuestionDTO quizQuestionDTO) {
+        if(quizQuestionDTO == null || quizQuestionDTO.getAnswersEntity() == null)
+        {
+            throw new FormatException("quizQuestionDTO","quizQuestionDTO not exist");
+        }
+        try {
+            // Find the category by ID
+            Category category = categoryRepository.findById(quizQuestionDTO.getCategoryId())
+                    .orElseThrow(() -> new FormatException("category_id","Category not found"));
+
+            // Create QuizQuestion
+            QuizQuestion quizQuestion = QuizQuestion.builder()
+                    .content(quizQuestionDTO.getQuestionContent())
+                    .categoryId(category)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            quizQuestionRepository.save(quizQuestion);
+
+            // Create QuizAnswer list
+            List<QuizAnswer> quizAnswers = new ArrayList<>();
+            for (QuizAnswerDTO answerRequest : quizQuestionDTO.getAnswersEntity()) {
+                QuizAnswer quizAnswer = QuizAnswer.builder()
+                        .quizAnswerId(answerRequest.getAnswerId())
+                        .content(answerRequest.getContent())
+                        .isCorrect(answerRequest.isIsCorrect())
+                        .createdAt(LocalDateTime.now())
+                        .quizQuestion(quizQuestion)
+                        .build();
+                quizAnswers.add(quizAnswer);
+            }
+
+            // Save QuizAnswer list
+            quizAnswerRepository.saveAll(quizAnswers);
+
+            return ResponseEntity.ok(quizQuestion);
+        }
+        catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @Override
     public ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers(
             @Valid
@@ -101,6 +144,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                         .categoryId(quiz.getCategoryId().getCategoryId())
                         .categoryName(categoryRepository.findCategoryById(quiz.getCategoryId().getCategoryId()).getCategoryName())
                         .questionContent(quiz.getContent())
+                        .createdAt(quiz.getCreatedAt())
                         .answersEntity(QuizAnswerMapper.mapQuizAnswerEntityToDTO(quizAnswerRepository.findByQuizQuestion(quiz)))
                         .build()));
         return questionDTOList;
@@ -143,6 +187,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             // Save the updated quiz question
             quizQuestionRepository.save(quizQuestion);
 
+            // delete all quiz answer convert Long to int
+            quizAnswerRepository.deleteByQuizQuestionId((long) quizQuestionId);
             // update quiz answer
             if (quizRequest.getAnswersEntity() != null && !quizRequest.getAnswersEntity().isEmpty()) {
                 List<QuizAnswer> quizAnswers = new ArrayList<>();
