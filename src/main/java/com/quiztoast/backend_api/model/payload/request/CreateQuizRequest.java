@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Builder
 public class CreateQuizRequest {
-    private int categoryId = 1;
+    private int categoryId;
     private Long userId;
     private String title;
     private String description;

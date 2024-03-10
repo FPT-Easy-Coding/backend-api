@@ -63,6 +63,8 @@ public interface ClassroomService {
 
     List<ClassroomQuestionResponse> getClassroomQuestions(int classroomId);
 
+    ClassroomQuestionResponse getQuestionById(int questionId);
+
     List<CommentResponse> getCommentsByQuestion(int questionId);
 
     Comment addComment(CommentRequest commentRequest);

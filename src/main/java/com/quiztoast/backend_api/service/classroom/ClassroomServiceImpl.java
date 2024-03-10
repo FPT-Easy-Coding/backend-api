@@ -45,7 +45,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ClassroomServiceImpl implements com.quiztoast.backend_api.service.classroom.ClassroomService {
+public class ClassroomServiceImpl implements ClassroomService {
     private final ClassroomRepository classroomRepository;
     private final UserRepository userRepository;
     private final QuizRepository quizRepository;
@@ -228,6 +228,14 @@ public class ClassroomServiceImpl implements com.quiztoast.backend_api.service.c
             );
         }
         return classroomQuestionResponses;
+    }
+
+    @Override
+    public ClassroomQuestionResponse getQuestionById(int questionId) {
+        ClassroomQuestion classroomQuestion = classroomQuestionRepository.findByQuestionId(questionId);
+        User user = classroomQuestion.getUser();
+        ClassroomAnswer classroomAnswer = classroomAnswerRepository.findAnswerByQuestionId(classroomQuestion.getClassQuestionId());
+        return ClassroomQuestionMapper.mapClassroomQuestionToClassroomQuestionResponse(classroomQuestion, user, classroomAnswer);
     }
 
     @Override

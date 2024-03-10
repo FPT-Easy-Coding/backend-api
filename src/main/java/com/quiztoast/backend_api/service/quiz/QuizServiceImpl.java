@@ -143,7 +143,7 @@ public class QuizServiceImpl implements QuizService {
         Quiz quiz = QuizMapper.mapCreateRequestToQuiz(createQuizRequest,user,category);
         quizRepository.save(quiz);
         for(CreateQuizQuestionRequest createQuizQuestionRequest : createQuizRequest.getQuestions()){
-            QuizQuestion quizQuestion= quizQuestionServiceImpl.createQuizQuestion(createQuizQuestionRequest);
+            QuizQuestion quizQuestion= quizQuestionServiceImpl.createQuizQuestion(createQuizQuestionRequest,category);
             QuizQuestionMapping.QuizQuestionMappingId id = new QuizQuestionMapping.QuizQuestionMappingId(quiz, quizQuestion);
             QuizQuestionMapping quizQuestionMapping = new QuizQuestionMapping(id);
             quizQuestionMappingRepository.save(quizQuestionMapping);

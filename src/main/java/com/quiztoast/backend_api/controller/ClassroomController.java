@@ -289,6 +289,19 @@ public class ClassroomController {
         }
     }
 
+    @GetMapping("get-classroom-question/question-id={questionId}")
+    public ResponseEntity<ClassroomQuestionResponse> getQuestionById(@PathVariable int questionId) {
+        try {
+            ClassroomQuestionResponse classroomQuestionResponse = classroomServiceImpl.getQuestionById(questionId);
+            if (classroomQuestionResponse == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(classroomQuestionResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     private HttpStatus getHttpStatus(MessageResponse messageResponse) {
         return messageResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
     }

@@ -110,9 +110,9 @@ public class QuizQuestionController {
             }
     )
     @PostMapping("create-quiz-question")
-    public ResponseEntity<?> createQuizQuestionAndAnswers(@Valid @RequestBody QuizQuestionRequest quizRequest) {
+    public ResponseEntity<?> createQuizQuestionAndAnswers(@Valid @RequestBody QuizQuestionDTO quizQuestionDTO) {
 
-        return quizQuestionServiceImpl.createQuizQuestionAndAnswers(quizRequest);
+        return quizQuestionServiceImpl.createQuizQuestionAndAnswers(quizQuestionDTO);
     }
     /**
      * get all QuizQuestion and answer  using a Post request.

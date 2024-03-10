@@ -45,17 +45,19 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     private final QuizQuestionMappingRepository quizQuestionMappingRepository;
 
 
-    @Override
-    public ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers(
-            @Valid
-            @RequestBody QuizQuestionRequest quizQuestionRequest
-    ) {
+    public ResponseEntity<QuizQuestion> createQuizQuestionAndAnswers(QuizQuestionDTO quizQuestionDTO) {
+        if(quizQuestionDTO == null || quizQuestionDTO.getAnswersEntity() == null)
+        {
+            throw  new FormatException("quizQuestionDTO","quizQuestionDTO not exist");
+        }
         try {
-            Category category = categoryRepository.findById(quizQuestionRequest.getCategoryId())
-                    .orElseThrow(() -> new FormatException("category_id", "Category not found"));
+            // Find the category by ID
+            Category category = categoryRepository.findById(quizQuestionDTO.getCategoryId())
+                    .orElseThrow(() -> new FormatException("category_id","Category not found"));
 
+            // Create QuizQuestion
             QuizQuestion quizQuestion = QuizQuestion.builder()
-                    .content(quizQuestionRequest.getQuestionContent())
+                    .content(quizQuestionDTO.getQuestionContent())
                     .categoryId(category)
                     .createdAt(LocalDateTime.now())
                     .build();
@@ -64,10 +66,11 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
             // Create QuizAnswer list
             List<QuizAnswer> quizAnswers = new ArrayList<>();
-            for (QuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
+            for (QuizAnswerDTO answerRequest : quizQuestionDTO.getAnswersEntity()) {
                 QuizAnswer quizAnswer = QuizAnswer.builder()
+                        .quizAnswerId(answerRequest.getAnswerId())
                         .content(answerRequest.getContent())
-                        .isCorrect(answerRequest.isCorrect())
+                        .isCorrect(answerRequest.isIsCorrect())
                         .createdAt(LocalDateTime.now())
                         .quizQuestion(quizQuestion)
                         .build();
@@ -75,15 +78,15 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                 quizAnswers.add(quizAnswer);
             }
 
+            // Save QuizAnswer list
             quizAnswerRepository.saveAll(quizAnswers);
 
-            QuizQuestionDTO quizQuestionDTO = QuizQuestionMapper.mapQuizQuesRequestToDTO(quizQuestionRequest);
-
-            return ResponseEntity.ok(quizQuestionDTO);
-        } catch (Exception e) {
+            return ResponseEntity.ok(quizQuestion);
+        }
+        catch (Exception e) {
+            // Handle other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-
     }
 
     @Override
@@ -115,8 +118,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public QuizQuestion createQuizQuestion(CreateQuizQuestionRequest quizQuestionRequest) {
-        QuizQuestion quizQuestion = QuizQuestionMapper.mapCreateRequestToQuizQuestion(quizQuestionRequest);
+    public QuizQuestion createQuizQuestion(CreateQuizQuestionRequest quizQuestionRequest, Category category) {
+        QuizQuestion quizQuestion = QuizQuestionMapper.mapCreateRequestToQuizQuestion(quizQuestionRequest,category);
         quizQuestionRepository.save(quizQuestion);
         for (CreateQuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
             quizAnswerService.createQuizAnswer(answerRequest, quizQuestion);
