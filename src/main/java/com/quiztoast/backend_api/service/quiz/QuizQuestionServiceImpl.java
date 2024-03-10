@@ -87,50 +87,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-    @Override
-    public ResponseEntity<QuizQuestionDTO> createQuizQuestionAndAnswers(
-            @Valid
-            @RequestBody QuizQuestionRequest quizQuestionRequest
-    ) {
-        try {
-            // Find the category by ID
-            Category category = categoryRepository.findById(quizQuestionDTO.getCategoryId())
-                    .orElseThrow(() -> new FormatException("category_id","Category not found"));
-
-            // Create QuizQuestion
-            QuizQuestion quizQuestion = QuizQuestion.builder()
-                    .content(quizQuestionDTO.getQuestionContent())
-                    .categoryId(category)
-                    .createdAt(LocalDateTime.now())
-                    .build();
-
-            quizQuestionRepository.save(quizQuestion);
-
-            // Create QuizAnswer list
-            List<QuizAnswer> quizAnswers = new ArrayList<>();
-            for (QuizAnswerDTO answerRequest : quizQuestionDTO.getAnswersEntity()) {
-                QuizAnswer quizAnswer = QuizAnswer.builder()
-                        .quizAnswerId(answerRequest.getAnswerId())
-                        .content(answerRequest.getContent())
-                        .isCorrect(answerRequest.isIsCorrect())
-                        .createdAt(LocalDateTime.now())
-                        .quizQuestion(quizQuestion)
-                        .build();
-
-                quizAnswers.add(quizAnswer);
-            }
-
-            // Save QuizAnswer list
-            quizAnswerRepository.saveAll(quizAnswers);
-
-            return ResponseEntity.ok(quizQuestion);
-        }
-        catch (Exception e) {
-            // Handle other exceptions
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
+    
 
     @Override
     public List<QuizQuestion> getAllQuizQuestions() {
