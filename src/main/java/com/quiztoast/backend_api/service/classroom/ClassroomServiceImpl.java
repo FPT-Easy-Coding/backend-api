@@ -272,6 +272,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 Comment.builder()
                         .content(commentRequest.getContent())
                         .user(user)
+                        .createAt(LocalDateTime.now())
                         .classroomQuestion(classroomQuestion)
                         .build()
         );
@@ -319,6 +320,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 ReplyComment.builder()
                         .content(replyRequest.getContent())
                         .user(user)
+                        .createAt(LocalDateTime.now())
                         .comment(comment)
                         .build()
         );

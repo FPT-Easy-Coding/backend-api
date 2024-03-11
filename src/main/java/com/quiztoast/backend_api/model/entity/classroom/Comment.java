@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -26,6 +28,9 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "class_question_id")
     private ClassroomQuestion classroomQuestion;
+
+    @Column(name = "create_at")
+    private LocalDateTime createAt;
 
     @Column(name = "content", nullable = false, length = 1000)
     private String content;

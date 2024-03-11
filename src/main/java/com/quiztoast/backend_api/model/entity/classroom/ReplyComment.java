@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -26,6 +28,9 @@ public class ReplyComment {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "create_at")
+    private LocalDateTime createAt;
 
     @Column(name = "content")
     private String content;

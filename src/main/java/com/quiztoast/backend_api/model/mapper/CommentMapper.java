@@ -14,6 +14,7 @@ public class CommentMapper {
                 .userName(comment.getUser().getUserName())
                 .userId(comment.getUser().getUserId())
                 .content(comment.getContent())
+                .createAt(comment.getCreateAt())
                 .questionId(comment.getClassroomQuestion().getClassQuestionId())
                 .replyComments(
                         replyComments.stream()

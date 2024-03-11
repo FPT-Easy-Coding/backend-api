@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -16,6 +18,7 @@ public class CommentResponse {
     private int questionId;
     private String userName;
     private Long userId;
+    private LocalDateTime createAt;
     private String content;
     private List<ReplyCommentResponse> replyComments;
 }
