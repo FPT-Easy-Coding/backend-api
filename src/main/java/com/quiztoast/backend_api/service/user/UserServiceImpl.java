@@ -8,12 +8,13 @@ import com.quiztoast.backend_api.model.entity.token.VerificationToken;
 import com.quiztoast.backend_api.model.entity.user.Provider;
 import com.quiztoast.backend_api.model.entity.user.User;
 
-import com.quizztoast.backendAPI.model.mapper.QuizMapper;
-import com.quizztoast.backendAPI.model.payload.request.UserUpdateRequest;
-import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
-import com.quizztoast.backendAPI.repository.*;
-import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
-import com.quizztoast.backendAPI.security.auth.RegistrationRequest;
+import com.quiztoast.backend_api.model.mapper.QuizMapper;
+import com.quiztoast.backend_api.model.payload.request.ChangePasswordRequest;
+import com.quiztoast.backend_api.model.payload.request.UserUpdateRequest;
+
+import com.quiztoast.backend_api.model.payload.response.QuizSetResponse;
+import com.quiztoast.backend_api.repository.*;
+import com.quiztoast.backend_api.security.auth.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -266,16 +267,16 @@ public class UserServiceImpl implements UserService {
         userRepository.save(existingUser);
         return ResponseEntity.ok(request);
     }
-@Override
-public ResponseEntity<?> updateAvatarUser(long userId, String avatar) {
-    User existingUser = userRepository.findByUserId(userId);
-    if (existingUser == null) {
-        throw new FormatException("userId", "userId not found");
+    @Override
+    public ResponseEntity<?> updateAvatarUser(long userId, String avatar) {
+        User existingUser = userRepository.findByUserId(userId);
+        if (existingUser == null) {
+            throw new FormatException("userId", "userId not found");
+        }
+        avatar = avatar.replaceAll("^\"|\"$", "");
+        existingUser.setAvatar(avatar);
+        userRepository.save(existingUser);
+        return ResponseEntity.ok(avatar);
     }
-    avatar = avatar.replaceAll("^\"|\"$", "");
-    existingUser.setAvatar(avatar);
-    userRepository.save(existingUser);
-    return ResponseEntity.ok(avatar);
-}
 
 }

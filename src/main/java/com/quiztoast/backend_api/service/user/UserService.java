@@ -3,9 +3,9 @@ package com.quiztoast.backend_api.service.user;
 import com.quiztoast.backend_api.model.entity.token.VerificationToken;
 import com.quiztoast.backend_api.model.entity.user.User;
 
-import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
-import com.quizztoast.backendAPI.model.payload.request.UserUpdateRequest;
-import com.quizztoast.backendAPI.security.auth.RegistrationRequest;
+import com.quiztoast.backend_api.model.payload.request.ChangePasswordRequest;
+import com.quiztoast.backend_api.model.payload.request.UserUpdateRequest;
+import com.quiztoast.backend_api.security.auth.RegistrationRequest;
 
 import org.springframework.http.ResponseEntity;
 

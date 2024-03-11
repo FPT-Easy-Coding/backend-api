@@ -1,4 +1,4 @@
-package com.quizztoast.backendAPI.model.payload.request;
+package com.quiztoast.backend_api.model.payload.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
