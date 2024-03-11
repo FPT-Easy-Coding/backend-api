@@ -267,13 +267,15 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(request);
     }
 @Override
-    public ResponseEntity<?> updateAvaatarUser(long userId, String avatar) {
+public ResponseEntity<?> updateAvatarUser(long userId, String avatar) {
     User existingUser = userRepository.findByUserId(userId);
     if (existingUser == null) {
         throw new FormatException("userId", "userId not found");
     }
+    avatar = avatar.replaceAll("^\"|\"$", "");
     existingUser.setAvatar(avatar);
     userRepository.save(existingUser);
-        return ResponseEntity.ok(avatar);
-    }
+    return ResponseEntity.ok(avatar);
+}
+
 }

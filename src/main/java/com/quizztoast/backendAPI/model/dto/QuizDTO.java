@@ -21,7 +21,7 @@ public class QuizDTO {
     private String avatar;
     private String accountTpye;
     private String quizName;
-    private double rate;
+    private float rate;
     private int numberOfQuestions;
     private LocalDateTime createAt;
     private Long view;

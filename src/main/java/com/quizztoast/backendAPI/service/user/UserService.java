@@ -41,5 +41,5 @@ public interface UserService {
     ResponseEntity<?> getProfileUserCreateQuiz(int quizId);
     ResponseEntity<UserUpdateRequest> updateProfileUser(long userId,UserUpdateRequest request);
 
-    ResponseEntity<?> updateAvaatarUser(long userId, String avatar);
+    ResponseEntity<?> updateAvatarUser(long userId, String avatar);
 }

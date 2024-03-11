@@ -22,6 +22,7 @@ public class QuizMapper {
                 .avatar(quiz.getUser().getAvatar())
                 .accountTpye(quiz.getUser().getAccountType())
                 .view(quiz.getViewOfQuiz())
+                .rate(rateQuizRepository.averageRateOfQuiz(quiz.getQuizId()) != null ? rateQuizRepository.averageRateOfQuiz(quiz.getQuizId()): 0 )
                 .numberOfQuestions(numberOfQuestion)
                 .createAt(quiz.getCreatedAt())
                 .timeRecentViewQuiz(quiz.getTimeRecentViewQuiz())
