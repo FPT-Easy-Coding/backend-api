@@ -1,14 +1,15 @@
 package com.quiztoast.backend_api.controller;
 
-import com.quiztoast.backend_api.exception.FormatException;
-import com.quiztoast.backend_api.model.dto.QuizDTO;
-import com.quiztoast.backend_api.model.dto.UserDTO;
-import com.quiztoast.backend_api.model.payload.response.QuizSetResponse;
-import com.quiztoast.backend_api.model.payload.response.SimpleErrorResponse;
-import com.quiztoast.backend_api.model.payload.response.UserProfileResponse;
-import com.quiztoast.backend_api.model.entity.user.User;
-import com.quiztoast.backend_api.model.mapper.UserMapper;
-import com.quiztoast.backend_api.model.payload.request.ChangePasswordRequest;
+import com.quizztoast.backendAPI.exception.FormatException;
+import com.quizztoast.backendAPI.model.dto.QuizDTO;
+import com.quizztoast.backendAPI.model.dto.UserDTO;
+import com.quizztoast.backendAPI.model.payload.request.UserUpdateRequest;
+import com.quizztoast.backendAPI.model.payload.response.QuizSetResponse;
+import com.quizztoast.backendAPI.model.payload.response.SimpleErrorResponse;
+import com.quizztoast.backendAPI.model.payload.response.UserProfileResponse;
+import com.quizztoast.backendAPI.model.entity.user.User;
+import com.quizztoast.backendAPI.model.mapper.UserMapper;
+import com.quizztoast.backendAPI.model.payload.request.ChangePasswordRequest;
 
 import com.quiztoast.backend_api.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -269,6 +270,21 @@ public class UserController {
         {
             return ResponseEntity.notFound().build();
         }
+    }
+    @RequestMapping(value="/update-profile-user", method = RequestMethod.PUT)
+    public ResponseEntity<UserUpdateRequest> updateProfileUser(
+            @RequestParam(name = "id") long userId,
+            @RequestBody UserUpdateRequest request)
+    {
+        return userServiceImpl.updateProfileUser(userId,request);
+    }
+
+    @RequestMapping(value="/update-avatar-user", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateAvaatarUser(
+            @RequestParam(name = "id") long userId,
+            @RequestBody String avatar)
+    {
+        return userServiceImpl.updateAvatarUser(userId,avatar);
     }
 
 }

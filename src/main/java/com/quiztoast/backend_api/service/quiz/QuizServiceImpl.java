@@ -376,6 +376,9 @@ public class QuizServiceImpl implements QuizService {
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
+        if (rateQuizRepository.averageRateOfQuiz(quizId)==null) {
+            return (float) 0;
+        }
         Quiz quiz = quizRepository.getQuizById(quizId);
         return rateQuizRepository.averageRateOfQuiz(quizId);
     }
