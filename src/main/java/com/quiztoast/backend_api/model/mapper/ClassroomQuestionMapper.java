@@ -19,6 +19,7 @@ public class ClassroomQuestionMapper {
                 .createAt(classroomQuestion.getCreateAt())
                 .isAnswered(classroomQuestion.isAnswered())
                 .userName(user.getUserName())
+                .userId(user.getUserId())
                 .userFirstName(user.getFirstName())
                 .userLastName(user.getLastName())
                 .classroomAnswerResponse(

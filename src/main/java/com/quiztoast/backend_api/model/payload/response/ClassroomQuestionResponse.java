@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ClassroomQuestionResponse {
     private int classQuestionId;
+    private Long userId;
     private String title;
     private String content;
     private ClassroomAnswerResponse classroomAnswerResponse;
