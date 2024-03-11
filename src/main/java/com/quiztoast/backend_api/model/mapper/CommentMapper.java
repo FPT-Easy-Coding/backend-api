@@ -12,6 +12,7 @@ public class CommentMapper {
         return CommentResponse.builder()
                 .commentId(comment.getCommentId())
                 .userName(comment.getUser().getUserName())
+                .userId(comment.getUser().getUserId())
                 .content(comment.getContent())
                 .questionId(comment.getClassroomQuestion().getClassQuestionId())
                 .replyComments(

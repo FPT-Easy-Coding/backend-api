@@ -87,7 +87,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    
+
 
     @Override
     public List<QuizQuestion> getAllQuizQuestions() {

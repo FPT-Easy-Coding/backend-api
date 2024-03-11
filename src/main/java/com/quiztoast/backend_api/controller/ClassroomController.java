@@ -13,9 +13,7 @@ import com.quiztoast.backend_api.model.entity.quiz.Quiz;
 import com.quiztoast.backend_api.model.entity.user.User;
 
 import com.quiztoast.backend_api.model.mapper.QuizMapper;
-import com.quiztoast.backend_api.model.payload.request.ClassroomRequest;
-import com.quiztoast.backend_api.model.payload.request.CommentRequest;
-import com.quiztoast.backend_api.model.payload.request.ReplyCommentRequest;
+import com.quiztoast.backend_api.model.payload.request.*;
 
 import com.quiztoast.backend_api.model.payload.response.ClassMemberResponse;
 import com.quiztoast.backend_api.model.payload.response.ClassroomQuestionResponse;
@@ -26,7 +24,6 @@ import com.quiztoast.backend_api.model.payload.response.MessageResponse;
 import com.quiztoast.backend_api.model.payload.response.QuizSetResponse;
 import com.quiztoast.backend_api.repository.QuizBelongClassroomRepository;
 import com.quiztoast.backend_api.repository.UserBelongClassroomRepository;
-import com.quiztoast.backend_api.model.payload.request.AnswerRequest;
 import com.quiztoast.backend_api.service.classroom.ClassroomServiceImpl;
 import com.quiztoast.backend_api.service.quiz.QuizServiceImpl;
 import com.quiztoast.backend_api.service.user.UserServiceImpl;
@@ -299,6 +296,67 @@ public class ClassroomController {
             return ResponseEntity.ok(classroomQuestionResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/add-question")
+    public ResponseEntity<MessageResponse> addQuestion(@RequestBody CreateClassQuestionRequest createClassQuestionRequest) {
+        try {
+            classroomServiceImpl.addQuestionToClassroom(createClassQuestionRequest);
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .success(true)
+                            .msg("Add question successfully")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error adding question: " + e.getMessage())
+                            .build());
+        }
+
+    }
+
+    @PutMapping("/update-question")
+    public ResponseEntity<MessageResponse> updateQuestion(
+            @RequestBody UpdateClassQuestionRequest updateClassQuestionRequest) {
+        try {
+            classroomServiceImpl.updateQuestionInClassroom(updateClassQuestionRequest);
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .success(true)
+                            .msg("Update question successfully")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error updating question: " + e.getMessage())
+                            .build());
+        }
+
+    }
+
+    @DeleteMapping("/delete-question/question-id={questionId}&classroom-id={classroomId}")
+    public ResponseEntity<MessageResponse> deleteQuestion
+            (
+                    @PathVariable int questionId,
+                    @PathVariable int classroomId
+            ) {
+        try {
+            classroomServiceImpl.removeQuestionFromClassroom(classroomId, questionId);
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .success(true)
+                            .msg("Delete question successfully")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error deleting question: " + e.getMessage())
+                            .build());
         }
     }
 

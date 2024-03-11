@@ -14,6 +14,7 @@ public class ReplyCommentResponse {
     private String userName;
     private String content;
     private Long replyCommentId;
+    private Long userId;
     private Long commentId;
 
 }

@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Builder
 public class UpdateClassQuestionRequest {
-    private Long userId;
     private int classroomId;
     private int questionId;
     private String title;

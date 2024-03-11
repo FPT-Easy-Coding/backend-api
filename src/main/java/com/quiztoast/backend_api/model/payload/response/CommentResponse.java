@@ -15,6 +15,7 @@ public class CommentResponse {
     private Long commentId;
     private int questionId;
     private String userName;
+    private Long userId;
     private String content;
     private List<ReplyCommentResponse> replyComments;
 }

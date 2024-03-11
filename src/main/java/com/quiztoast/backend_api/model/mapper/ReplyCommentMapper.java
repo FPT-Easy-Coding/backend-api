@@ -8,6 +8,7 @@ public class ReplyCommentMapper {
         return ReplyCommentResponse.builder()
                 .replyCommentId(replyComment.getReplyCommentId())
                 .userName(replyComment.getUser().getUserName())
+                .userId(replyComment.getUser().getUserId())
                 .content(replyComment.getContent())
                 .commentId(replyComment.getComment().getCommentId())
                 .build();
