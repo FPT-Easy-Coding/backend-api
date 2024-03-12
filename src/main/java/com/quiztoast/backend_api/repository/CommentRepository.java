@@ -30,4 +30,5 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     void updateComment(Long commentId, String content);
 
     Comment findByCommentId(Long commentId);
+
 }

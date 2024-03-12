@@ -129,6 +129,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void deleteClassroom(Classroom classroom) {
         userBelongClassroomRepository.deleteUsersByClassroom(classroom);
         quizBelongClassroomRepository.deleteQuizSetsByClassroom(classroom);
+
         classroomRepository.deleteById(classroom.getClassroomId());
     }
 
@@ -169,6 +170,12 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void removeQuestionFromClassroom(int classroomId, int questionId) {
+        List<Comment> commentList = commentRepository.findAllCommentsByQuestion(questionId);
+        for (Comment comment : commentList) {
+            deleteComment(comment.getCommentId());
+        }
+        ClassroomAnswer classroomAnswer = classroomAnswerRepository.findAnswerByQuestionId(questionId);
+        classroomAnswerRepository.delete(classroomAnswer);
         classroomQuestionRepository.deleteQuestionFromClassroom(classroomId, questionId);
     }
 
@@ -298,6 +305,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findByCommentId(commentId);
+        List<ReplyComment> replyComments = replyCommentRepository.findAllByComment(comment);
+        replyCommentRepository.deleteAll(replyComments);
         commentRepository.deleteComment(commentId);
     }
 
