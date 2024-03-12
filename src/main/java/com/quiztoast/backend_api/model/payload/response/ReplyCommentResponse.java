@@ -15,7 +15,7 @@ public class ReplyCommentResponse {
 
     private String userName;
     private String content;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private Long replyCommentId;
     private Long userId;
     private Long commentId;

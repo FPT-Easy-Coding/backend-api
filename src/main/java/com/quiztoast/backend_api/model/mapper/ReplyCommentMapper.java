@@ -9,7 +9,7 @@ public class ReplyCommentMapper {
                 .replyCommentId(replyComment.getReplyCommentId())
                 .userName(replyComment.getUser().getUserName())
                 .userId(replyComment.getUser().getUserId())
-                .createAt(replyComment.getCreateAt())
+                .createdAt(replyComment.getCreateAt())
                 .content(replyComment.getContent())
                 .commentId(replyComment.getComment().getCommentId())
                 .build();
