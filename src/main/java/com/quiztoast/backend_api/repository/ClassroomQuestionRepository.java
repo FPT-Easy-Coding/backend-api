@@ -19,6 +19,7 @@ public interface ClassroomQuestionRepository extends JpaRepository<ClassroomQues
 
 
     @Query(value = "DELETE FROM ClassroomQuestion cq WHERE cq.classQuestionId = :questionId AND cq.classroom.classroomId = :classroomId")
+    @Modifying
     void deleteQuestionFromClassroom(int classroomId, int questionId);
 
 }
