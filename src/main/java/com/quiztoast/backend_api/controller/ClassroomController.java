@@ -410,9 +410,9 @@ public class ClassroomController {
     }
 
     @PutMapping("/update-comment/{commentId}")
-    public ResponseEntity<MessageResponse> updateComment(@PathVariable Long commentId, @RequestBody String content) {
+    public ResponseEntity<MessageResponse> updateComment(@PathVariable Long commentId, @RequestBody CommonUpdateRequest commonUpdateRequest) {
         try {
-            classroomServiceImpl.updateComment(commentId, content);
+            classroomServiceImpl.updateComment(commentId, commonUpdateRequest.getContent());
             return ResponseEntity.ok(
                     MessageResponse.builder()
                             .success(true)
@@ -501,9 +501,9 @@ public class ClassroomController {
     }
 
     @PutMapping("/update-reply/{replyId}")
-    public ResponseEntity<MessageResponse> updateReply(@PathVariable Long replyId, @RequestBody String content) {
+    public ResponseEntity<MessageResponse> updateReply(@PathVariable Long replyId, @RequestBody CommonUpdateRequest commonUpdateRequest) {
         try {
-            classroomServiceImpl.updateReply(replyId, content);
+            classroomServiceImpl.updateReply(replyId, commonUpdateRequest.getContent());
             return ResponseEntity.ok(
                     MessageResponse.builder()
                             .success(true)
@@ -577,9 +577,9 @@ public class ClassroomController {
     }
 
     @PutMapping("/update-answer/{answerId}")
-    public ResponseEntity<MessageResponse> updateAnswer(@PathVariable int answerId, @RequestBody String content) {
+    public ResponseEntity<MessageResponse> updateAnswer(@PathVariable int answerId, @RequestBody CommonUpdateRequest commonUpdateRequest) {
         try {
-            classroomServiceImpl.updateAnswer(answerId, content);
+            classroomServiceImpl.updateAnswer(answerId, commonUpdateRequest.getContent());
             return ResponseEntity.ok(
                     MessageResponse.builder()
                             .success(true)
