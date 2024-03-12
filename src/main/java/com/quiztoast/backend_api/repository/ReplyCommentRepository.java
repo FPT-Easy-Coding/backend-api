@@ -18,8 +18,6 @@ public interface ReplyCommentRepository extends JpaRepository<ReplyComment, Long
     @Query(value = "DELETE FROM ReplyComment rc WHERE rc.replyCommentId = :replyId")
     @Modifying
     void deleteReply(Long replyId);
-
-    @Query(value = "UPDATE ReplyComment rc SET rc.content = :content WHERE rc.replyCommentId = :replyId")
-    @Modifying
-    void updateReply(Long replyId, String content);
+    @Query(value = "SELECT rc FROM ReplyComment rc WHERE rc.replyCommentId = :replyId")
+    ReplyComment findByReplyId(Long replyId);
 }

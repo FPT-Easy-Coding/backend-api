@@ -12,8 +12,6 @@ public interface ClassroomAnswerRepository extends JpaRepository<ClassroomAnswer
     @Query(value = "DELETE FROM ClassroomAnswer a WHERE a.classAnswerId = :answerId")
     @Modifying
     void deleteAnswer(int answerId);
-
-    @Query(value = "UPDATE ClassroomAnswer a SET a.content = :content WHERE a.classAnswerId = :answerId")
-    @Modifying
-    void updateAnswer(int answerId, String content);
+    @Query(value = "SELECT a FROM ClassroomAnswer a WHERE a.classAnswerId = :answerId")
+    ClassroomAnswer findByAnswerId(int answerId);
 }

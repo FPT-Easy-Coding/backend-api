@@ -303,7 +303,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void updateComment(Long commentId, String content) {
-        commentRepository.updateComment(commentId, content);
+        Comment comment = commentRepository.findByCommentId(commentId);
+        comment.setContent(content);
+        commentRepository.save(comment);
     }
 
     @Override
@@ -333,7 +335,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void updateReply(Long replyId, String content) {
-        replyCommentRepository.updateReply(replyId, content);
+        ReplyComment replyComment = replyCommentRepository.findByReplyId(replyId);
+        replyComment.setContent(content);
+        replyCommentRepository.save(replyComment);
     }
 
 
@@ -369,6 +373,8 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void updateAnswer(int answerId, String content) {
-        classroomAnswerRepository.updateAnswer(answerId, content);
+        ClassroomAnswer classroomAnswer = classroomAnswerRepository.findByAnswerId(answerId);
+        classroomAnswer.setContent(content);
+        classroomAnswerRepository.save(classroomAnswer);
     }
 }
