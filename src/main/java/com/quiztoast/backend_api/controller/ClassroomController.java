@@ -130,12 +130,22 @@ public class ClassroomController {
 
     @DeleteMapping("/delete-classroom/class-id={classId}")
     public ResponseEntity<MessageResponse> deleteClassroom(@PathVariable int classId) {
-        Classroom classroom = classroomServiceImpl.findClassroomById(classId);
-        classroomServiceImpl.deleteClassroom(classroom);
-        return ResponseEntity.ok(MessageResponse.builder()
-                .success(true)
-                .msg("Delete classroom successfully")
-                .build());
+        try {
+            Classroom classroom = classroomServiceImpl.findClassroomById(classId);
+            classroomServiceImpl.deleteClassroom(classroom);
+            return ResponseEntity.ok(MessageResponse.builder()
+                    .success(true)
+                    .msg("Delete classroom successfully")
+                    .build());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error deleting classroom: " + e.getMessage())
+                            .build()
+            );
+        }
     }
 
 

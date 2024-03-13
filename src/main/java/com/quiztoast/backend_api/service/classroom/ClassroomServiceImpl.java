@@ -127,9 +127,18 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void deleteClassroom(Classroom classroom) {
-        userBelongClassroomRepository.deleteUsersByClassroom(classroom);
-        quizBelongClassroomRepository.deleteQuizSetsByClassroom(classroom);
-
+        List<UserBelongClassroom> userBelongClassrooms = userBelongClassroomRepository.findByClassroomId(classroom.getClassroomId());
+        if (userBelongClassrooms != null && !userBelongClassrooms.isEmpty()) {
+            userBelongClassroomRepository.deleteUsersByClassroom(classroom);
+        }
+       List<QuizBelongClassroom> quizBelongClassrooms = quizBelongClassroomRepository.findByIdClassroom(classroom);
+        if (quizBelongClassrooms != null && !quizBelongClassrooms.isEmpty()) {
+            quizBelongClassroomRepository.deleteQuizSetsByClassroom(classroom);
+        }
+        List<ClassroomQuestion> classroomQuestions = classroomQuestionRepository.findByClassroomId(classroom.getClassroomId());
+        for (ClassroomQuestion classroomQuestion : classroomQuestions) {
+            removeQuestionFromClassroom(classroomQuestion.getClassroom().getClassroomId(), classroomQuestion.getClassQuestionId());
+        }
         classroomRepository.deleteById(classroom.getClassroomId());
     }
 
@@ -171,11 +180,15 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public void removeQuestionFromClassroom(int classroomId, int questionId) {
         List<Comment> commentList = commentRepository.findAllCommentsByQuestion(questionId);
-        for (Comment comment : commentList) {
-            deleteComment(comment.getCommentId());
+        if (commentList != null && !commentList.isEmpty()) {
+            for (Comment comment : commentList) {
+                deleteComment(comment.getCommentId());
+            }
         }
         ClassroomAnswer classroomAnswer = classroomAnswerRepository.findAnswerByQuestionId(questionId);
-        classroomAnswerRepository.delete(classroomAnswer);
+        if (classroomAnswer != null) {
+            classroomAnswerRepository.deleteAnswer(classroomAnswer.getClassAnswerId());
+        }
         classroomQuestionRepository.deleteQuestionFromClassroom(classroomId, questionId);
     }
 
@@ -307,7 +320,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findByCommentId(commentId);
         List<ReplyComment> replyComments = replyCommentRepository.findAllByComment(comment);
-        replyCommentRepository.deleteAll(replyComments);
+        for (ReplyComment replyComment : replyComments) {
+            replyCommentRepository.deleteReply(replyComment.getReplyCommentId());
+        }
         commentRepository.deleteComment(commentId);
     }
 
