@@ -15,7 +15,7 @@ public interface FolderService {
 
     public void deleteFolder(Folder folder);
 
-    public Folder updateFolder(Folder folder);
+    public Folder updateFolder(Long id,FolderRequest folderRequest);
 
     public Folder getFolderById(Long id);
     public List<Folder> getFolderByUser(User user);

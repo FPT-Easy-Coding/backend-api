@@ -175,6 +175,30 @@ public class FolderController {
         }
     }
 
+    @PutMapping("/update/folder-id={folderId}")
+    public ResponseEntity<MessageResponse> updateFolder(@PathVariable Long folderId, @RequestBody FolderRequest folderRequest) {
+        try {
+            Folder folder = folderServiceImpl.updateFolder(folderId, folderRequest);
+            if (folder == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        MessageResponse.builder()
+                                .success(false)
+                                .msg("Folder not found")
+                                .build());
+            }
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .success(true)
+                            .msg("Folder updated")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error updating folder: " + e.getMessage())
+                            .build());
+    }}
+
     @PostMapping("/create-folder")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<MessageResponse> createFolder(@RequestBody FolderRequest folderRequest) {

@@ -46,8 +46,13 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public Folder updateFolder(Folder folder) {
-        return null;
+    public Folder updateFolder( Long id,FolderRequest request) {
+        Folder updateFolder = folderRepository.findById(id).orElse(null);
+        if (updateFolder == null) {
+            return null;
+        }
+        updateFolder.setFolderName(request.getFolderName());
+        return folderRepository.save(updateFolder);
     }
 
     @Override
