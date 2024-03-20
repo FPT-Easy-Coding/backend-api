@@ -97,7 +97,10 @@ public class ClassroomServiceImpl implements ClassroomService {
     public Classroom createClassroom(ClassroomRequest classroomRequest) {
         User user = userRepository.findByUserId(classroomRequest.getUserId());
         Classroom classroom = ClassroomMapper.mapClassroomRequestToClassroom(classroomRequest, user);
-        return classroomRepository.save(classroom);
+        UserBelongClassroom userBelongClassroom = new UserBelongClassroom();
+        userBelongClassroom.setId(new UserBelongClassroom.UserBelongClassroomId(user, classroom));
+        classroomRepository.save(classroom);
+        return classroom;
     }
 
     @Override

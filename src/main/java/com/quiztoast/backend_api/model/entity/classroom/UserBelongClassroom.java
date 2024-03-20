@@ -32,6 +32,15 @@ public class UserBelongClassroom {
         @JoinColumn(name = "class_id")
         private Classroom classroom;
 
+        public UserBelongClassroomId(User user, Classroom classroom) {
+            this.user = user;
+            this.classroom = classroom;
+        }
+
+        public UserBelongClassroomId() {
+
+        }
+
         // Constructors, getters, setters, etc.
     }
 
