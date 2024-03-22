@@ -17,7 +17,7 @@ public interface QuizService {
 
     ResponseEntity<QuizDTO> createQuiz(QuizRequest quizRequest);
     Quiz createQuizSet(CreateQuizRequest createQuizRequest);
-    ResponseEntity<String> deleteQuizById(int quiz_id);
+    ResponseEntity<String> deleteQuizById(int quiz_id,long userId);
 
     ResponseEntity<QuizDTO> updateQuiz(int quizId, QuizRequest quizRequest);
 

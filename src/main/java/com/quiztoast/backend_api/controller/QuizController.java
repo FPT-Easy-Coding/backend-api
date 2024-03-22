@@ -315,8 +315,12 @@ public class QuizController {
 )
 
 @DeleteMapping("/delete-quiz")
-public ResponseEntity<String> deleteQuiz(@RequestParam(name = "id") int quizId) {
-    return quizServiceImpl.deleteQuizById(quizId);
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
+public ResponseEntity<String> deleteQuiz(
+        @RequestParam(name = "id") int quizId
+        ,  @RequestParam("user-id") long userId
+) {
+    return quizServiceImpl.deleteQuizById(quizId,userId);
 }
 
 /**
