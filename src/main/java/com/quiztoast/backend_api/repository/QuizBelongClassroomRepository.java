@@ -26,4 +26,13 @@ public interface QuizBelongClassroomRepository extends JpaRepository<QuizBelongC
 
     @Query("SELECT q FROM QuizBelongClassroom q WHERE q.id.classroom.classroomId = :classroomId AND q.id.quiz.quizId = :quizId")
     QuizBelongClassroom findByIdClassroomAndQuiz(int classroomId, int quizId);
+
+    @Modifying
+    @Query("SELECT q FROM QuizBelongClassroom q WHERE q.id.quiz.quizId = :quizId")
+    List<QuizBelongClassroom> findQuizId(int quizId);
+
+    @Modifying
+    @Query("DELETE FROM QuizBelongClassroom q WHERE q.id.quiz.quizId = :quizId")
+    void deleteQuizSetsByQuizId(int quizId);
+
 }

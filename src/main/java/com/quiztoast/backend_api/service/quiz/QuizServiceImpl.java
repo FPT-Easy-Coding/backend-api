@@ -12,16 +12,7 @@ import com.quiztoast.backend_api.model.payload.response.QuizQuestionResponse;
 import com.quiztoast.backend_api.model.payload.response.QuestionData;
 import com.quiztoast.backend_api.model.payload.response.RateQuizResponse;
 
-import com.quiztoast.backend_api.repository.CategoryRepository;
-import com.quiztoast.backend_api.repository.CreateQuizCategoryRepository;
-import com.quiztoast.backend_api.repository.DoQuizRepository;
-import com.quiztoast.backend_api.repository.QuizAnswerRepository;
-import com.quiztoast.backend_api.repository.QuizQuestionMappingRepository;
-import com.quiztoast.backend_api.repository.QuizQuestionRepository;
-import com.quiztoast.backend_api.repository.QuizRepository;
-import com.quiztoast.backend_api.repository.RateQuizRepository;
-import com.quiztoast.backend_api.repository.TokenRepository;
-import com.quiztoast.backend_api.repository.UserRepository;
+import com.quiztoast.backend_api.repository.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +44,8 @@ public class QuizServiceImpl implements QuizService {
     private final RateQuizRepository rateQuizRepository;
     private final TokenRepository tokenRepository;
     private final QuizQuestionServiceImpl quizQuestionServiceImpl;
+    private final QuizBelongFolderRepository quizBelongFolderRepository;
+    private final QuizBelongClassroomRepository quizBelongClassroomRepository;
     @Override
     public List<QuizDTO> getAllQuiz() {
         List<Quiz> quizzes = quizRepository.findAll();
@@ -170,9 +163,21 @@ public class QuizServiceImpl implements QuizService {
 
         //delete quiz in quiz_question_mapping
         quizQuestionMappingRepository.deleteByQuizId(quizId);
-        //delete quiz_question
-
-        //delete quiz_answer
+        // delete quiz in quiz_rating
+        if(rateQuizRepository.findQuizByQuizId(quizId)!=null)
+        {
+            rateQuizRepository.deleteByQuizId(quizId);
+        }
+        //delete quiz in quiz_belong_folder
+if(quizBelongFolderRepository.findByQuizId(quizId)!=null)
+{
+quizBelongFolderRepository.deleteQuizBelongFolderByQuizID(quizId);
+}
+        //delete quiz in quiz_belong_class
+if(quizBelongClassroomRepository.findQuizId(quizId)!=null)
+{
+quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
+}
         // delete quiz
         quizRepository.deleteQuizById(quizId);
 
