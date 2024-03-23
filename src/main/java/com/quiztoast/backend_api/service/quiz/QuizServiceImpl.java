@@ -153,17 +153,17 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-    public ResponseEntity<String> deleteQuizById(int quizId,long userId) {
+    public ResponseEntity<String> deleteQuizById(int quizId,UserRequest userId) {
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
         // Check user_id must be in User table
-        if (!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId.getUserId())) {
             throw new FormatException("userId", "userId not found");
         }
         //check user delete quiz
         Quiz quiz = quizRepository.getQuizById(quizId);
-        if(quiz.getUser().getUserId() != userId)
+        if(quiz.getUser().getUserId() != userId.getUserId())
         {
             throw new FormatException("userId", "userId doesn't match! ");
         }
