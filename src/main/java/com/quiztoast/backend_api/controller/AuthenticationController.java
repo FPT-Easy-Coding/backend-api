@@ -294,6 +294,7 @@ public class AuthenticationController {
         Optional<User> theUser = userServiceImpl.getUserByPasswordResetToken(passwordResetToken);
         if (theUser.isPresent()) {
             userServiceImpl.resetUserPassword(theUser.get(), passwordResetRequest.getNewPassword());
+            userServiceImpl.deletePasswordResetTokenForUser(theUser.get());
             return ResponseEntity.ok(new MessageResponse(true, "Password has been reset successfully"));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "Invalid password reset token"));

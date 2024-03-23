@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.naming.directory.SearchResult;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -42,4 +44,8 @@ public interface QuizRepository extends JpaRepository<Quiz,Long> {
     List<Quiz> findQuizByCategory(int categoryId);
     @Query("SELECT q.rate FROM Quiz q WHERE q.quizId = :quizId")
     Integer findRateByQuizId(int quizId);
+
+
+    @Query("SELECT q FROM Quiz q WHERE q.quizName LIKE %:keywords%")
+    List<Quiz> searchByName(String keywords);
 }

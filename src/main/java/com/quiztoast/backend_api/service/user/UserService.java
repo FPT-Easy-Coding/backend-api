@@ -41,4 +41,6 @@ public interface UserService {
     ResponseEntity<UserUpdateRequest> updateProfileUser(long userId,UserUpdateRequest request);
 
     ResponseEntity<?> updateAvatarUser(long userId, String avatar);
+
+    void deletePasswordResetTokenForUser(User user);
 }
