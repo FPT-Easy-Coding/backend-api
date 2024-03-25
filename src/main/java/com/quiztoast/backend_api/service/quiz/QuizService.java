@@ -6,6 +6,7 @@ import com.quiztoast.backend_api.model.entity.quiz.Quiz;
 import com.quiztoast.backend_api.model.entity.user.User;
 import com.quiztoast.backend_api.model.payload.request.CreateQuizRequest;
 import com.quiztoast.backend_api.model.payload.request.QuizRequest;
+import com.quiztoast.backend_api.model.payload.request.UserRequest;
 import com.quiztoast.backend_api.model.payload.response.RateQuizResponse;
 import org.springframework.http.ResponseEntity;
 
@@ -17,7 +18,7 @@ public interface QuizService {
 
     ResponseEntity<QuizDTO> createQuiz(QuizRequest quizRequest);
     Quiz createQuizSet(CreateQuizRequest createQuizRequest);
-    ResponseEntity<String> deleteQuizById(int quiz_id);
+    ResponseEntity<String> deleteQuizById(int quiz_id, UserRequest userId);
 
     ResponseEntity<QuizDTO> updateQuiz(int quizId, QuizRequest quizRequest);
 

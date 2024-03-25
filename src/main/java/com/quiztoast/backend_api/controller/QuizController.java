@@ -9,6 +9,7 @@ import com.quiztoast.backend_api.model.mapper.QuizMapper;
 import com.quiztoast.backend_api.model.payload.request.CreateQuizRequest;
 import com.quiztoast.backend_api.model.payload.request.QuizRequest;
 import com.quiztoast.backend_api.model.payload.request.RateQuizRequest;
+import com.quiztoast.backend_api.model.payload.request.UserRequest;
 import com.quiztoast.backend_api.model.payload.response.MessageResponse;
 import com.quiztoast.backend_api.model.payload.response.QuizSetResponse;
 import com.quiztoast.backend_api.model.payload.response.RateQuizResponse;
@@ -315,8 +316,12 @@ public class QuizController {
 )
 
 @DeleteMapping("/delete-quiz")
-public ResponseEntity<String> deleteQuiz(@RequestParam(name = "id") int quizId) {
-    return quizServiceImpl.deleteQuizById(quizId);
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
+public ResponseEntity<String> deleteQuiz(
+        @RequestParam(name = "id") int quizId
+        ,  @RequestBody UserRequest userId
+) {
+    return quizServiceImpl.deleteQuizById(quizId,userId);
 }
 
 /**

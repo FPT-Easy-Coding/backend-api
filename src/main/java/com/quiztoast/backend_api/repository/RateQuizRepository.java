@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
+
 public interface RateQuizRepository extends JpaRepository<RateQuiz,RateQuiz.RateQuizId> {
 
 
@@ -16,5 +19,10 @@ public interface RateQuizRepository extends JpaRepository<RateQuiz,RateQuiz.Rate
     @Modifying
     @Query("DELETE FROM RateQuiz r WHERE r.id.quizId.quizId = :quizId AND r.id.userId.userId = :userId")
     void deleteByQuizIdAndUserId(@Param("quizId") int quizId, @Param("userId") long userId);
-
+//@Modifying
+    @Query("SELECT r FROM RateQuiz r WHERE r.id.quizId.quizId = :quizId" )
+    List<RateQuiz> findQuizByQuizId(int quizId);
+    @Modifying
+    @Query("DELETE FROM RateQuiz r WHERE r.id.quizId.quizId = :quizId ")
+    void deleteByQuizId(int quizId);
 }

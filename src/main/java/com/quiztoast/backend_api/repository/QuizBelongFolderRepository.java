@@ -19,4 +19,11 @@ public interface QuizBelongFolderRepository extends JpaRepository<QuizBelongFold
     void deleteQuizBelongFolder(Long folderId, Long quizId);
     @Query("SELECT q FROM QuizBelongFolder q WHERE q.id.folder.folderId = :folderId AND q.id.quiz.quizId = :quizId")
     QuizBelongFolder findQuizBelongFolderById(Long folderId, Long quizId);
+    @Modifying
+    @Query("SELECT q FROM QuizBelongFolder q WHERE  q.id.quiz.quizId = :quizId")
+    List<QuizBelongFolder> findByQuizId(int quizId);
+
+    @Modifying
+    @Query("DELETE FROM QuizBelongFolder q WHERE q.id.quiz.quizId = :quizId")
+    void deleteQuizBelongFolderByQuizID( int quizId);
 }
