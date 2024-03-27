@@ -271,7 +271,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    @RequestMapping(value="/update-profile-user", method = RequestMethod.PUT)
+    @RequestMapping(value="/update-profile", method = RequestMethod.PUT)
     public ResponseEntity<UserUpdateRequest> updateProfileUser(
             @RequestParam(name = "id") long userId,
             @RequestBody UserUpdateRequest request)
@@ -279,8 +279,8 @@ public class UserController {
         return userServiceImpl.updateProfileUser(userId,request);
     }
 
-    @RequestMapping(value="/update-avatar-user", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateAvaatarUser(
+    @RequestMapping(value="/update-avatar", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateAvatarUser(
             @RequestParam(name = "id") long userId,
             @RequestBody String avatar)
     {
