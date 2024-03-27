@@ -73,7 +73,7 @@ public class UserController {
                     ),
             }
     )
-    @PatchMapping
+    @PatchMapping("/change-password")
     public ResponseEntity<?> changePassword(
             @RequestBody ChangePasswordRequest changePasswordRequest,
             Principal connectedUser
