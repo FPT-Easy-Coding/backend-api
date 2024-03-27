@@ -5,6 +5,8 @@ import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
 import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
 import com.quiztoast.backend_api.model.payload.request.CreateQuizAnswerRequest;
 import com.quiztoast.backend_api.model.payload.request.QuizAnswerRequest;
+import com.quiztoast.backend_api.model.payload.request.UpdateQuizAnswerRequest;
+import com.quiztoast.backend_api.model.payload.request.UpdateQuizQuestionRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,6 +46,16 @@ public class QuizAnswerMapper {
                 .content(quizRequest.getContent())
                 .isCorrect(quizRequest.getIsCorrect())
                 .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static QuizAnswer mapUpdateRequestToQuizAnswer(QuizAnswer quizAnswer,UpdateQuizAnswerRequest updateQuizQuestionRequest, QuizQuestion quizQuestion) {
+        return QuizAnswer.builder()
+                .quizAnswerId(quizAnswer.getQuizAnswerId())
+                .quizQuestion(quizQuestion)
+                .content(updateQuizQuestionRequest.getContent())
+                .isCorrect(updateQuizQuestionRequest.getIsCorrect())
+                .createdAt(quizAnswer.getCreatedAt())
                 .build();
     }
 }

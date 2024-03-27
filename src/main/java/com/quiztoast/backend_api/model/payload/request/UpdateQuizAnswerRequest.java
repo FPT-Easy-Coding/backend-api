@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
-public class CreateQuizAnswerRequest {
+public class UpdateQuizAnswerRequest {
+    private long quizAnswerId;
     private String content;
     private Boolean isCorrect;
 }

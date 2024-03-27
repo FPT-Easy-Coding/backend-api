@@ -16,4 +16,7 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer,Long> {
     @Query("DELETE FROM QuizAnswer qa WHERE qa.quizQuestion.quizQuestionId = :quizQuestionId")
     void deleteByQuizQuestionId(@Param("quizQuestionId") Long quizQuestionId);
     List<QuizAnswer> findByQuizQuestion(QuizQuestion quizQuestion);
+
+    @Query("SELECT qa FROM QuizAnswer qa WHERE qa.quizAnswerId = :quizAnswerId")
+    QuizAnswer findByQuizAnswerId (Long quizAnswerId);
 }

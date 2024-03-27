@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
-public class CreateQuizAnswerRequest {
-    private String content;
-    private Boolean isCorrect;
+public class UpdateQuizQuestionRequest {
+    private long quizQuestionId;
+    private String question;
+    private List<UpdateQuizAnswerRequest> answers;
 }

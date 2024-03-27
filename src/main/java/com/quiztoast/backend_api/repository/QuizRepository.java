@@ -24,6 +24,7 @@ public interface QuizRepository extends JpaRepository<Quiz,Long> {
     Quiz getQuizById(@Param("quizId") int quizId);
 
 
+
     List<Quiz> findByQuizNameContaining(String content);
 
     @Query("SELECT SUM(q.viewOfQuiz) FROM Quiz q WHERE q.user.userId = :userId")
