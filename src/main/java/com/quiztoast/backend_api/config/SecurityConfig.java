@@ -28,6 +28,7 @@ public class SecurityConfig {
             "/api/v1/auth/**",
             "/api/v1/users/**",
             "/api/v1/users",
+            "/api/v1/search/**",
             "/api/v1/users/update-profile-user",
             "/api/v1/users/update-avatar-user",
             "/api/v1/admin/**",
