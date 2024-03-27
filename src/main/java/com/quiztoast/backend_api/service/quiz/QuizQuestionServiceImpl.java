@@ -11,10 +11,7 @@ import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
 import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
 import com.quiztoast.backend_api.model.mapper.QuizAnswerMapper;
 import com.quiztoast.backend_api.model.mapper.QuizQuestionMapper;
-import com.quiztoast.backend_api.model.payload.request.CreateQuizAnswerRequest;
-import com.quiztoast.backend_api.model.payload.request.CreateQuizQuestionRequest;
-import com.quiztoast.backend_api.model.payload.request.QuizAnswerRequest;
-import com.quiztoast.backend_api.model.payload.request.QuizQuestionRequest;
+import com.quiztoast.backend_api.model.payload.request.*;
 import com.quiztoast.backend_api.repository.CategoryRepository;
 import com.quiztoast.backend_api.repository.QuizAnswerRepository;
 import com.quiztoast.backend_api.repository.QuizQuestionMappingRepository;
@@ -46,14 +43,13 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
 
     public ResponseEntity<QuizQuestion> createQuizQuestionAndAnswers(QuizQuestionDTO quizQuestionDTO) {
-        if(quizQuestionDTO == null || quizQuestionDTO.getAnswersEntity() == null)
-        {
-            throw new FormatException("quizQuestionDTO","quizQuestionDTO not exist");
+        if (quizQuestionDTO == null || quizQuestionDTO.getAnswersEntity() == null) {
+            throw new FormatException("quizQuestionDTO", "quizQuestionDTO not exist");
         }
         try {
             // Find the category by ID
             Category category = categoryRepository.findById(quizQuestionDTO.getCategoryId())
-                    .orElseThrow(() -> new FormatException("category_id","Category not found"));
+                    .orElseThrow(() -> new FormatException("category_id", "Category not found"));
 
             // Create QuizQuestion
             QuizQuestion quizQuestion = QuizQuestion.builder()
@@ -81,8 +77,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             quizAnswerRepository.saveAll(quizAnswers);
 
             return ResponseEntity.ok(quizQuestion);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Handle other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -120,12 +115,21 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     @Override
     public QuizQuestion createQuizQuestion(CreateQuizQuestionRequest quizQuestionRequest, Category category) {
-        QuizQuestion quizQuestion = QuizQuestionMapper.mapCreateRequestToQuizQuestion(quizQuestionRequest,category);
+        QuizQuestion quizQuestion = QuizQuestionMapper.mapCreateRequestToQuizQuestion(quizQuestionRequest, category);
         quizQuestionRepository.save(quizQuestion);
         for (CreateQuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
             quizAnswerService.createQuizAnswer(answerRequest, quizQuestion);
         }
         return quizQuestion;
+    }
+    public void updateQuizQuestion(UpdateQuizQuestionRequest quizQuestionRequest, Category category) {
+        QuizQuestion oldQuizQuestion = quizQuestionRepository.findById(quizQuestionRequest.getQuizQuestionId()).orElse(null);
+        assert oldQuizQuestion != null;
+        QuizQuestion quizQuestion = QuizQuestionMapper.mapUpdateRequestToQuizQuestion(oldQuizQuestion,quizQuestionRequest, category);
+        quizQuestionRepository.save(quizQuestion);
+        for (UpdateQuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
+            quizAnswerService.updateQuizAnswer(answerRequest, quizQuestion);
+        }
     }
 
     @Override

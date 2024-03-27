@@ -46,6 +46,7 @@ public class QuizServiceImpl implements QuizService {
     private final QuizQuestionServiceImpl quizQuestionServiceImpl;
     private final QuizBelongFolderRepository quizBelongFolderRepository;
     private final QuizBelongClassroomRepository quizBelongClassroomRepository;
+
     @Override
     public List<QuizDTO> getAllQuiz() {
         List<Quiz> quizzes = quizRepository.findAll();
@@ -124,7 +125,7 @@ public class QuizServiceImpl implements QuizService {
         }
         int numberOfQuestion = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
         // Mapper QuizDTO
-        QuizDTO quizDTO = mapQuizDTOToUser(quiz, numberOfQuestion,rateQuizRepository);
+        QuizDTO quizDTO = mapQuizDTOToUser(quiz, numberOfQuestion, rateQuizRepository);
         // Returns the QuizDTO object after creation
         return ResponseEntity.ok(quizDTO);
     }
@@ -133,10 +134,10 @@ public class QuizServiceImpl implements QuizService {
     public Quiz createQuizSet(CreateQuizRequest createQuizRequest) {
         User user = userRepository.findById(createQuizRequest.getUserId()).orElse(null);
         Category category = categoryRepository.findById(createQuizRequest.getCategoryId()).orElse(null);
-        Quiz quiz = QuizMapper.mapCreateRequestToQuiz(createQuizRequest,user,category);
+        Quiz quiz = QuizMapper.mapCreateRequestToQuiz(createQuizRequest, user, category);
         quizRepository.save(quiz);
-        for(CreateQuizQuestionRequest createQuizQuestionRequest : createQuizRequest.getQuestions()){
-            QuizQuestion quizQuestion= quizQuestionServiceImpl.createQuizQuestion(createQuizQuestionRequest,category);
+        for (CreateQuizQuestionRequest createQuizQuestionRequest : createQuizRequest.getQuestions()) {
+            QuizQuestion quizQuestion = quizQuestionServiceImpl.createQuizQuestion(createQuizQuestionRequest, category);
             QuizQuestionMapping.QuizQuestionMappingId id = new QuizQuestionMapping.QuizQuestionMappingId(quiz, quizQuestion);
             QuizQuestionMapping quizQuestionMapping = new QuizQuestionMapping(id);
             quizQuestionMappingRepository.save(quizQuestionMapping);
@@ -144,9 +145,27 @@ public class QuizServiceImpl implements QuizService {
         return quiz;
     }
 
+    public Quiz updateQuiz(UpdateQuizRequest updateQuizRequest) {
+        User user = userRepository.findById(updateQuizRequest.getUserId()).orElse(null);
+        Category category = categoryRepository.findById(updateQuizRequest.getCategoryId()).orElse(null);
+        Quiz quiz = quizRepository.getQuizById(updateQuizRequest.getQuizId());
+        if (user != quiz.getUser()) {
+            System.out.println("User not match!");
+            System.out.println("User: " + user.getUserId());
+            System.out.println("Quiz: " + quiz.getUser().getUserId());
+            return null;
+        }
+        Quiz updatedQuiz = QuizMapper.mapUpdateRequestToQuiz(quiz,updateQuizRequest, category);
+        quizRepository.save(updatedQuiz);
+        for (UpdateQuizQuestionRequest updateQuizQuestionRequest : updateQuizRequest.getQuestions()) {
+            quizQuestionServiceImpl.updateQuizQuestion(updateQuizQuestionRequest, category);
+        }
+        return updatedQuiz;
+    }
+
 
     @Override
-    public ResponseEntity<String> deleteQuizById(int quizId,UserRequest userId) {
+    public ResponseEntity<String> deleteQuizById(int quizId, UserRequest userId) {
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
@@ -156,28 +175,24 @@ public class QuizServiceImpl implements QuizService {
         }
         //check user delete quiz
         Quiz quiz = quizRepository.getQuizById(quizId);
-        if(quiz.getUser().getUserId() != userId.getUserId())
-        {
+        if (quiz.getUser().getUserId() != userId.getUserId()) {
             throw new FormatException("userId", "userId doesn't match! ");
         }
 
         //delete quiz in quiz_question_mapping
         quizQuestionMappingRepository.deleteByQuizId(quizId);
         // delete quiz in quiz_rating
-        if(rateQuizRepository.findQuizByQuizId(quizId)!=null)
-        {
+        if (rateQuizRepository.findQuizByQuizId(quizId) != null) {
             rateQuizRepository.deleteByQuizId(quizId);
         }
         //delete quiz in quiz_belong_folder
-if(quizBelongFolderRepository.findByQuizId(quizId)!=null)
-{
-quizBelongFolderRepository.deleteQuizBelongFolderByQuizID(quizId);
-}
+        if (quizBelongFolderRepository.findByQuizId(quizId) != null) {
+            quizBelongFolderRepository.deleteQuizBelongFolderByQuizID(quizId);
+        }
         //delete quiz in quiz_belong_class
-if(quizBelongClassroomRepository.findQuizId(quizId)!=null)
-{
-quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
-}
+        if (quizBelongClassroomRepository.findQuizId(quizId) != null) {
+            quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
+        }
         // delete quiz
         quizRepository.deleteQuizById(quizId);
 
@@ -249,7 +264,7 @@ quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
         quizRepository.save(quiz);
         //mapper QuizDTO
         int numberOfQuestion = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
-        QuizDTO quizDTo = mapQuizDTOToUser(quiz, numberOfQuestion,rateQuizRepository);
+        QuizDTO quizDTo = mapQuizDTOToUser(quiz, numberOfQuestion, rateQuizRepository);
         // Returns the QuizDTO object after creation
         return ResponseEntity.ok(quizDTo);
     }
@@ -319,7 +334,7 @@ quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
         List<QuizDTO> quizDTOList = new ArrayList<>();
         for (Quiz quiz : quizRepository.findByQuizNameContaining(QuizName)) {
             int numberOfQuestion = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
-            QuizDTO quizDTO = mapQuizDTOToUser(quiz, numberOfQuestion,rateQuizRepository);
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz, numberOfQuestion, rateQuizRepository);
             quizDTOList.add(quizDTO);
         }
         return quizDTOList;
@@ -366,7 +381,7 @@ quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
         for (Integer quizId : quizRepository.findQuizId(userId)) {
             Quiz quiz = quizRepository.getQuizById(quizId);
             int numberOfQuestions = getNumberOfQuestionsByQuizId(quizId);
-            QuizDTO quizDTO = mapQuizDTOToUser(quiz, numberOfQuestions,rateQuizRepository);
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz, numberOfQuestions, rateQuizRepository);
             listQuizDTO.add(quizDTO);
         }
         return ResponseEntity.ok(listQuizDTO);
@@ -377,6 +392,7 @@ quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
         // Your logic to compute the number of questions
         return quizQuestionMappingRepository.countQuizQuestionByQuizID(quizId);
     }
+
     @Override
     public ResponseEntity<?> getQuizByCategory(int categoryId) {
         //check category id
@@ -386,24 +402,26 @@ quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
         List<QuizDTO> quizDTOList = new ArrayList<>();
         for (Quiz quiz : quizRepository.findQuizByCategory(categoryId)) {
             int numberOfQuestions = quizQuestionMappingRepository.countQuizQuestionByQuizID(quiz.getQuizId());
-            QuizDTO quizDTO = mapQuizDTOToUser(quiz,numberOfQuestions,rateQuizRepository);
+            QuizDTO quizDTO = mapQuizDTOToUser(quiz, numberOfQuestions, rateQuizRepository);
             quizDTOList.add(quizDTO);
         }
         return ResponseEntity.ok(quizDTOList);
     }
+
     @Override
     public Float getRateByQuiz(int quizId) {
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
-        if (rateQuizRepository.averageRateOfQuiz(quizId)==null) {
+        if (rateQuizRepository.averageRateOfQuiz(quizId) == null) {
             return (float) 0;
         }
         Quiz quiz = quizRepository.getQuizById(quizId);
         return rateQuizRepository.averageRateOfQuiz(quizId);
     }
+
     @Override
-    public ResponseEntity<RateQuizResponse> createRateQuiz( int quizId, long userId, float rate) {
+    public ResponseEntity<RateQuizResponse> createRateQuiz(int quizId, long userId, float rate) {
 //        //check token
 //        if(tokenRepository.findTokenByUserId(userId) != token)
 //        {
@@ -415,22 +433,20 @@ quizBelongClassroomRepository.deleteQuizSetsByQuizId(quizId);
         if (userRepository.findByUserId(userId) == null) {
             throw new FormatException("userId", "userId not found");
         }
-        if(rate <1 || rate >5)
-        {
+        if (rate < 1 || rate > 5) {
             throw new FormatException("rate", "min rate =1 and max rate =5");
         }
-        if(rate%0.5 != 0)
-        {
+        if (rate % 0.5 != 0) {
             throw new FormatException("rate", "rate of space = 0.5");
         }
 //add to rate_quiz
         RateQuiz.RateQuizId rateQuizId = new RateQuiz.RateQuizId();
         rateQuizId.setUserId(userRepository.findByUserId(userId));
         rateQuizId.setQuizId(quizRepository.getQuizById(quizId));
-rateQuizId.setRate(rate);
-rateQuizId.setCreateAt();
-RateQuiz rateQuiz = new RateQuiz();
-rateQuiz.setId(rateQuizId);
+        rateQuizId.setRate(rate);
+        rateQuizId.setCreateAt();
+        RateQuiz rateQuiz = new RateQuiz();
+        rateQuiz.setId(rateQuizId);
         rateQuizRepository.save(rateQuiz);
 
         RateQuizResponse rateQuizResponse = new RateQuizResponse();
@@ -439,9 +455,10 @@ rateQuiz.setId(rateQuizId);
         rateQuizResponse.setRate(rate);
         rateQuizResponse.setCreateAt(rateQuizId.getCreateAt());
         rateQuizResponse.setIsRated(true);
-return ResponseEntity.ok(rateQuizResponse);
+        return ResponseEntity.ok(rateQuizResponse);
     }
-@Override
+
+    @Override
     public ResponseEntity<RateQuizResponse> UpdateRateQuiz(int quizId, long userId, float rate) {
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
@@ -449,60 +466,57 @@ return ResponseEntity.ok(rateQuizResponse);
         if (userRepository.findByUserId(userId) == null) {
             throw new FormatException("userId", "userId not found");
         }
-        if(rate <1 || rate >5)
-        {
+        if (rate < 1 || rate > 5) {
             throw new FormatException("rate", "min rate =1 and max rate =5");
         }
-        if(rate%0.5 != 0)
-        {
+        if (rate % 0.5 != 0) {
             throw new FormatException("rate", "rate of space = 0.5");
         }
-        if(rateQuizRepository.findByQuizIdAndUserId(quizId, userId)==null)
-        {
+        if (rateQuizRepository.findByQuizIdAndUserId(quizId, userId) == null) {
             throw new FormatException("Rate Quiz", "don't exist");
         }
         //delete rateQUiz to rate_quiz
-    rateQuizRepository.deleteByQuizIdAndUserId(
-           quizId,
-            userId
-    );
-    //add to rate_quiz
-    RateQuiz.RateQuizId rateQuizId = new RateQuiz.RateQuizId();
-    rateQuizId.setUserId(userRepository.findByUserId(userId));
-    rateQuizId.setQuizId(quizRepository.getQuizById(quizId));
-    rateQuizId.setRate(rate);
-    rateQuizId.setCreateAt();
-    RateQuiz rateQuiz = new RateQuiz();
-    rateQuiz.setId(rateQuizId);
-    rateQuizRepository.save(rateQuiz);
+        rateQuizRepository.deleteByQuizIdAndUserId(
+                quizId,
+                userId
+        );
+        //add to rate_quiz
+        RateQuiz.RateQuizId rateQuizId = new RateQuiz.RateQuizId();
+        rateQuizId.setUserId(userRepository.findByUserId(userId));
+        rateQuizId.setQuizId(quizRepository.getQuizById(quizId));
+        rateQuizId.setRate(rate);
+        rateQuizId.setCreateAt();
+        RateQuiz rateQuiz = new RateQuiz();
+        rateQuiz.setId(rateQuizId);
+        rateQuizRepository.save(rateQuiz);
 
-    RateQuizResponse rateQuizResponse = new RateQuizResponse();
-    rateQuizResponse.setQuizId(quizId);
-    rateQuizResponse.setUserId(userId);
-    rateQuizResponse.setRate(rate);
-    rateQuizResponse.setCreateAt(rateQuizId.getCreateAt());
-    rateQuizResponse.setIsRated(true);
-    return ResponseEntity.ok(rateQuizResponse);
+        RateQuizResponse rateQuizResponse = new RateQuizResponse();
+        rateQuizResponse.setQuizId(quizId);
+        rateQuizResponse.setUserId(userId);
+        rateQuizResponse.setRate(rate);
+        rateQuizResponse.setCreateAt(rateQuizId.getCreateAt());
+        rateQuizResponse.setIsRated(true);
+        return ResponseEntity.ok(rateQuizResponse);
     }
-@Override
-    public ResponseEntity<?> getUserRateQuiz(@RequestBody Long userId,@RequestBody int quizId) {
+
+    @Override
+    public ResponseEntity<?> getUserRateQuiz(@RequestBody Long userId, @RequestBody int quizId) {
         //check userId and quizId in rate_quiz
-    RateQuizResponse rateQuizResponse = new RateQuizResponse();
-    if(rateQuizRepository.findByQuizIdAndUserId(quizId,userId)!=null)
-        {
-            RateQuiz rateQuiz = rateQuizRepository.findByQuizIdAndUserId(quizId,userId);
+        RateQuizResponse rateQuizResponse = new RateQuizResponse();
+        if (rateQuizRepository.findByQuizIdAndUserId(quizId, userId) != null) {
+            RateQuiz rateQuiz = rateQuizRepository.findByQuizIdAndUserId(quizId, userId);
             rateQuizResponse.setUserId(rateQuiz.getId().getUserId());
             rateQuizResponse.setQuizId(rateQuiz.getId().getQuizId());
             rateQuizResponse.setRate(rateQuiz.getId().getRate());
             rateQuizResponse.setIsRated(true);
             rateQuizResponse.setCreateAt(rateQuiz.getId().getCreateAt());
             return ResponseEntity.ok(rateQuizResponse);
-        }else {
-        rateQuizResponse.setUserId(userId);
-        rateQuizResponse.setQuizId(quizId);
-        rateQuizResponse.setIsRated(false);
-        return ResponseEntity.ok(rateQuizResponse);
-    }
+        } else {
+            rateQuizResponse.setUserId(userId);
+            rateQuizResponse.setQuizId(quizId);
+            rateQuizResponse.setIsRated(false);
+            return ResponseEntity.ok(rateQuizResponse);
+        }
     }
 }
 

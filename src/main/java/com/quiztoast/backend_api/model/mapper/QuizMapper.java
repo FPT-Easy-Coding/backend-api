@@ -5,6 +5,7 @@ import com.quiztoast.backend_api.model.entity.quiz.Category;
 import com.quiztoast.backend_api.model.entity.quiz.Quiz;
 import com.quiztoast.backend_api.model.entity.user.User;
 import com.quiztoast.backend_api.model.payload.request.CreateQuizRequest;
+import com.quiztoast.backend_api.model.payload.request.UpdateQuizRequest;
 import com.quiztoast.backend_api.model.payload.response.QuizSetResponse;
 import com.quiztoast.backend_api.repository.RateQuizRepository;
 
@@ -52,6 +53,18 @@ public class QuizMapper {
                 .viewOfQuiz(0L)
                 .createdAt(LocalDateTime.now())
                 .timeRecentViewQuiz(LocalDateTime.now())
+                .build();
+    }
+    public static Quiz mapUpdateRequestToQuiz(Quiz quiz,UpdateQuizRequest updateQuizRequest, Category category) {
+        return Quiz.builder()
+                .quizId(quiz.getQuizId())
+                .user(quiz.getUser())
+                .quizName(updateQuizRequest.getTitle())
+                .category(category)
+                .rate(quiz.getRate())
+                .viewOfQuiz(quiz.getViewOfQuiz())
+                .createdAt(quiz.getCreatedAt())
+                .timeRecentViewQuiz(quiz.getTimeRecentViewQuiz())
                 .build();
     }
 }

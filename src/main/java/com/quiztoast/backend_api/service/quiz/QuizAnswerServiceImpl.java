@@ -4,6 +4,8 @@ import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
 import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
 import com.quiztoast.backend_api.model.mapper.QuizAnswerMapper;
 import com.quiztoast.backend_api.model.payload.request.CreateQuizAnswerRequest;
+import com.quiztoast.backend_api.model.payload.request.UpdateQuizAnswerRequest;
+import com.quiztoast.backend_api.model.payload.request.UpdateQuizQuestionRequest;
 import com.quiztoast.backend_api.repository.QuizAnswerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,16 @@ public class QuizAnswerServiceImpl implements QuizAnswerService {
     private final QuizAnswerRepository quizAnswerRepository;
 
     @Override
-    public void createQuizAnswer(CreateQuizAnswerRequest createQuizRequest, QuizQuestion quizQuestion) {
+    public void createQuizAnswer(CreateQuizAnswerRequest createQuizAnswerRequest, QuizQuestion quizQuestion) {
          quizAnswerRepository.save(
-                QuizAnswerMapper.mapCreateRequestToQuizAnswer(createQuizRequest, quizQuestion)
+                QuizAnswerMapper.mapCreateRequestToQuizAnswer(createQuizAnswerRequest, quizQuestion)
         );
-
+    }
+    @Override
+    public void updateQuizAnswer(UpdateQuizAnswerRequest updateQuizAnswerRequest, QuizQuestion quizQuestion) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findByQuizAnswerId(updateQuizAnswerRequest.getQuizAnswerId());
+        quizAnswerRepository.save(
+                QuizAnswerMapper.mapUpdateRequestToQuizAnswer(quizAnswer,updateQuizAnswerRequest, quizQuestion)
+        );
     }
 }
