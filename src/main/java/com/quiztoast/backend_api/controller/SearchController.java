@@ -1,9 +1,9 @@
 package com.quiztoast.backend_api.controller;
 
-import com.quiztoast.backend_api.service.SearchRequest;
 import com.quiztoast.backend_api.service.SearchResultResponse;
 import com.quiztoast.backend_api.service.SearchServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,16 +13,18 @@ import org.springframework.web.bind.annotation.*;
 public class SearchController {
     private final SearchServiceImpl searchServiceImpl;
 
-    @GetMapping
-    public ResponseEntity<SearchResultResponse> search(@RequestBody SearchRequest keywords) {
+    @GetMapping()
+    public ResponseEntity<SearchResultResponse> search(
+            @RequestParam("keywords") String keywords) {
         try {
-            if (keywords.getKeywords() == null) {
-                return ResponseEntity.status(400).body(null);
+            if (keywords == null || keywords.isEmpty()) {
+                return ResponseEntity.badRequest().build();
             }
 
-            return ResponseEntity.ok(searchServiceImpl.search(keywords.getKeywords()));
+            return ResponseEntity.ok(searchServiceImpl.search(keywords));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }
