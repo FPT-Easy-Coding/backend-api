@@ -24,6 +24,7 @@ public class QuizRequest {
     private Integer categoryId;
     @NotBlank(message = "quizName cannot be blank")
     private String quizName;
+    private String description;
     private List<QuizQuestionRequest> listQuestion;
     private Double rate;
     private LocalDateTime createAt;

@@ -315,7 +315,7 @@ public class QuizController {
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<String> deleteQuiz(
             @RequestParam(name = "id") int quizId
-            , @RequestBody UserRequest userId
+            ,@RequestParam(name= "userId") Long userId
     ) {
         return quizServiceImpl.deleteQuizById(quizId, userId);
     }

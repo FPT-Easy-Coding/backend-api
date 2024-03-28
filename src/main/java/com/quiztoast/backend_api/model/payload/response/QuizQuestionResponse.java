@@ -18,6 +18,7 @@ public class QuizQuestionResponse {
     private String userName;
     private String userFirstName;
     private String userLastName;
+    private String avatar;
     private int categoryId;
     private String categoryName;
     private String quizName;
@@ -27,7 +28,6 @@ public class QuizQuestionResponse {
     private LocalDateTime createAt;
     private Long view;
     private LocalDateTime timeRecentViewQuiz;
-
     private List<QuestionData> questions;
 }
 

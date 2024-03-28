@@ -61,6 +61,7 @@ public class QuizMapper {
                 .user(quiz.getUser())
                 .quizName(updateQuizRequest.getTitle())
                 .category(category)
+                .description(updateQuizRequest.getDescription())
                 .rate(quiz.getRate())
                 .viewOfQuiz(quiz.getViewOfQuiz())
                 .createdAt(quiz.getCreatedAt())

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 import static com.quiztoast.backend_api.model.mapper.QuizMapper.mapQuizDTOToUser;
@@ -80,6 +81,7 @@ public class QuizServiceImpl implements QuizService {
         quiz.setRate(quizRequest.getRate());
         quiz.setCreatedAt(LocalDateTime.now());
         quiz.setTimeRecentViewQuiz(null);
+        quiz.setDescription(quizRequest.getDescription());
         // Save the Quiz object to the Quiz table
         quizRepository.save(quiz);
         //save to table Create Quiz
@@ -165,17 +167,17 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-    public ResponseEntity<String> deleteQuizById(int quizId, UserRequest userId) {
+    public ResponseEntity<String> deleteQuizById(int quizId, Long userId) {
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
         // Check user_id must be in User table
-        if (!userRepository.existsById(userId.getUserId())) {
+        if (!userRepository.existsById(userId)) {
             throw new FormatException("userId", "userId not found");
         }
         //check user delete quiz
         Quiz quiz = quizRepository.getQuizById(quizId);
-        if (quiz.getUser().getUserId() != userId.getUserId()) {
+        if (!Objects.equals(quiz.getUser().getUserId(), userId)) {
             throw new FormatException("userId", "userId doesn't match! ");
         }
 
@@ -313,6 +315,7 @@ public class QuizServiceImpl implements QuizService {
                 .userLastName(quiz.getUser().getLastName())
                 .categoryId(quiz.getCategory().getCategoryId())
                 .categoryName(quiz.getCategory().getCategoryName())
+                .avatar(quiz.getUser().getAvatar())
                 .quizName(quiz.getQuizName())
                 .rate(quiz.getRate())
                 .numberOfQuestions(numberOfQuestions)
