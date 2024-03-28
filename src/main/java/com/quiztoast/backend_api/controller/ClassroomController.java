@@ -280,7 +280,7 @@ public class ClassroomController {
             classroomServiceImpl.joinClassroom(token, classroomId);
             classroomServiceImpl.deleteInvitationToken(token);
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", "http://localhost:5173/class/" + classroomId); // Modified URL with absolute path
+            headers.add("Location", "http://localhost:5173/class/" + classroomId+"/sets"); // Modified URL with absolute path
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
