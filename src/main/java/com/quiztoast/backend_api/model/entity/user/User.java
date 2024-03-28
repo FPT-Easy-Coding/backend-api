@@ -73,7 +73,7 @@ public class User implements UserDetails {
     @Column(name = "account_type")
     private String accountType;
 
-    @Column(name = "avatar")
+    @Column(name = "avatar", columnDefinition = "LONGTEXT")
     private String avatar;
 
     @JsonManagedReference

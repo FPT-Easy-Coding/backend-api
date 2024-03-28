@@ -3,6 +3,7 @@ package com.quiztoast.backend_api.controller;
 import com.quiztoast.backend_api.exception.FormatException;
 import com.quiztoast.backend_api.model.dto.QuizDTO;
 import com.quiztoast.backend_api.model.dto.UserDTO;
+import com.quiztoast.backend_api.model.payload.request.UpdateAvatarRequest;
 import com.quiztoast.backend_api.model.payload.request.UserUpdateRequest;
 import com.quiztoast.backend_api.model.payload.response.QuizSetResponse;
 import com.quiztoast.backend_api.model.payload.response.SimpleErrorResponse;
@@ -280,9 +281,9 @@ public class UserController {
     }
 
     @RequestMapping(value="/update-avatar", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateAvatarUser(
+    public ResponseEntity<UpdateAvatarRequest> updateAvatarUser(
             @RequestParam(name = "id") long userId,
-            @RequestBody String avatar)
+            @RequestBody UpdateAvatarRequest avatar)
     {
         return userServiceImpl.updateAvatarUser(userId,avatar);
     }

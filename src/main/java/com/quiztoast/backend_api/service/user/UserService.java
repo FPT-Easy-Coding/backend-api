@@ -4,6 +4,7 @@ import com.quiztoast.backend_api.model.entity.token.VerificationToken;
 import com.quiztoast.backend_api.model.entity.user.User;
 
 import com.quiztoast.backend_api.model.payload.request.ChangePasswordRequest;
+import com.quiztoast.backend_api.model.payload.request.UpdateAvatarRequest;
 import com.quiztoast.backend_api.model.payload.request.UserUpdateRequest;
 import com.quiztoast.backend_api.security.auth.RegistrationRequest;
 
@@ -40,7 +41,7 @@ public interface UserService {
     ResponseEntity<?> getProfileUserCreateQuiz(int quizId);
     ResponseEntity<UserUpdateRequest> updateProfileUser(long userId,UserUpdateRequest request);
 
-    ResponseEntity<?> updateAvatarUser(long userId, String avatar);
+    ResponseEntity<?> updateAvatarUser(long userId, UpdateAvatarRequest avatar);
 
     void deletePasswordResetTokenForUser(User user);
 }

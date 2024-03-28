@@ -10,6 +10,7 @@ import com.quiztoast.backend_api.model.entity.user.User;
 
 import com.quiztoast.backend_api.model.mapper.QuizMapper;
 import com.quiztoast.backend_api.model.payload.request.ChangePasswordRequest;
+import com.quiztoast.backend_api.model.payload.request.UpdateAvatarRequest;
 import com.quiztoast.backend_api.model.payload.request.UserUpdateRequest;
 
 import com.quiztoast.backend_api.model.payload.response.QuizSetResponse;
@@ -263,17 +264,17 @@ public class UserServiceImpl implements UserService {
         existingUser.setEmail(request.getEmail());
         existingUser.setTelephone(request.getTelephone());
         existingUser.setAccountType(request.getAccountType());
+        existingUser.setUserName(request.getUserName());
         userRepository.save(existingUser);
         return ResponseEntity.ok(request);
     }
     @Override
-    public ResponseEntity<?> updateAvatarUser(long userId, String avatar) {
+    public ResponseEntity<UpdateAvatarRequest> updateAvatarUser(long userId, UpdateAvatarRequest avatar) {
         User existingUser = userRepository.findByUserId(userId);
         if (existingUser == null) {
             throw new FormatException("userId", "userId not found");
         }
-        avatar = avatar.replaceAll("^\"|\"$", "");
-        existingUser.setAvatar(avatar);
+        existingUser.setAvatar(avatar.getAvatar());
         userRepository.save(existingUser);
         return ResponseEntity.ok(avatar);
     }

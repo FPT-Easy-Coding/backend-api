@@ -15,6 +15,7 @@ import org.hibernate.annotations.NaturalId;
 public class UserUpdateRequest {
     private String accountType;
     private String email;
+    private String userName;
     private String firstName;
     private String lastName;
     private String telephone;
