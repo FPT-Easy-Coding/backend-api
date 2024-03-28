@@ -18,7 +18,7 @@ public interface QuizService {
 
     ResponseEntity<QuizDTO> createQuiz(QuizRequest quizRequest);
     Quiz createQuizSet(CreateQuizRequest createQuizRequest);
-    ResponseEntity<String> deleteQuizById(int quiz_id, UserRequest userId);
+    ResponseEntity<String> deleteQuizById(int quiz_id, Long userId);
 
     ResponseEntity<QuizDTO> updateQuiz(int quizId, QuizRequest quizRequest);
 
@@ -40,7 +40,6 @@ public interface QuizService {
     ResponseEntity<RateQuizResponse> createRateQuiz(int quizId, long userId, float rate);
 
     ResponseEntity<RateQuizResponse> UpdateRateQuiz(int quizId, long userId, float rate);
-
 
     ResponseEntity<?> getUserRateQuiz(Long userId, int quizId);
 }
