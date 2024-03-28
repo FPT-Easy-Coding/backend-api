@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -25,10 +26,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return          an optional containing the user, or empty if not found
      */
     User findByUserId(Long userId);
-    User findUserByEmail(String email);
+
     Optional<User> findByUserName(String userName);
 
     @Modifying
     @Query("UPDATE User u SET u.provider = ?2 WHERE u.userName = ?1")
     void updateAuthenticationType(String userName, Provider provider);
+
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    User findUserByEmail(String email);
+
 }

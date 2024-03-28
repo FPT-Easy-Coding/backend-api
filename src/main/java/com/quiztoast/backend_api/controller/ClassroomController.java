@@ -137,8 +137,7 @@ public class ClassroomController {
                     .success(true)
                     .msg("Delete classroom successfully")
                     .build());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     MessageResponse.builder()
                             .success(false)
@@ -210,6 +209,7 @@ public class ClassroomController {
         }
     }
 
+
     @PostMapping("/add-member/{classroomId}/user/{userId}")
     public ResponseEntity<MessageResponse> addClassroomUser
             (
@@ -230,8 +230,26 @@ public class ClassroomController {
                             .msg("Error adding user: " + e.getMessage())
                             .build());
         }
+    }
 
-
+    @PostMapping("/invite-members")
+    public ResponseEntity<MessageResponse> inviteMembers(
+            @RequestBody InviteMemberRequest inviteMembersRequest
+    ) {
+        try {
+            classroomServiceImpl.inviteMemberToClassroom(inviteMembersRequest);
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .success(true)
+                            .msg("Invite members successfully")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error inviting members: " + e.getMessage())
+                            .build());
+        }
     }
 
     @PostMapping("/add-quiz/{classroomId}/quiz/{quizId}")

@@ -1,5 +1,6 @@
 package com.quiztoast.backend_api.service.classroom;
 
+import com.quiztoast.backend_api.event.publisher.InvitationEventPublisher;
 import com.quiztoast.backend_api.model.dto.ClassroomDTO;
 import com.quiztoast.backend_api.model.entity.classroom.Classroom;
 import com.quiztoast.backend_api.model.entity.classroom.ClassroomAnswer;
@@ -13,12 +14,7 @@ import com.quiztoast.backend_api.model.entity.user.User;
 import com.quiztoast.backend_api.model.mapper.ClassroomMapper;
 import com.quiztoast.backend_api.model.mapper.ClassroomQuestionMapper;
 import com.quiztoast.backend_api.model.mapper.CommentMapper;
-import com.quiztoast.backend_api.model.payload.request.AnswerRequest;
-import com.quiztoast.backend_api.model.payload.request.ClassroomRequest;
-import com.quiztoast.backend_api.model.payload.request.CommentRequest;
-import com.quiztoast.backend_api.model.payload.request.CreateClassQuestionRequest;
-import com.quiztoast.backend_api.model.payload.request.ReplyCommentRequest;
-import com.quiztoast.backend_api.model.payload.request.UpdateClassQuestionRequest;
+import com.quiztoast.backend_api.model.payload.request.*;
 import com.quiztoast.backend_api.model.payload.response.ClassMemberResponse;
 import com.quiztoast.backend_api.model.payload.response.ClassroomQuestionResponse;
 import com.quiztoast.backend_api.model.payload.response.ClassroomResponse;
@@ -34,6 +30,7 @@ import com.quiztoast.backend_api.repository.ReplyCommentRepository;
 import com.quiztoast.backend_api.repository.UserBelongClassroomRepository;
 import com.quiztoast.backend_api.repository.UserRepository;
 import com.quiztoast.backend_api.service.notification.NotificationServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +53,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final ReplyCommentRepository replyCommentRepository;
     private final ClassroomAnswerRepository classroomAnswerRepository;
     private final NotificationServiceImpl notificationServiceImpl;
+    private final InvitationEventPublisher invitationEventPublisher;
 
     @Override
     public List<Classroom> getAllClassroom() {
@@ -212,17 +210,53 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void addUserToClassroom(int classroomId, Long userId) {
         Classroom classroom = classroomRepository.findByClassroomId(classroomId);
         User user = userRepository.findByUserId(userId);
+
+        // Initialize the composite primary key
+        UserBelongClassroom.UserBelongClassroomId userBelongClassroomId = new UserBelongClassroom.UserBelongClassroomId();
+        userBelongClassroomId.setClassroom(classroom);
+        userBelongClassroomId.setUser(user);
+
+        // Create a new UserBelongClassroom entity with the initialized composite primary key
         UserBelongClassroom userBelongClassroom = new UserBelongClassroom();
-        userBelongClassroom.getId().setClassroom(classroom);
-        userBelongClassroom.getId().setUser(user);
+        userBelongClassroom.setId(userBelongClassroomId);
+
+        // Save the entity
         userBelongClassroomRepository.save(userBelongClassroom);
     }
+
 
     @Override
     public void removeUserFromClassroom(int classroomId, int userId) {
         userBelongClassroomRepository.deleteUserFromClassroom(classroomId, userId);
     }
 
+    public void inviteMemberToClassroom(InviteMemberRequest inviteMemberRequest) {
+        int classroomId = inviteMemberRequest.getClassId();
+        List<User> userList = new ArrayList<>();
+        List<String> mails = inviteMemberRequest.getInviteMails();
+        if (mails != null && !mails.isEmpty()) {
+            for (String mail : mails) {
+                User user = userRepository.findUserByEmail(mail);
+                if (user != null) {
+                    userList.add(user);
+                }
+            }
+        }
+        if (!userList.isEmpty()) {
+            invitationEventPublisher.publishInvitationEvent(userList);
+        }
+        for (User user : userList) {
+            addUserToClassroom(classroomId, user.getUserId());
+        }
+    }
+
+    public String applicationUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+
+    }
+    public String generateJoinClassUrl(String applicationUrl, String token ) {
+        return applicationUrl + "/api/v1/auth/reset-password?token=" + token;
+    }
     @Override
     public List<ClassMemberResponse> getClassMembers(int classroomId) {
         List<UserBelongClassroom> userBelongClassrooms = userBelongClassroomRepository.findByClassroomId(classroomId);
