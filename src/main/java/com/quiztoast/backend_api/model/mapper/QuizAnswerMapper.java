@@ -58,4 +58,12 @@ public class QuizAnswerMapper {
                 .createdAt(quizAnswer.getCreatedAt())
                 .build();
     }
+    public static QuizAnswer mapUpdateRequestToQuizAnswer(UpdateQuizAnswerRequest updateQuizQuestionRequest, QuizQuestion quizQuestion) {
+        return QuizAnswer.builder()
+                .quizQuestion(quizQuestion)
+                .content(updateQuizQuestionRequest.getContent())
+                .isCorrect(updateQuizQuestionRequest.getIsCorrect())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
 }

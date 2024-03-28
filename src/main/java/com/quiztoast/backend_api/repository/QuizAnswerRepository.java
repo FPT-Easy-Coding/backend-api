@@ -20,4 +20,7 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer,Long> {
 
     @Query("SELECT qa FROM QuizAnswer qa WHERE qa.quizAnswerId = :quizAnswerId")
     QuizAnswer findByQuizAnswerId (Long quizAnswerId);
+
+    @Query("SELECT qa FROM QuizAnswer qa WHERE qa.quizAnswerId = :quizAnswerId")
+    QuizAnswer existsByQuizAnswerId(Long quizAnswerId);
 }

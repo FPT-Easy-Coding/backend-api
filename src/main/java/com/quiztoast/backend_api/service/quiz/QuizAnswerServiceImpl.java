@@ -32,4 +32,8 @@ public class QuizAnswerServiceImpl implements QuizAnswerService {
                 QuizAnswerMapper.mapUpdateRequestToQuizAnswer(quizAnswer,updateQuizAnswerRequest, quizQuestion)
         );
     }
+
+    public boolean isAnswerExist(Long quizAnswerId){
+        return quizAnswerRepository.existsByQuizAnswerId(quizAnswerId) != null;
+    }
 }

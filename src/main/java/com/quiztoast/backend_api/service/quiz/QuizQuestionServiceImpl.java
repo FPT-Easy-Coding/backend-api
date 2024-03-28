@@ -122,15 +122,34 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         }
         return quizQuestion;
     }
+
     public void updateQuizQuestion(UpdateQuizQuestionRequest quizQuestionRequest, Category category) {
         QuizQuestion oldQuizQuestion = quizQuestionRepository.findById(quizQuestionRequest.getQuizQuestionId()).orElse(null);
-        assert oldQuizQuestion != null;
-        QuizQuestion quizQuestion = QuizQuestionMapper.mapUpdateRequestToQuizQuestion(oldQuizQuestion,quizQuestionRequest, category);
-        quizQuestionRepository.save(quizQuestion);
-        for (UpdateQuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
-            quizAnswerService.updateQuizAnswer(answerRequest, quizQuestion);
+        if (oldQuizQuestion == null) {
+            QuizQuestion newQuizQuestion = QuizQuestionMapper.mapUpdateRequestToQuizQuestion(quizQuestionRequest, category);
+            quizQuestionRepository.save(newQuizQuestion);
+            for (UpdateQuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
+                QuizAnswer newAnswer = QuizAnswerMapper.mapUpdateRequestToQuizAnswer(answerRequest, newQuizQuestion);
+                quizAnswerRepository.save(newAnswer);
+            }
+        } else {
+            QuizQuestion updatedQuizQuestion = QuizQuestionMapper.mapUpdateRequestToQuizQuestion(oldQuizQuestion, quizQuestionRequest, category);
+            quizQuestionRepository.save(updatedQuizQuestion);
+            for (UpdateQuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
+                // Check if it's an existing answer or a new one
+                if (quizAnswerService.isAnswerExist(answerRequest.getQuizAnswerId())) {
+                    // Existing answer, update it
+                    QuizAnswer quizAnswer = quizAnswerRepository.findByQuizAnswerId(answerRequest.getQuizAnswerId());
+                    quizAnswerRepository.save(QuizAnswerMapper.mapUpdateRequestToQuizAnswer(quizAnswer, answerRequest, updatedQuizQuestion));
+                } else {
+                    // New answer, save it
+                    QuizAnswer newAnswer = QuizAnswerMapper.mapUpdateRequestToQuizAnswer(answerRequest, updatedQuizQuestion);
+                    quizAnswerRepository.save(newAnswer);
+                }
+            }
         }
     }
+
 
     @Override
     public ResponseEntity<QuizQuestion> updateQuizQuestion(int quizQuestionId, @Valid @RequestBody QuizQuestionRequest quizRequest) {

@@ -33,4 +33,11 @@ public class QuizQuestionMapper {
                 .categoryId(category)
                 .build();
     }
+    public static QuizQuestion mapUpdateRequestToQuizQuestion(UpdateQuizQuestionRequest quizQuestionRequest, Category category) {
+        return QuizQuestion.builder()
+                .content(quizQuestionRequest.getQuestion())
+                .categoryId(category)
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
 }

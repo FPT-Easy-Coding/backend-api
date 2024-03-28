@@ -152,9 +152,6 @@ public class QuizServiceImpl implements QuizService {
         Category category = categoryRepository.findById(updateQuizRequest.getCategoryId()).orElse(null);
         Quiz quiz = quizRepository.getQuizById(updateQuizRequest.getQuizId());
         if (user != quiz.getUser()) {
-            System.out.println("User not match!");
-            System.out.println("User: " + user.getUserId());
-            System.out.println("Quiz: " + quiz.getUser().getUserId());
             return null;
         }
         Quiz updatedQuiz = QuizMapper.mapUpdateRequestToQuiz(quiz,updateQuizRequest, category);
