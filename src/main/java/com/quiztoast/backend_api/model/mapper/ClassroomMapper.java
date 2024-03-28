@@ -30,6 +30,7 @@ public class ClassroomMapper {
         return ClassroomResponse.builder()
                 .classId(classroom.getClassroomId())
                 .className(className)
+                .teacherId(classroom.getUser().getUserId())
                 .teacherName(classroom.getUser().getUserName())
                 .numberOfStudent(numberOfStudents)
                 .numberOfQuizSet(numberOfQuizSets)
@@ -54,6 +55,7 @@ public class ClassroomMapper {
 
     public static ClassMemberResponse mapUserBelongClassroomToClassMemberResponse(UserBelongClassroom userBelongClassroom) {
         return ClassMemberResponse.builder()
+                .userId(userBelongClassroom.getId().getUser().getUserId())
                 .userName(userBelongClassroom.getId().getUser().getUserName())
                 .userFirstName(userBelongClassroom.getId().getUser().getFirstName())
                 .userLastName(userBelongClassroom.getId().getUser().getLastName())

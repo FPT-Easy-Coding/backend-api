@@ -13,6 +13,7 @@ public class ClassroomResponse {
     private int classId;
     private String className;
     private String teacherName;
+    private Long teacherId;
     private Long numberOfStudent;
     private Long numberOfQuizSet;
     private String slugCode;

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Builder
 public class ClassMemberResponse {
+    Long userId;
     String userName;
     String userFirstName;
     String userLastName;
