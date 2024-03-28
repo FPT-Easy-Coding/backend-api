@@ -157,7 +157,7 @@ public class QuizServiceImpl implements QuizService {
         Quiz updatedQuiz = QuizMapper.mapUpdateRequestToQuiz(quiz,updateQuizRequest, category);
         quizRepository.save(updatedQuiz);
         for (UpdateQuizQuestionRequest updateQuizQuestionRequest : updateQuizRequest.getQuestions()) {
-            quizQuestionServiceImpl.updateQuizQuestion(updateQuizQuestionRequest, category);
+            quizQuestionServiceImpl.updateQuizQuestion(updateQuizQuestionRequest, category, quiz);
         }
         return updatedQuiz;
     }
@@ -168,7 +168,6 @@ public class QuizServiceImpl implements QuizService {
         if (!quizRepository.existsById(quizId)) {
             throw new FormatException("quizId", "Quiz with given ID not found");
         }
-        // Check user_id must be in User table
         if (!userRepository.existsById(userId)) {
             throw new FormatException("userId", "userId not found");
         }

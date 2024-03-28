@@ -5,10 +5,7 @@ import com.quiztoast.backend_api.exception.FormatException;
 
 import com.quiztoast.backend_api.model.dto.QuizAnswerDTO;
 import com.quiztoast.backend_api.model.dto.QuizQuestionDTO;
-import com.quiztoast.backend_api.model.entity.quiz.Category;
-import com.quiztoast.backend_api.model.entity.quiz.Quiz;
-import com.quiztoast.backend_api.model.entity.quiz.QuizAnswer;
-import com.quiztoast.backend_api.model.entity.quiz.QuizQuestion;
+import com.quiztoast.backend_api.model.entity.quiz.*;
 import com.quiztoast.backend_api.model.mapper.QuizAnswerMapper;
 import com.quiztoast.backend_api.model.mapper.QuizQuestionMapper;
 import com.quiztoast.backend_api.model.payload.request.*;
@@ -123,11 +120,14 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         return quizQuestion;
     }
 
-    public void updateQuizQuestion(UpdateQuizQuestionRequest quizQuestionRequest, Category category) {
+    public void updateQuizQuestion(UpdateQuizQuestionRequest quizQuestionRequest, Category category, Quiz quiz) {
         QuizQuestion oldQuizQuestion = quizQuestionRepository.findById(quizQuestionRequest.getQuizQuestionId()).orElse(null);
         if (oldQuizQuestion == null) {
             QuizQuestion newQuizQuestion = QuizQuestionMapper.mapUpdateRequestToQuizQuestion(quizQuestionRequest, category);
             quizQuestionRepository.save(newQuizQuestion);
+            QuizQuestionMapping.QuizQuestionMappingId id = new QuizQuestionMapping.QuizQuestionMappingId(quiz, newQuizQuestion);
+            QuizQuestionMapping quizQuestionMapping = new QuizQuestionMapping(id);
+            quizQuestionMappingRepository.save(quizQuestionMapping);
             for (UpdateQuizAnswerRequest answerRequest : quizQuestionRequest.getAnswers()) {
                 QuizAnswer newAnswer = QuizAnswerMapper.mapUpdateRequestToQuizAnswer(answerRequest, newQuizQuestion);
                 quizAnswerRepository.save(newAnswer);
