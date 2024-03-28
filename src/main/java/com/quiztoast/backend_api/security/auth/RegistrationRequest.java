@@ -1,4 +1,5 @@
 package com.quiztoast.backend_api.security.auth;
+
 import com.quiztoast.backend_api.exception.annotation.email_exits.EmailExists;
 import com.quiztoast.backend_api.model.entity.user.Role;
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class RegistrationRequest {
     @NotBlank(message = "email cannot be blank")
     @Email(message = "email must be a valid email")
     @Pattern(
-            regexp = "^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)*@gmail\\.com$",
+            regexp = "^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)*@(gmail\\.com|yahoo\\.com|hotmail\\.com|example\\.edu|example\\.edu\\.vn)$",
             message = "email must be a gmail account"
     )
     @EmailExists(message = "email already exists")
@@ -41,7 +42,7 @@ public class RegistrationRequest {
 
     @NotNull(message = "password cannot be null")
     @NotBlank(message = "password cannot be blank")
-    @Size(min = 5, max=20,
+    @Size(min = 5, max = 20,
             message = "password must be between 5 and 20 characters")
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).*",
