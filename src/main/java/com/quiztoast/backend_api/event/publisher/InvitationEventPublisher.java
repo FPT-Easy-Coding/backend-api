@@ -23,8 +23,8 @@ public class InvitationEventPublisher {
      * @param invitedUsers the list of users to whom the invitation is sent
      */
     @Async
-    public void publishInvitationEvent(List<User> invitedUsers) {
-        MemberInviteEvent memberInviteEvent = new MemberInviteEvent(invitedUsers);
+    public void publishInvitationEvent(List<User> invitedUsers, List<String> inviteUrls) {
+        MemberInviteEvent memberInviteEvent = new MemberInviteEvent(invitedUsers,inviteUrls);
         eventPublisher.publishEvent(memberInviteEvent);
     }
 }

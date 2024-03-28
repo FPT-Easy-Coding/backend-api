@@ -5,12 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import javax.naming.directory.SearchResult;
 import java.util.Collection;
 import java.util.List;
 
-
+@Repository
 public interface QuizRepository extends JpaRepository<Quiz,Long> {
 
     @Query("SELECT CASE WHEN COUNT(q) > 0 THEN true ELSE false END FROM Quiz q WHERE q.quizId = :quizId")

@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
     private final CreateQuizCategoryRepository createQuizCategoryRepository;
     private final QuizQuestionMappingRepository quizQuestionMappingRepository;
     private final UserBelongClassroomRepository userBelongClassroomRepository;
+    private final InvitationTokenRepository invitationTokenRepository;
     @Override
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
         var user = ((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
@@ -219,6 +220,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUserByPasswordResetToken(String token) {
         return Optional.ofNullable(passwordResetTokenRepository.findByToken(token).getUser());
+    }
+
+    public User getUserByInvitationToken(String token) {
+        return invitationTokenRepository.findByToken(token).getUser();
     }
 
     @Override

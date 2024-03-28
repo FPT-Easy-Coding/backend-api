@@ -11,9 +11,10 @@ import java.util.List;
 @Setter
 public class MemberInviteEvent extends ApplicationEvent {
     private final List<User> invitedUsers;
-
-    public MemberInviteEvent( List<User> invitedUsers) {
+    private List<String> inviteUrls;
+    public MemberInviteEvent( List<User> invitedUsers, List<String> inviteUrls) {
         super(invitedUsers);
         this.invitedUsers = invitedUsers;
+        this.inviteUrls = inviteUrls;
     }
 }

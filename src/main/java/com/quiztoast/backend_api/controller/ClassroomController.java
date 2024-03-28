@@ -28,8 +28,10 @@ import com.quiztoast.backend_api.service.classroom.ClassroomServiceImpl;
 import com.quiztoast.backend_api.service.quiz.QuizServiceImpl;
 import com.quiztoast.backend_api.service.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -234,10 +236,11 @@ public class ClassroomController {
 
     @PostMapping("/invite-members")
     public ResponseEntity<MessageResponse> inviteMembers(
-            @RequestBody InviteMemberRequest inviteMembersRequest
+            @RequestBody InviteMemberRequest inviteMembersRequest,
+            HttpServletRequest request
     ) {
         try {
-            classroomServiceImpl.inviteMemberToClassroom(inviteMembersRequest);
+            classroomServiceImpl.inviteMemberToClassroom(inviteMembersRequest,request);
             return ResponseEntity.ok(
                     MessageResponse.builder()
                             .success(true)
@@ -251,6 +254,43 @@ public class ClassroomController {
                             .build());
         }
     }
+
+
+    @GetMapping("/{classroomId}/join")
+    public ResponseEntity<MessageResponse> joinClassroom(
+            @RequestParam("token") String token,
+            @PathVariable("classroomId") int classroomId
+    ){
+        try {
+            String tokenValidationResult = classroomServiceImpl.validateInvitationToken(token);
+            if (!tokenValidationResult.equalsIgnoreCase("valid")) {
+                if (tokenValidationResult.equalsIgnoreCase("expired")) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                            MessageResponse.builder()
+                                    .success(false)
+                                    .msg("Invitation token expired")
+                                    .build());
+                }
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        MessageResponse.builder()
+                                .success(false)
+                                .msg("Invalid invitation token")
+                                .build());
+            }
+            classroomServiceImpl.joinClassroom(token, classroomId);
+            classroomServiceImpl.deleteInvitationToken(token);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "http://localhost:5173/class/" + classroomId); // Modified URL with absolute path
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    MessageResponse.builder()
+                            .success(false)
+                            .msg("Error joining classroom: " + e.getMessage())
+                            .build());
+        }
+    }
+
 
     @PostMapping("/add-quiz/{classroomId}/quiz/{quizId}")
     public ResponseEntity<MessageResponse> addQuizToClassroom(

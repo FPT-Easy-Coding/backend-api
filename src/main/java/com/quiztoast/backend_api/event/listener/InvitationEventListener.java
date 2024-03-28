@@ -22,25 +22,24 @@ public class InvitationEventListener {
 
     @EventListener
     public void handleInvitationEvent(MemberInviteEvent event) {
-        List<User> invitedUsers = event.getInvitedUsers();
-        for (User invitedUser : invitedUsers) {
-            try {
-                sendInvitationEmail(invitedUser);
-            } catch (MessagingException e) {
-                log.error("Failed to send invitation email to user: {}", invitedUser.getUsername(), e);
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+        try {
+            List<User> invitedUsers = event.getInvitedUsers();
+            List<String> inviteUrls = event.getInviteUrls();
+
+            for (int i = 0; i < invitedUsers.size(); i++) {
+                sendInvitationEmail(invitedUsers.get(i), inviteUrls.get(i));
             }
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void sendInvitationEmail(User user) throws MessagingException, UnsupportedEncodingException {
+    private void sendInvitationEmail(User user, String url) throws MessagingException, UnsupportedEncodingException {
         String subject = "Invitation to join our Classroom";
         String senderName = "QuizToast";
         String content = "<p>Dear " + user.getUserName() + ",</p>" +
                 "You have been invited to join our Classroom. Please, click the link below to accept the invitation:" +
-                "<a href=\"https://localhost:5173/classroom/accept-invitation?token=" + 123 +
-                "\">Click here to accept the invitation</a>" +
+                "<p><a href='" + url + "'>" + "Click here to accept" + "</a></p>" +
                 "<p>Thank you</p> QuizToast";
 
         MimeMessage message = javaMailSender.createMimeMessage();

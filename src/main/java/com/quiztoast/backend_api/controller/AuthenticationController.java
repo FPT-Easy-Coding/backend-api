@@ -315,7 +315,7 @@ public class AuthenticationController {
             String passwordResetToken = UUID.randomUUID().toString();
             userServiceImpl.savePasswordResetTokenForUser(user.get(), passwordResetToken);
             String applicationUrl = authenticationServiceImpl.applicationUrl(request);
-            String passwordResetUrl = authenticationServiceImpl.generatePasswordResetUrl(applicationUrl, passwordResetToken);
+            String passwordResetUrl = authenticationServiceImpl. generatePasswordResetUrl(applicationUrl, passwordResetToken);
             authenticationServiceImpl.sendPasswordResetEmail(user.get(), passwordResetUrl);
             return ResponseEntity.ok(new EmailForgottenResponse(true));
         }

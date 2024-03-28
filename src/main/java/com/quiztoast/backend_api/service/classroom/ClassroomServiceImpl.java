@@ -10,6 +10,8 @@ import com.quiztoast.backend_api.model.entity.classroom.QuizBelongClassroom;
 import com.quiztoast.backend_api.model.entity.classroom.ReplyComment;
 import com.quiztoast.backend_api.model.entity.classroom.UserBelongClassroom;
 import com.quiztoast.backend_api.model.entity.quiz.Quiz;
+import com.quiztoast.backend_api.model.entity.token.InvitationToken;
+import com.quiztoast.backend_api.model.entity.token.PasswordResetToken;
 import com.quiztoast.backend_api.model.entity.user.User;
 import com.quiztoast.backend_api.model.mapper.ClassroomMapper;
 import com.quiztoast.backend_api.model.mapper.ClassroomQuestionMapper;
@@ -20,16 +22,9 @@ import com.quiztoast.backend_api.model.payload.response.ClassroomQuestionRespons
 import com.quiztoast.backend_api.model.payload.response.ClassroomResponse;
 import com.quiztoast.backend_api.model.payload.response.ClassroomToProfileResponse;
 import com.quiztoast.backend_api.model.payload.response.CommentResponse;
-import com.quiztoast.backend_api.repository.ClassroomAnswerRepository;
-import com.quiztoast.backend_api.repository.ClassroomQuestionRepository;
-import com.quiztoast.backend_api.repository.ClassroomRepository;
-import com.quiztoast.backend_api.repository.CommentRepository;
-import com.quiztoast.backend_api.repository.QuizBelongClassroomRepository;
-import com.quiztoast.backend_api.repository.QuizRepository;
-import com.quiztoast.backend_api.repository.ReplyCommentRepository;
-import com.quiztoast.backend_api.repository.UserBelongClassroomRepository;
-import com.quiztoast.backend_api.repository.UserRepository;
+import com.quiztoast.backend_api.repository.*;
 import com.quiztoast.backend_api.service.notification.NotificationServiceImpl;
+import com.quiztoast.backend_api.service.user.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -52,7 +49,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final CommentRepository commentRepository;
     private final ReplyCommentRepository replyCommentRepository;
     private final ClassroomAnswerRepository classroomAnswerRepository;
+    private final InvitationTokenRepository invitationTokenRepository;
     private final NotificationServiceImpl notificationServiceImpl;
+    private final UserServiceImpl userServiceImpl;
     private final InvitationEventPublisher invitationEventPublisher;
 
     @Override
@@ -223,6 +222,20 @@ public class ClassroomServiceImpl implements ClassroomService {
         // Save the entity
         userBelongClassroomRepository.save(userBelongClassroom);
     }
+    public void addUserToClassroom(int classroomId, User user) {
+        Classroom classroom = classroomRepository.findByClassroomId(classroomId);
+        // Initialize the composite primary key
+        UserBelongClassroom.UserBelongClassroomId userBelongClassroomId = new UserBelongClassroom.UserBelongClassroomId();
+        userBelongClassroomId.setClassroom(classroom);
+        userBelongClassroomId.setUser(user);
+
+        // Create a new UserBelongClassroom entity with the initialized composite primary key
+        UserBelongClassroom userBelongClassroom = new UserBelongClassroom();
+        userBelongClassroom.setId(userBelongClassroomId);
+
+        // Save the entity
+        userBelongClassroomRepository.save(userBelongClassroom);
+    }
 
 
     @Override
@@ -230,10 +243,11 @@ public class ClassroomServiceImpl implements ClassroomService {
         userBelongClassroomRepository.deleteUserFromClassroom(classroomId, userId);
     }
 
-    public void inviteMemberToClassroom(InviteMemberRequest inviteMemberRequest) {
+    public void inviteMemberToClassroom(InviteMemberRequest inviteMemberRequest, HttpServletRequest request) {
         int classroomId = inviteMemberRequest.getClassId();
         List<User> userList = new ArrayList<>();
         List<String> mails = inviteMemberRequest.getInviteMails();
+        List<String> inviteUrls = new ArrayList<>();
         if (mails != null && !mails.isEmpty()) {
             for (String mail : mails) {
                 User user = userRepository.findUserByEmail(mail);
@@ -243,19 +257,53 @@ public class ClassroomServiceImpl implements ClassroomService {
             }
         }
         if (!userList.isEmpty()) {
-            invitationEventPublisher.publishInvitationEvent(userList);
+            for(User user : userList) {
+                String token = UUID.randomUUID().toString();
+                saveInvitationToken(user, token);
+                String inviteUrl = generateJoinClassUrl(applicationUrl(request), token,classroomId);
+                inviteUrls.add(inviteUrl);
+            }
+            sendPasswordResetEmail(userList, inviteUrls);
         }
-        for (User user : userList) {
-            addUserToClassroom(classroomId, user.getUserId());
+    }
+
+    public void joinClassroom(String token, int classroomId) {
+        User user = userServiceImpl.getUserByInvitationToken(token);
+        addUserToClassroom(classroomId, user);
+    }
+    public void deleteInvitationToken(String token) {
+        InvitationToken invitationToken = invitationTokenRepository.findByToken(token);
+        if (invitationToken != null) {
+            invitationTokenRepository.delete(invitationToken);
         }
+    }
+    public String validateInvitationToken(String token) {
+        InvitationToken invitationToken = invitationTokenRepository.findByToken(token);
+        if (invitationToken == null) {
+            return "invalid";
+        }
+        if ((invitationToken.getTokenExpirationTime().compareTo(new Date())) < 0) {
+            invitationTokenRepository.delete(invitationToken);
+            return "expired";
+        }
+        return "valid";
     }
 
     public String applicationUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
 
     }
-    public String generateJoinClassUrl(String applicationUrl, String token ) {
-        return applicationUrl + "/api/v1/auth/reset-password?token=" + token;
+    public String generateJoinClassUrl(String applicationUrl, String token, int classroomId) {
+        return applicationUrl + "/api/v1/classroom/" + classroomId + "/join?token=" + token;
+    }
+
+    public void sendPasswordResetEmail(List<User> user, List<String> inviteUrls) {
+        invitationEventPublisher.publishInvitationEvent(user, inviteUrls);
+    }
+    public void saveInvitationToken(User user, String token) {
+        InvitationToken invitationToken = new InvitationToken(user, token);
+        invitationTokenRepository.save(invitationToken);
+
     }
     @Override
     public List<ClassMemberResponse> getClassMembers(int classroomId) {
@@ -444,4 +492,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroomAnswer.setContent(content);
         classroomAnswerRepository.save(classroomAnswer);
     }
+
+
+
 }
