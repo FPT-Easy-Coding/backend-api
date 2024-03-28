@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class FolderResponse {
     Long folderId;
+    Long authorId;
     String folderName;
     Long numberOfQuizSet;
     String authorName;

@@ -13,6 +13,7 @@ public class FolderMapper {
         String folderName = folder.getFolderName();
         return FolderResponse.builder()
                 .folderId(folder.getFolderId())
+                .authorId(folder.getUser().getUserId())
                 .folderName(folderName)
                 .authorName(folder.getUser().getUserName())
                 .numberOfQuizSet(numberOfQuizSets)

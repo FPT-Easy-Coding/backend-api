@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -272,7 +273,9 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    @RequestMapping(value="/update-profile", method = RequestMethod.PUT)
+
+    @PutMapping(value = "/update-profile")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserUpdateRequest> updateProfileUser(
             @RequestParam(name = "id") long userId,
             @RequestBody UserUpdateRequest request)
@@ -280,7 +283,8 @@ public class UserController {
         return userServiceImpl.updateProfileUser(userId,request);
     }
 
-    @RequestMapping(value="/update-avatar", method = RequestMethod.PUT)
+    @PutMapping(value = "/update-avatar")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UpdateAvatarRequest> updateAvatarUser(
             @RequestParam(name = "id") long userId,
             @RequestBody UpdateAvatarRequest avatar)
