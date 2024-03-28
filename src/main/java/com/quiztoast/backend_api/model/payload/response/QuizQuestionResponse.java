@@ -23,6 +23,7 @@ public class QuizQuestionResponse {
     private String quizName;
     private double rate;
     private int numberOfQuestions;
+    private String description;
     private LocalDateTime createAt;
     private Long view;
     private LocalDateTime timeRecentViewQuiz;

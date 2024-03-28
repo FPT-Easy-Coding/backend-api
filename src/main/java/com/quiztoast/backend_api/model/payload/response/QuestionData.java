@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class QuestionData {
+    private Long questionId;
     private String questionContent;
     private List<QuizAnswerDTO> answers;
 }

@@ -285,19 +285,17 @@ public class QuizServiceImpl implements QuizService {
         for (QuizQuestion quizQuestionIdObject : quizQuestionIds) {
             QuestionData questionData = new QuestionData();
             QuizQuestion quizQuestion = quizQuestionRepository.findByQuizQuestionId(quizQuestionIdObject.getQuizQuestionId());
-
             questionData.setQuestionContent(quizQuestion.getContent());
-
+            questionData.setQuestionId(quizQuestion.getQuizQuestionId());
             List<QuizAnswerDTO> quizAnswerDTOList = new ArrayList<>();
-
             List<QuizAnswer> quizAnswersList = quizAnswerRepository.findByQuizQuestion(quizQuestion);
             for (QuizAnswer quizAnswerEntity : quizAnswersList) {
                 QuizAnswerDTO quizAnswerDTO = new QuizAnswerDTO();
+                quizAnswerDTO.setAnswerId(quizAnswerEntity.getQuizAnswerId());
                 quizAnswerDTO.setContent(quizAnswerEntity.getContent());
                 quizAnswerDTO.setIsCorrect(quizAnswerEntity.getIsCorrect());
                 quizAnswerDTOList.add(quizAnswerDTO);
             }
-
             questionData.setAnswers(quizAnswerDTOList);
             response.getQuestions().add(questionData);
         }
@@ -318,6 +316,7 @@ public class QuizServiceImpl implements QuizService {
                 .quizName(quiz.getQuizName())
                 .rate(quiz.getRate())
                 .numberOfQuestions(numberOfQuestions)
+                .description(quiz.getDescription())
                 .createAt(quiz.getCreatedAt())
                 .view(quiz.getViewOfQuiz())
                 .timeRecentViewQuiz(quiz.getTimeRecentViewQuiz())

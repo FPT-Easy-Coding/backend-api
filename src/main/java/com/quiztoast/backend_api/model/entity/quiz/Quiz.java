@@ -41,8 +41,10 @@ public class Quiz {
 
     @Column(name = "view")
     private Long viewOfQuiz;
+
     @Column(name = "time_recent_view_quiz")
     private LocalDateTime timeRecentViewQuiz ;
 
-
+    @Column(name = "description", length = 2000)
+    private String description;
 }
