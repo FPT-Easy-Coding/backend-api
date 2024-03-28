@@ -8,8 +8,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 @Repository
-public interface QuizQuestionRepository extends JpaRepository<QuizQuestion ,Long> {
+public interface QuizQuestionRepository extends JpaRepository<QuizQuestion, Long> {
 
     List<QuizQuestion> findByContentContaining(String content);
 
@@ -24,4 +25,7 @@ public interface QuizQuestionRepository extends JpaRepository<QuizQuestion ,Long
 
     @Query("SELECT q FROM QuizQuestion q WHERE q.categoryId.categoryId = :id")
     QuizQuestion[] findQuizQuesstionByCategoryId(int id);
+
+    @Query("SELECT q FROM QuizQuestion q JOIN QuizQuestionMapping qm ON q.quizQuestionId = qm.id.quizQuestion.quizQuestionId WHERE qm.id.quiz.quizId = :quizId")
+    List<QuizQuestion> findAllByQuizId(int quizId);
 }

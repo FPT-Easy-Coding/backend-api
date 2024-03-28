@@ -23,4 +23,7 @@ public interface QuizQuestionMappingRepository extends JpaRepository<QuizQuestio
     @Modifying
     @Query("delete from QuizQuestionMapping q where q.id.quiz.quizId = :quizId")
     void deleteByQuizId(@Param("quizId") long quizId);
+    @Modifying
+    @Query("delete from QuizQuestionMapping q where q.id.quizQuestion.quizQuestionId = :quizQuestionId")
+    void deleteByQuizQuestionId(long quizQuestionId);
 }

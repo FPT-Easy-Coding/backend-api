@@ -147,6 +147,7 @@ public class QuizServiceImpl implements QuizService {
         return quiz;
     }
 
+
     public Quiz updateQuiz(UpdateQuizRequest updateQuizRequest) {
         User user = userRepository.findById(updateQuizRequest.getUserId()).orElse(null);
         Category category = categoryRepository.findById(updateQuizRequest.getCategoryId()).orElse(null);
@@ -154,13 +155,31 @@ public class QuizServiceImpl implements QuizService {
         if (user != quiz.getUser()) {
             return null;
         }
-        Quiz updatedQuiz = QuizMapper.mapUpdateRequestToQuiz(quiz,updateQuizRequest, category);
+        Quiz updatedQuiz = QuizMapper.mapUpdateRequestToQuiz(quiz, updateQuizRequest, category);
         quizRepository.save(updatedQuiz);
+
+        List<QuizQuestion> oldQuizQuestions = quizQuestionRepository.findAllByQuizId(quiz.getQuizId());
+        for (QuizQuestion oldQuizQuestion : oldQuizQuestions) {
+            boolean found = false;
+            for (UpdateQuizQuestionRequest updateQuizQuestionRequest : updateQuizRequest.getQuestions()) {
+                if (oldQuizQuestion.getQuizQuestionId() == (updateQuizQuestionRequest.getQuizQuestionId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                quizAnswerRepository.deleteByQuizQuestionId(oldQuizQuestion.getQuizQuestionId());
+                quizQuestionMappingRepository.deleteByQuizQuestionId(oldQuizQuestion.getQuizQuestionId());
+                quizQuestionRepository.delete(oldQuizQuestion);
+            }
+        }
+
         for (UpdateQuizQuestionRequest updateQuizQuestionRequest : updateQuizRequest.getQuestions()) {
             quizQuestionServiceImpl.updateQuizQuestion(updateQuizQuestionRequest, category, quiz);
         }
         return updatedQuiz;
     }
+
 
 
     @Override

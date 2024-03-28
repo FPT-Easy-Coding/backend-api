@@ -33,6 +33,7 @@ public class QuizAnswerServiceImpl implements QuizAnswerService {
         );
     }
 
+
     public boolean isAnswerExist(Long quizAnswerId){
         return quizAnswerRepository.existsByQuizAnswerId(quizAnswerId) != null;
     }
