@@ -33,10 +33,6 @@ public class RegistrationRequest {
     @NotNull(message = "email cannot be null")
     @NotBlank(message = "email cannot be blank")
     @Email(message = "email must be a valid email")
-    @Pattern(
-            regexp = "^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)*@(gmail\\.com|yahoo\\.com|hotmail\\.com|example\\.edu|example\\.edu\\.vn)$",
-            message = "email must be a gmail account"
-    )
     @EmailExists(message = "email already exists")
     private String email;
 
